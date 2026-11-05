@@ -1,0 +1,274 @@
+import { site, contact, helpCta, gpt, technologies, services, serviceBySlug, featuredServices, products, industries, whoWeAre, needs, waLink } from './data.mjs';
+import { icon } from './icons.mjs';
+import { clock } from './layout.mjs';
+
+const [uae, india] = contact.offices;
+export const sentences = (t) => t.split(/(?<=\.)\s+/);
+export const pad2 = (n) => String(n).padStart(2, '0');
+export const svcImg = (s) => `assets/img/svc/${s.slug}.jpg`;
+export const productImg = (p) => `assets/img/products/${p.slug}.jpg`;
+// The India office is labelled "India", so its small label shows the state instead
+export const officeLabel = (o) => (o.city.toUpperCase() === o.region ? o.coords : o.region);
+
+/* ---------- Small parts ---------- */
+// Button: label + round icon. Variants: ghost, light, ghost-light.
+export function btn(label, href, { variant = '', ic = 'arrow-up-right', ext = false, magnetic = false, attrs = '', tag = 'a' } = {}) {
+  const cls = `btn${variant ? ` btn--${variant}` : ''}`;
+  const inner = `<span>${label}</span><span class="btn-ic">${icon(ic)}</span>`;
+  if (tag === 'button') return `<button class="${cls}" ${attrs}>${inner}</button>`;
+  return `<a class="${cls}" href="${href}"${ext ? ' target="_blank" rel="noopener"' : ''}${magnetic ? ' data-magnetic' : ''}${attrs ? ` ${attrs}` : ''}>${inner}</a>`;
+}
+export const tlink = (label, href, attrs = '') => `<a class="tlink" href="${href}"${attrs ? ` ${attrs}` : ''}>${label}${icon('arrow-right')}</a>`;
+// Brand duotone image: navy shadows, full colour on hover
+export const tone = (src, alt = '', w = 1000, h = 667) => `<span class="tone"><img src="${src}" alt="${alt}" loading="lazy" decoding="async" width="${w}" height="${h}"></span>`;
+const go = `<span class="ix-go" aria-hidden="true">${icon('arrow-up-right')}</span>`;
+
+/* ---------- First section of every page (kept as is: dark 3D Earth) ---------- */
+export function earth(mode) {
+  return `<div class="earth earth--${mode}" data-earth="${mode}">
+    <canvas aria-hidden="true"></canvas>
+    <div class="earth-label" data-earth-label="uae"><i></i><span>${uae.city}</span><span class="dim">${uae.coords}</span>${clock(uae)}</div>
+    <div class="earth-label" data-earth-label="india"><i></i><span>${india.city}</span><span class="dim">${india.coords}</span>${clock(india)}</div>
+  </div>`;
+}
+
+// scene: 'network' | 'blocks' | 'neural' gives the page its own 3D animation (assets/js/scenes.js);
+// without one, the page shows the 3D Earth.
+export function pageHero({ crumb, eyebrow, title, text, scene }) {
+  return `<section class="page-hero" data-dark>
+  ${scene ? `<div class="earth earth--scene" data-scene="${scene}"><canvas aria-hidden="true"></canvas></div>` : earth('page')}
+  <div class="page-hero-shade" aria-hidden="true"></div>
+  <div class="page-hero-inner">
+    <p class="mono crumbs"><a href="index.html">Home</a> <span aria-hidden="true">/</span> ${crumb}</p>
+    <p class="mono eyebrow">(${eyebrow})</p>
+    <h1 class="display" data-split>${title}</h1>
+    ${text ? `<p class="lead" data-reveal>${text}</p>` : ''}
+  </div>
+  <div class="page-hero-foot mono" aria-hidden="true"><span>Scroll</span><span>${uae.city} — ${india.city}</span></div>
+</section>`;
+}
+
+/* Everything after the first section sits on a light sheet */
+export const content = (...sections) => `<div class="content" data-theme="light">\n${sections.join('\n')}\n</div>`;
+
+/* ---------- Section heads: numbered hairline bar + large title ---------- */
+export const bar = ({ idx, label, meta = '' }) =>
+  `<p class="sh-bar"><span class="sh-idx">${idx}</span><span>${label}</span>${meta ? `<span class="sh-meta">${meta}</span>` : ''}</p>`;
+
+export function head({ idx, label, meta = '', title, text = '', action = '' }) {
+  const side = text || action;
+  return `<header class="sh">
+    ${bar({ idx, label, meta })}
+    <div class="sh-main${side ? '' : ' sh-main--solo'}">
+      <h2 class="sh-title" data-split>${title}</h2>
+      ${side ? `<div class="sh-side" data-reveal>${text ? `<p>${text}</p>` : ''}${action}</div>` : ''}
+    </div>
+  </header>`;
+}
+
+/* ---------- Facts row ---------- */
+export const facts = (extra = '') => `<div class="facts">
+      <div class="fact" data-reveal><span class="fact-label">Managed services</span><span class="fact-num" data-count="${services.length}">${services.length}</span></div>
+      <div class="fact" data-reveal><span class="fact-label">AI products for industry</span><span class="fact-num" data-count="${industries.length}">${industries.length}</span></div>
+      <div class="fact" data-reveal><span class="fact-label">Countries · UAE &amp; India</span><span class="fact-num" data-count="2">2</span></div>
+      ${extra}
+    </div>`;
+
+/* ---------- Home 01: who we are ---------- */
+export function intro() {
+  const s = sentences(whoWeAre.text);
+  return `<section class="sec intro">
+  <div class="wrap">
+    ${head({ idx: '01', label: whoWeAre.eyebrow, meta: `${uae.city} — India`, title: 'Excellence in managed software services', text: s[2] })}
+    ${facts(`<div class="fact fact--text" data-reveal><p>We craft intelligent solutions that propel your business forward.</p>${tlink('More about Hamdaz', 'about.html')}</div>`)}
+  </div>
+</section>`;
+}
+
+/* ---------- Services index: hairline rows with a hover image preview ---------- */
+const ixRow = (s, i) => `<span class="ix-num">${pad2(i + 1)}</span><span class="ix-title">${s.title}</span><span class="ix-text">${s.summary}</span>${go}`;
+
+export function servicesIndex() {
+  const featured = featuredServices.map((slug) => serviceBySlug[slug]);
+  const rest = services.filter((s) => !featuredServices.includes(s.slug));
+  const restNames = rest.slice(0, 6).map((s) => s.title.split(/\s[(–]/)[0]).join(', ');
+  return `<section class="sec svc-sec">
+  <div class="wrap">
+    ${head({ idx: '02', label: 'What we do', meta: `${services.length} services`, title: 'Our managed services', text: sentences(site.description)[0], action: btn('View all services', 'services.html', { magnetic: true }) })}
+    <ol class="index index--compact" data-preview>
+      ${featured.map((s, i) => `<li><a class="ix" href="services.html#${s.slug}" data-img="${svcImg(s)}">${ixRow(s, i)}</a></li>`).join('\n      ')}
+      <li><a class="ix ix--more" href="services.html"><span class="ix-num">+${rest.length}</span><span class="ix-title">More services</span><span class="ix-text">${restNames} and more.</span>${go}</a></li>
+    </ol>
+  </div>
+</section>`;
+}
+
+/* ---------- AI products grid ---------- */
+export function productsGrid() {
+  return `<section class="sec prod-sec">
+  <div class="wrap">
+    ${head({ idx: '03', label: products.eyebrow, meta: `${industries.length} industries`, title: 'AI products for every industry', text: sentences(products.intro)[0] })}
+    <div class="prod-grid">
+      ${industries
+        .map(
+          (p, i) => `<a class="prod" href="solutions.html#${p.slug}" data-reveal>
+        ${tone(productImg(p))}
+        <span class="prod-meta"><span class="prod-num">${pad2(i + 1)}</span><span class="prod-title">${p.title}</span></span>
+      </a>`,
+        )
+        .join('\n      ')}
+      <a class="prod prod--cta" href="solutions.html#custom-gpt" data-reveal>
+        <span class="prod-num">Also from Hamdaz</span>
+        <span class="prod-cta-title">Custom ChatGPT for your business</span>
+        ${go}
+      </a>
+    </div>
+  </div>
+</section>`;
+}
+
+/* ---------- Custom ChatGPT: the one navy panel ---------- */
+export function gptSection({ idx = '04', full = false } = {}) {
+  const chat = `<figure class="chat" data-chat data-reveal>
+          <div class="chat-head">
+            <span class="chat-mark">H</span>
+            <div><p class="chat-title">Company Assistant</p><p class="chat-sub"><i></i> Custom ChatGPT · Your data</p></div>
+            <span class="chat-note">Illustrative example</span>
+          </div>
+          <div class="chat-body">
+            <p class="msg msg--you">What is the refund policy for annual subscriptions?</p>
+            <div class="msg msg--bot"><p>Annual plans are refunded in full within 30 days of purchase. After that, the customer receives a pro-rated credit for the remaining months.</p><p class="msg-src">${icon('file-text')} Billing policy · section 4.2</p></div>
+            <p class="msg msg--you">Draft a reply to the customer who asked yesterday</p>
+            <div class="msg msg--bot"><p>Thank you for your message. As your plan started 18 days ago, you are within the 30-day window and can receive a full refund. Shall I process it?</p><p class="msg-src">${icon('file-text')} Billing policy · CRM record</p></div>
+          </div>
+          <div class="chat-input"><span>Ask anything about your business</span><span class="chat-send">${icon('send')}</span></div>
+        </figure>`;
+  const head = `${bar({ idx, label: 'Custom ChatGPT', meta: 'Customised with your data' })}
+        <h2 class="gpt-title" data-split><span class="c">Custom ChatGPT</span> for your business</h2>
+        <p class="gpt-text" data-reveal>Advanced chatbots built on ChatGPT and customized with your own data.</p>`;
+
+  // Products page: full text in an accordion beside the chat
+  const fullBody = `<div class="gpt-main">
+        ${head}
+        ${chat}
+      </div>
+      <div class="gpt-side">
+        <h3 class="gpt-sub">${gpt.subtitle}</h3>
+        <ol class="steps steps--full">${gpt.items
+          .map(([t, d], i) => `<li><details${i === 0 ? ' open' : ''}><summary><span class="st-num">${pad2(i + 1)}</span><span class="st-title">${t}</span><span class="st-plus" aria-hidden="true"></span></summary><p>${d}</p></details></li>`)
+          .join('')}</ol>
+        <div class="gpt-closing" data-reveal>${btn('Contact Now', 'contact.html?about=Custom%20ChatGPT', { variant: 'light' })}</div>
+      </div>`;
+
+  // Home: copy beside the chat, the five steps in a row underneath
+  const homeBody = `<div class="gpt-main">
+        ${head}
+        <div data-reveal>${btn('Learn more', 'solutions.html#custom-gpt', { variant: 'light' })}</div>
+      </div>
+      <div class="gpt-aside">${chat}</div>
+      <ol class="steps steps--row">${gpt.items
+        .map(([t], i) => `<li data-reveal><span class="st-num">${pad2(i + 1)}</span><h3 class="st-title">${t}</h3></li>`)
+        .join('')}</ol>`;
+
+  return `<section class="sec gpt-sec" id="custom-gpt">
+  <div class="wrap">
+    <div class="gpt${full ? '' : ' gpt--home'}" data-dark>
+      ${full ? fullBody : homeBody}
+    </div>
+  </div>
+</section>`;
+}
+
+/* ---------- Home: find the right service (goal -> matching services) ---------- */
+export function serviceFinder({ idx = '04' } = {}) {
+  const lowerFirst = (t) => t.charAt(0).toLowerCase() + t.slice(1);
+  return `<section class="sec finder-sec" id="find">
+  <div class="wrap">
+    <div class="gpt finder" data-dark>
+      <div class="finder-main">
+        ${bar({ idx, label: 'Find the right service', meta: `${needs.length} goals · ${services.length} services` })}
+        <h2 class="finder-title" data-split>What do you need <span class="c">help with?</span></h2>
+        <p class="finder-text" data-reveal>Pick a goal to see the services that fit.</p>
+        <div class="needs" role="tablist" aria-label="Business goals" data-tabs data-reveal>
+          ${needs
+            .map(
+              (n, i) => `<button class="need" type="button" role="tab" id="need-${n.id}" aria-controls="np-${n.id}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}"><span class="need-num">${pad2(i + 1)}</span>${n.label}</button>`,
+            )
+            .join('\n          ')}
+        </div>
+      </div>
+      <div class="finder-panels">
+        ${needs
+          .map(
+            (n, i) => `<div class="np" role="tabpanel" id="np-${n.id}" aria-labelledby="need-${n.id}"${i ? ' hidden' : ''}>
+          <p class="np-label">${n.services.length} services for “${lowerFirst(n.label)}”</p>
+          <ul class="np-list">${n.services
+            .map((slug) => {
+              const s = serviceBySlug[slug];
+              return `<li><a href="services.html#${slug}"><span class="np-title">${s.title}</span><span class="np-text">${s.summary}</span>${go}</a></li>`;
+            })
+            .join('')}</ul>
+          <div class="np-actions">
+            ${btn('Ask on WhatsApp', waLink(`Hello Hamdaz, I need help to ${lowerFirst(n.label)}.`), { variant: 'light', ic: 'whatsapp', ext: true })}
+            ${btn('Send an enquiry', `contact.html?need=${encodeURIComponent(lowerFirst(n.label))}`, { variant: 'ghost-light' })}
+          </div>
+        </div>`,
+          )
+          .join('\n        ')}
+      </div>
+    </div>
+  </div>
+</section>`;
+}
+
+/* ---------- Technologies marquee ---------- */
+export function techStrip() {
+  // One moving row; main.js drives it and reacts to scroll speed.
+  // Brand marks: Simple Icons (CC0). General topics use Lucide line icons.
+  const techIcons = {
+    'Generative AI': 'sparkles', OpenAI: 'openai', 'Microsoft Azure': 'microsoftazure', AWS: 'amazonaws',
+    'Google Cloud': 'googlecloud', 'Oracle Cloud': 'oracle', Kubernetes: 'kubernetes', Zoho: 'zoho', SAP: 'sap',
+    Odoo: 'odoo', Salesforce: 'salesforce', Flutter: 'flutter', 'React Native': 'react', SCADA: 'gauge',
+    IIoT: 'radio-tower', Blockchain: 'blocks',
+  };
+  const ul = `<ul>${technologies.map((t) => `<li>${techIcons[t] ? icon(techIcons[t], 'i mq-ic') : ''}<span>${t}</span></li>`).join('')}</ul>`;
+  return `<section class="tech" aria-label="Technologies we work with">
+  <div class="tech-head"><p>Technologies we work with</p><p class="tech-meta">AI · Cloud · ERP · Mobile · IoT</p><button class="mq-toggle" type="button" aria-pressed="false" data-marquee-toggle><span class="mq-toggle-icon" aria-hidden="true"></span><span data-marquee-toggle-label>Pause</span></button></div>
+  <p class="sr-only">${technologies.join(', ')}</p>
+  <div class="mq" data-marquee="1" aria-hidden="true"><div class="mq-track">${ul}${ul}</div></div>
+</section>`;
+}
+
+/* ---------- Closing call to action, offices and careers ---------- */
+export function contactSection({ idx = '05' } = {}) {
+  const [first, second] = helpCta.title.replace('Business', 'business').split(/(?=your)/);
+  return `<section class="sec cta-sec">
+  <div class="wrap">
+    ${bar({ idx, label: 'Contact', meta: `<a href="mailto:${contact.email}">${contact.email}</a>` })}
+    <h2 class="cta-title" data-split>${first}<span class="c">${second}</span></h2>
+    <div class="cta-row">
+      <p class="cta-text" data-reveal>${helpCta.text}.</p>
+      <div class="cta-actions" data-reveal>
+        ${btn(helpCta.button, 'contact.html', { magnetic: true })}
+        ${btn('WhatsApp', waLink('Hello Hamdaz, I would like to discuss a project.'), { variant: 'ghost', ic: 'whatsapp', ext: true })}
+      </div>
+    </div>
+    <div class="cta-cols">
+      ${contact.offices
+        .map(
+          (o) => `<div class="cta-col" data-reveal>
+        <p class="cta-label"><span>${officeLabel(o)}</span>${clock(o)}</p>
+        <p class="cta-city">${o.city}</p>
+        <p class="cta-sub">${o.phones.map((p) => `<a href="tel:${p.tel}">${p.label}</a>`).join('<br>')}</p>
+      </div>`,
+        )
+        .join('\n      ')}
+      <div class="cta-col" id="careers" data-reveal>
+        <p class="cta-label"><span>Careers</span></p>
+        <p class="cta-city">Join the Hamdaz Team</p>
+        <p class="cta-sub">${tlink('Send your CV', `mailto:${contact.email}?subject=${encodeURIComponent('Join the Hamdaz Team')}`)}</p>
+      </div>
+    </div>
+  </div>
+</section>`;
+}

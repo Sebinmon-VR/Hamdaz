@@ -1,0 +1,39 @@
+# Apache config for hamdaz.com (static site)
+# Keeps old WordPress URLs working after the redesign.
+
+Options -Indexes
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Force HTTPS
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Old WordPress pages → new pages
+  RewriteRule ^about-us/?$            /about.html     [R=301,L]
+  RewriteRule ^services/?$            /services.html  [R=301,L]
+  RewriteRule ^products/?$            /solutions.html [R=301,L]
+  RewriteRule ^contact-us/?$          /contact.html   [R=301,L]
+
+  # Old service & product detail pages → anchors on the new pages
+  # (e.g. /service/generative-ai/ → /services.html#generative-ai, which opens that service's details)
+  RewriteRule ^service/([a-z0-9-]+)/?$ /services.html#$1  [R=301,NE,L]
+  RewriteRule ^product/([a-z0-9-]+)/?$ /solutions.html#$1 [R=301,NE,L]
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript image/svg+xml application/xml
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType text/javascript "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType image/jpeg "access plus 30 days"
+  ExpiresByType image/png "access plus 30 days"
+</IfModule>
