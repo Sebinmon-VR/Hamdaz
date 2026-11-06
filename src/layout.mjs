@@ -14,27 +14,17 @@ export const NAV = [
 
 export const clock = (o) => `<span class="clock" data-clock="${o.tz}" data-clock-label="${o.tzLabel}">--:-- ${o.tzLabel}</span>`;
 
-function loader() {
-  return `<div class="loader" data-loader aria-hidden="true">
-  <div class="loader-row"><span>Hamdaz Technologies</span><span>Delivering the Digital Future</span></div>
-  <div class="loader-count"><span data-loader-count>000</span></div>
-  <div class="loader-foot">
-    <div class="loader-bar"><i data-loader-bar></i></div>
-    <div class="loader-row"><span>Abu Dhabi · UAE</span><span>Loading</span><span>India</span></div>
-  </div>
-</div>`;
-}
-
 function header(active) {
-  const links = NAV.filter((n) => n.key !== 'home')
-    .map((n) => `<li><a href="${n.href}"${active === n.key ? ' aria-current="page"' : ''} data-hover><span>${n.label}</span><span aria-hidden="true">${n.label}</span></a></li>`)
+  // the bar links to the sections; Contact is the button beside it (the logo goes home)
+  const links = NAV.filter((n) => n.key !== 'home' && n.key !== 'contact')
+    .map((n) => `<li><a href="${n.href}"${active === n.key ? ' aria-current="page"' : ''}>${n.label}</a></li>`)
     .join('');
   return `<a class="skip" href="#main">Skip to content</a>
 <header class="header" data-header>
   <a class="brand" href="index.html" aria-label="${site.name}, home"><img src="assets/img/logo.svg" width="176" height="136" alt=""><span>Technologies</span></a>
   <nav class="nav" aria-label="Primary"><ul>${links}</ul></nav>
   <div class="header-end">
-    <a class="pill" href="contact.html" data-magnetic>Contact Now ${icon('arrow-up-right')}</a>
+    <a class="pill" href="contact.html"${active === 'contact' ? ' aria-current="page"' : ''} data-magnetic>Contact Now ${icon('arrow-up-right')}</a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn><span class="menu-btn-label">Menu</span><span class="menu-btn-lines"><i></i><i></i></span></button>
   </div>
 </header>
@@ -103,21 +93,26 @@ function footer() {
 <div class="cursor" aria-hidden="true"><div class="cursor-ring"><span data-cursor-label></span></div><div class="cursor-dot"></div></div>`;
 }
 
-// Fallback page-switch cover, used only where the 3D morph can't run (no WebGL). main.js animates it.
-function curtain() {
+// The page-switch cover (main.js animates it). It carries this page's name, so a page opened through a
+// switch shows its own name until the cover lifts.
+function curtain(name = '') {
   return `<div class="curtain" data-curtain aria-hidden="true">
   <div class="curtain-accent" data-curtain-accent></div>
   <div class="curtain-main" data-curtain-main>
     <div class="curtain-inner">
       <img class="curtain-logo" src="assets/img/logo.svg" width="176" height="136" alt="" data-curtain-logo>
-      <p class="curtain-label"><span data-curtain-label></span></p>
+      <p class="curtain-label"><span data-curtain-label>${name}</span></p>
       <span class="curtain-line"><i data-curtain-line></i></span>
     </div>
   </div>
 </div>`;
 }
 
-export function layout({ path = '', title, description = site.description, active = '', body, earth = false, scene = false, jsonld = '', base = '', bodyClass = '' }) {
+// a version stamp for the stylesheet and scripts, new on every build, so browsers fetch the latest copies
+const V = Date.now().toString(36);
+
+export function layout({ path = '', title, description = site.description, active = '', body, earth = false, scene = false, stage = false, jsonld = '', base = '', bodyClass = '' }) {
+  const three = earth || scene || stage;
   const fullTitle = title ? `${title} – Hamdaz` : 'Hamdaz – Delivering the Digital Future';
   const url = `${site.url}/${path}`;
   return `<!doctype html>
@@ -143,21 +138,20 @@ ${base ? `<base href="${base}">\n` : ''}<meta name="viewport" content="width=dev
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="assets/css/style.css">
-<script>(function(d){var r=d.documentElement;r.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches){r.classList.add('reduce')}else{r.classList.add('anim');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('anim')},4000)}try{if(sessionStorage.getItem('hz-morph-state')){r.classList.add('morphing');if('onpageswap' in window)r.classList.add('vt-arrive');setTimeout(function(){r.classList.remove('morphing')},4000)}if(sessionStorage.getItem('hz-nav')){r.classList.add('from-nav');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('from-nav')},3000)}}catch(e){}})(document)</script>
-${earth || scene ? '<link rel="modulepreload" href="assets/vendor/three.module.min.js">\n' : ''}<script src="assets/vendor/gsap.min.js" defer></script>
+<link rel="stylesheet" href="assets/css/style.css?v=${V}">
+<script>(function(d){var r=d.documentElement;r.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches){r.classList.add('reduce')}else{r.classList.add('anim');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('anim')},4000)}try{if(sessionStorage.getItem('hz-nav')){r.classList.add('from-nav');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('from-nav')},3000)}}catch(e){}})(document)</script>
+${three ? '<link rel="modulepreload" href="assets/vendor/three.module.min.js">\n' : ''}<script src="assets/vendor/gsap.min.js" defer></script>
 <script src="assets/vendor/ScrollTrigger.min.js" defer></script>
 <script src="assets/vendor/lenis.min.js" defer></script>
-<script src="assets/js/main.js" defer></script>
-${earth || scene ? '<script type="module" src="assets/js/morph.js" blocking="render"></script>\n' : ''}${earth ? '<script type="module" src="assets/js/earth.js"></script>\n' : ''}${scene ? '<script type="module" src="assets/js/scenes.js"></script>\n' : ''}${jsonld}</head>
+<script src="assets/js/main.js?v=${V}" defer></script>
+${stage ? `<script type="module" src="assets/js/stage.js?v=${V}"></script>\n` : earth ? `<script type="module" src="assets/js/earth.js?v=${V}"></script>\n` : ''}${scene ? `<script type="module" src="assets/js/scenes.js?v=${V}"></script>\n` : ''}${jsonld}</head>
 <body id="top" class="${bodyClass}">
-${active === 'home' ? loader() : ''}
 ${header(active)}
 <main id="main">
 ${body}
 </main>
 ${footer()}
-${curtain()}
+${curtain(NAV.find((n) => n.key === active)?.label || '')}
 </body>
 </html>
 `;

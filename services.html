@@ -21,22 +21,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="assets/css/style.css">
-<script>(function(d){var r=d.documentElement;r.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches){r.classList.add('reduce')}else{r.classList.add('anim');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('anim')},4000)}try{if(sessionStorage.getItem('hz-morph-state')){r.classList.add('morphing');if('onpageswap' in window)r.classList.add('vt-arrive');setTimeout(function(){r.classList.remove('morphing')},4000)}if(sessionStorage.getItem('hz-nav')){r.classList.add('from-nav');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('from-nav')},3000)}}catch(e){}})(document)</script>
+<link rel="stylesheet" href="assets/css/style.css?v=mw4v9gur">
+<script>(function(d){var r=d.documentElement;r.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches){r.classList.add('reduce')}else{r.classList.add('anim');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('anim')},4000)}try{if(sessionStorage.getItem('hz-nav')){r.classList.add('from-nav');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('from-nav')},3000)}}catch(e){}})(document)</script>
 <link rel="modulepreload" href="assets/vendor/three.module.min.js">
 <script src="assets/vendor/gsap.min.js" defer></script>
 <script src="assets/vendor/ScrollTrigger.min.js" defer></script>
 <script src="assets/vendor/lenis.min.js" defer></script>
-<script src="assets/js/main.js" defer></script>
-<script type="module" src="assets/js/morph.js" blocking="render"></script>
-<script type="module" src="assets/js/scenes.js"></script>
+<script src="assets/js/main.js?v=mw4v9gur" defer></script>
+<script type="module" src="assets/js/earth.js?v=mw4v9gur"></script>
 </head>
 <body id="top" class="">
-
 <a class="skip" href="#main">Skip to content</a>
 <header class="header" data-header>
   <a class="brand" href="index.html" aria-label="Hamdaz Technologies, home"><img src="assets/img/logo.svg" width="176" height="136" alt=""><span>Technologies</span></a>
-  <nav class="nav" aria-label="Primary"><ul><li><a href="about.html" data-hover><span>Who We Are</span><span aria-hidden="true">Who We Are</span></a></li><li><a href="services.html" aria-current="page" data-hover><span>What We Do</span><span aria-hidden="true">What We Do</span></a></li><li><a href="solutions.html" data-hover><span>How We Do</span><span aria-hidden="true">How We Do</span></a></li><li><a href="contact.html" data-hover><span>Contact Us</span><span aria-hidden="true">Contact Us</span></a></li></ul></nav>
+  <nav class="nav" aria-label="Primary"><ul><li><a href="about.html">Who We Are</a></li><li><a href="services.html" aria-current="page">What We Do</a></li><li><a href="solutions.html">How We Do</a></li></ul></nav>
   <div class="header-end">
     <a class="pill" href="contact.html" data-magnetic>Contact Now <svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn><span class="menu-btn-label">Menu</span><span class="menu-btn-lines"><i></i><i></i></span></button>
@@ -59,7 +57,13 @@
 </div>
 <main id="main">
 <section class="page-hero" data-dark>
-  <div class="earth earth--scene" data-scene="blocks"><canvas aria-hidden="true"></canvas></div>
+  <div class="earth earth--page" data-earth="page" data-element="layers">
+    <canvas aria-hidden="true"></canvas>
+    <div class="earth-label" data-side="left" data-earth-label="ai" aria-hidden="true"><span>Generative AI</span><span class="dim">Custom GPT · Bots</span><span class="tag">Node 01</span></div>
+    <div class="earth-label" data-side="left" data-earth-label="cloud" aria-hidden="true"><span>Cloud</span><span class="dim">Azure · AWS · GCP · OCI</span><span class="tag">Node 02</span></div>
+    <div class="earth-label" data-earth-label="data" aria-hidden="true"><span>Data & Analytics</span><span class="dim">Predictive insight</span><span class="tag">Node 03</span></div>
+    <div class="earth-label" data-side="left" data-earth-label="security" aria-hidden="true"><span>Security</span><span class="dim">Information security</span><span class="tag">Node 04</span></div>
+  </div>
   <div class="page-hero-shade" aria-hidden="true"></div>
   <div class="page-hero-inner">
     <p class="mono crumbs"><a href="index.html">Home</a> <span aria-hidden="true">/</span> What We Do</p>
@@ -76,12 +80,22 @@
     <p class="sh-bar"><span class="sh-idx">01</span><span>Services</span><span class="sh-meta">20 services</span></p>
     <div class="sh-main">
       <h2 class="sh-title" data-split>Our managed services</h2>
-      <div class="sh-side" data-reveal><p>Select a service to see everything it includes.</p></div>
+      <div class="sh-side" data-reveal><p>Hover a service to see what it includes, or open it for the full details.</p></div>
     </div>
   </header>
-    <ol class="index index--full" data-preview>
+    <ol class="svc-grid">
       <li class="svc-row" id="generative-ai" data-img="assets/img/svc/generative-ai.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/generative-ai.jpg"><span class="ix-num">01</span><span class="ix-title">Generative AI</span><span class="ix-text">In the realm of Generative AI, our consultancy specializes in harnessing cutting-edge technologies to create intelligent and innovative solutions.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/generative-ai.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">01</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>AI-driven Content Creation</span><span>Automated Design Generation</span><span>Chatbot Development</span><span>Deepfake Detection Services</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">Generative AI</span>
+          <span class="svc-text">In the realm of Generative AI, our consultancy specializes in harnessing cutting-edge technologies to create intelligent and innovative solutions.</span>
+          <span class="svc-tags"><span class="svc-tag">AI-driven Content Creation</span><span class="svc-tag">Automated Design Generation</span><span class="svc-tag">Chatbot Development</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">In the realm of Generative AI, our consultancy specializes in harnessing cutting-edge technologies to create intelligent and innovative solutions. Our services include:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>AI-driven Content Creation</strong><p>Utilizing Generative AI to produce creative and personalized content.</p></div></li><li><span class="ml-num">02</span><div><strong>Automated Design Generation</strong><p>Implementing AI algorithms to generate designs and prototypes.</p></div></li><li><span class="ml-num">03</span><div><strong>Chatbot Development</strong><p>Creating advanced conversational agents for enhanced customer interaction.</p></div></li><li><span class="ml-num">04</span><div><strong>Deepfake Detection Services</strong><p>Implementing solutions to identify and mitigate deepfake threats.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Leveraging OpenAI's GPT-4 for advanced natural language processing.</p></div></li></ol>
@@ -89,7 +103,17 @@
         </div>
       </li>
       <li class="svc-row" id="data-analytics-predictive-services" data-img="assets/img/svc/data-analytics-predictive-services.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/data-analytics-predictive-services.jpg"><span class="ix-num">02</span><span class="ix-title">Data Analytics & Predictive Services</span><span class="ix-text">Our consultancy excels in Data Analytics and Predictive Services, providing insights for informed decision-making.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/data-analytics-predictive-services.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">02</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>Data Warehousing and Integration</span><span>Data Visualization</span><span>Predictive Analytics Modeling</span><span>Big Data Processing</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">Data Analytics & Predictive Services</span>
+          <span class="svc-text">Our consultancy excels in Data Analytics and Predictive Services, providing insights for informed decision-making.</span>
+          <span class="svc-tags"><span class="svc-tag">Data Warehousing and Integration</span><span class="svc-tag">Data Visualization</span><span class="svc-tag">Predictive Analytics Modeling</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">Our consultancy excels in Data Analytics and Predictive Services, providing insights for informed decision-making:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>Data Warehousing and Integration</strong><p>Consolidating and integrating data from various sources.</p></div></li><li><span class="ml-num">02</span><div><strong>Data Visualization</strong><p>Creating interactive and insightful visual representations of data.</p></div></li><li><span class="ml-num">03</span><div><strong>Predictive Analytics Modeling</strong><p>Using statistical algorithms for forecasting future trends.</p></div></li><li><span class="ml-num">04</span><div><strong>Big Data Processing</strong><p>Handling and analyzing large volumes of data for actionable insights.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Incorporating machine learning algorithms for advanced predictive analytics.</p></div></li></ol>
@@ -97,7 +121,17 @@
         </div>
       </li>
       <li class="svc-row" id="business-process-automation-and-digital-transformation-services" data-img="assets/img/svc/business-process-automation-and-digital-transformation-services.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/business-process-automation-and-digital-transformation-services.jpg"><span class="ix-num">03</span><span class="ix-title">Business Process Automation and Digital Transformation Services</span><span class="ix-text">Our consultancy focuses on driving business efficiency and innovation.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/business-process-automation-and-digital-transformation-services.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">03</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>Business Process Mapping and Analysis</span><span>Change Management</span><span>Integration of Emerging Technologies</span><span>Continuous Improvement</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">Business Process Automation and Digital Transformation Services</span>
+          <span class="svc-text">Our consultancy focuses on driving business efficiency and innovation.</span>
+          <span class="svc-tags"><span class="svc-tag">Business Process Mapping and Analysis</span><span class="svc-tag">Change Management</span><span class="svc-tag">Integration of Emerging Technologies</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">Our consultancy focuses on driving business efficiency and innovation through:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>Business Process Mapping and Analysis</strong><p>Identifying areas for automation and improvement.</p></div></li><li><span class="ml-num">02</span><div><strong>Change Management</strong><p>Facilitating a smooth transition to automated processes.</p></div></li><li><span class="ml-num">03</span><div><strong>Integration of Emerging Technologies</strong><p>Leveraging AI, IoT, and other technologies for digital transformation.</p></div></li><li><span class="ml-num">04</span><div><strong>Continuous Improvement</strong><p>Implementing strategies for ongoing process optimization.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Utilizing blockchain for transparent and secure digital transactions.</p></div></li></ol>
@@ -105,7 +139,17 @@
         </div>
       </li>
       <li class="svc-row" id="data-center-infrastructure-services" data-img="assets/img/svc/data-center-infrastructure-services.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/data-center-infrastructure-services.jpg"><span class="ix-num">04</span><span class="ix-title">Data Center/Infrastructure Services</span><span class="ix-text">Our consultancy excels in providing robust Data Center and Infrastructure Services, ensuring reliability and scalability.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/data-center-infrastructure-services.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">04</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>Data Center Design and Optimization</span><span>Server Virtualization</span><span>IT Infrastructure Monitoring</span><span>Edge Computing Solutions</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">Data Center/Infrastructure Services</span>
+          <span class="svc-text">Our consultancy excels in providing robust Data Center and Infrastructure Services, ensuring reliability and scalability.</span>
+          <span class="svc-tags"><span class="svc-tag">Data Center Design and Optimization</span><span class="svc-tag">Server Virtualization</span><span class="svc-tag">IT Infrastructure Monitoring</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">Our consultancy excels in providing robust Data Center and Infrastructure Services, ensuring reliability and scalability. Key offerings include:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>Data Center Design and Optimization</strong><p>Designing and optimizing data center layouts.</p></div></li><li><span class="ml-num">02</span><div><strong>Server Virtualization</strong><p>Implementing virtualization technologies for efficient resource utilization.</p></div></li><li><span class="ml-num">03</span><div><strong>IT Infrastructure Monitoring</strong><p>Utilizing advanced tools for real-time monitoring.</p></div></li><li><span class="ml-num">04</span><div><strong>Edge Computing Solutions</strong><p>Deploying infrastructure at the network edge for low-latency applications.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Implementing hyper-converged infrastructure (HCI) for streamlined operations.</p></div></li></ol>
@@ -113,7 +157,17 @@
         </div>
       </li>
       <li class="svc-row" id="cloud-services-migration" data-img="assets/img/svc/cloud-services-migration.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/cloud-services-migration.jpg"><span class="ix-num">05</span><span class="ix-title">Cloud Services & Migration</span><span class="ix-text">Our consultancy excels in Cloud Services and Migration, ensuring seamless transitions and optimized cloud environments.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/cloud-services-migration.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">05</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>Cloud Strategy Consulting</span><span>Cloud Migration Services</span><span>Multi-Cloud Management</span><span>Serverless Architecture Implementation</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">Cloud Services & Migration</span>
+          <span class="svc-text">Our consultancy excels in Cloud Services and Migration, ensuring seamless transitions and optimized cloud environments.</span>
+          <span class="svc-tags"><span class="svc-tag">Cloud Strategy Consulting</span><span class="svc-tag">Cloud Migration Services</span><span class="svc-tag">Multi-Cloud Management</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">Our consultancy excels in Cloud Services and Migration, ensuring seamless transitions and optimized cloud environments. Our key services encompass:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>Cloud Strategy Consulting</strong><p>Developing customized cloud adoption strategies for businesses.</p></div></li><li><span class="ml-num">02</span><div><strong>Cloud Migration Services</strong><p>Efficiently moving applications and data to cloud platforms.</p></div></li><li><span class="ml-num">03</span><div><strong>Multi-Cloud Management</strong><p>Optimizing operations across multiple cloud providers.</p></div></li><li><span class="ml-num">04</span><div><strong>Serverless Architecture Implementation</strong><p>Leveraging AWS Lambda, Azure Functions, etc.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Integrating Kubernetes for container orchestration.</p></div></li></ol>
@@ -121,7 +175,17 @@
         </div>
       </li>
       <li class="svc-row" id="partner-services-msft-azure-aws-gcp-oci" data-img="assets/img/svc/partner-services-msft-azure-aws-gcp-oci.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/partner-services-msft-azure-aws-gcp-oci.jpg"><span class="ix-num">06</span><span class="ix-title">Partner Services – MSFT Azure, AWS, GCP, OCI</span><span class="ix-text">Specializing in partner services, our consultancy ensures optimal utilization of cloud platforms.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/partner-services-msft-azure-aws-gcp-oci.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">06</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>Cloud Consultation and Adoption Planning</span><span>Migration and Integration Services</span><span>Cost Optimization</span><span>Managed Services for Cloud Platforms</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">Partner Services – MSFT Azure, AWS, GCP, OCI</span>
+          <span class="svc-text">Specializing in partner services, our consultancy ensures optimal utilization of cloud platforms.</span>
+          <span class="svc-tags"><span class="svc-tag">Cloud Consultation and Adoption Planning</span><span class="svc-tag">Migration and Integration Services</span><span class="svc-tag">Cost Optimization</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">Specializing in partner services, our consultancy ensures optimal utilization of cloud platforms. Our key focus areas include:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>Cloud Consultation and Adoption Planning</strong><p>Assisting clients in selecting and adopting the right cloud platform.</p></div></li><li><span class="ml-num">02</span><div><strong>Migration and Integration Services</strong><p>Seamless transition of applications and data to cloud environments.</p></div></li><li><span class="ml-num">03</span><div><strong>Cost Optimization</strong><p>Implementing strategies to optimize cloud infrastructure costs.</p></div></li><li><span class="ml-num">04</span><div><strong>Managed Services for Cloud Platforms</strong><p>Ongoing support and maintenance for cloud-based systems.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Integration of serverless computing and AI services from cloud providers.</p></div></li></ol>
@@ -129,7 +193,17 @@
         </div>
       </li>
       <li class="svc-row" id="digital-twin" data-img="assets/img/svc/digital-twin.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/digital-twin.jpg"><span class="ix-num">07</span><span class="ix-title">Digital Twin</span><span class="ix-text">Specializing in Digital Twin technology, our consultancy creates digital replicas of physical entities.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/digital-twin.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">07</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>IoT Integration</span><span>Simulation and Modeling</span><span>Predictive Maintenance</span><span>Supply Chain Optimization</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">Digital Twin</span>
+          <span class="svc-text">Specializing in Digital Twin technology, our consultancy creates digital replicas of physical entities.</span>
+          <span class="svc-tags"><span class="svc-tag">IoT Integration</span><span class="svc-tag">Simulation and Modeling</span><span class="svc-tag">Predictive Maintenance</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">Specializing in Digital Twin technology, our consultancy creates digital replicas of physical entities for:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>IoT Integration</strong><p>Connecting physical entities to the digital twin for real-time monitoring.</p></div></li><li><span class="ml-num">02</span><div><strong>Simulation and Modeling</strong><p>Using digital twins for scenario analysis and optimization.</p></div></li><li><span class="ml-num">03</span><div><strong>Predictive Maintenance</strong><p>Utilizing digital twins to predict and prevent equipment failures.</p></div></li><li><span class="ml-num">04</span><div><strong>Supply Chain Optimization</strong><p>Applying digital twins for efficient supply chain management.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Integrating edge computing for real-time updates in digital twin models.</p></div></li></ol>
@@ -137,7 +211,17 @@
         </div>
       </li>
       <li class="svc-row" id="rpa-robotic-process-automation" data-img="assets/img/svc/rpa-robotic-process-automation.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/rpa-robotic-process-automation.jpg"><span class="ix-num">08</span><span class="ix-title">RPA (Robotic Process Automation)</span><span class="ix-text">Specializing in Robotic Process Automation, our consultancy streamlines business processes.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/rpa-robotic-process-automation.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">08</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>Process Automation Assessment</span><span>RPA Tool Selection and Implementation</span><span>Workflow Integration</span><span>Bot Monitoring and Maintenance</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">RPA (Robotic Process Automation)</span>
+          <span class="svc-text">Specializing in Robotic Process Automation, our consultancy streamlines business processes.</span>
+          <span class="svc-tags"><span class="svc-tag">Process Automation Assessment</span><span class="svc-tag">RPA Tool Selection and Implementation</span><span class="svc-tag">Workflow Integration</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">Specializing in Robotic Process Automation, our consultancy streamlines business processes through:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>Process Automation Assessment</strong><p>Identifying and prioritizing processes for automation.</p></div></li><li><span class="ml-num">02</span><div><strong>RPA Tool Selection and Implementation</strong><p>Choosing and integrating the right RPA tools for specific tasks.</p></div></li><li><span class="ml-num">03</span><div><strong>Workflow Integration</strong><p>Integrating automated processes with existing business workflows.</p></div></li><li><span class="ml-num">04</span><div><strong>Bot Monitoring and Maintenance</strong><p>Ensuring the efficient operation and upkeep of automated bots.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Incorporating AI-driven RPA for enhanced decision-making capabilities.</p></div></li></ol>
@@ -145,7 +229,17 @@
         </div>
       </li>
       <li class="svc-row" id="mobile-app-development" data-img="assets/img/svc/mobile-app-development.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/mobile-app-development.jpg"><span class="ix-num">09</span><span class="ix-title">Mobile App Development</span><span class="ix-text">Our consultancy excels in Mobile App Development, providing services that cater to diverse business needs.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/mobile-app-development.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">09</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>Native and Cross-Platform App Development</span><span>User Interface (UI) and User Experience (UX) Design</span><span>Enterprise Mobile Solutions</span><span>Mobile App Security</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">Mobile App Development</span>
+          <span class="svc-text">Our consultancy excels in Mobile App Development, providing services that cater to diverse business needs.</span>
+          <span class="svc-tags"><span class="svc-tag">Native and Cross-Platform App Development</span><span class="svc-tag">User Interface (UI) and User Experience (UX) Design</span><span class="svc-tag">Enterprise Mobile Solutions</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">Our consultancy excels in Mobile App Development, providing services that cater to diverse business needs:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>Native and Cross-Platform App Development</strong><p>Creating apps for various platforms and devices.</p></div></li><li><span class="ml-num">02</span><div><strong>User Interface (UI) and User Experience (UX) Design</strong><p>Ensuring a seamless and engaging app experience.</p></div></li><li><span class="ml-num">03</span><div><strong>Enterprise Mobile Solutions</strong><p>Developing apps for internal business processes and employee productivity.</p></div></li><li><span class="ml-num">04</span><div><strong>Mobile App Security</strong><p>Implementing robust security measures to protect user data.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Utilizing Flutter and React Native for efficient cross-platform development.</p></div></li></ol>
@@ -153,7 +247,17 @@
         </div>
       </li>
       <li class="svc-row" id="education-services" data-img="assets/img/svc/education-services.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/education-services.jpg"><span class="ix-num">10</span><span class="ix-title">Education Services</span><span class="ix-text">Our consultancy offers Education Services, leveraging technology for enhanced learning experiences.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/education-services.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">10</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>Learning Management System (LMS) Integration</span><span>Virtual Classroom Solutions</span><span>Student Information System (SIS) Implementation</span><span>E-learning Content Development</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">Education Services</span>
+          <span class="svc-text">Our consultancy offers Education Services, leveraging technology for enhanced learning experiences.</span>
+          <span class="svc-tags"><span class="svc-tag">Learning Management System (LMS) Integration</span><span class="svc-tag">Virtual Classroom Solutions</span><span class="svc-tag">Student Information System (SIS) Implementation</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">Our consultancy offers Education Services, leveraging technology for enhanced learning experiences:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>Learning Management System (LMS) Integration</strong><p>Facilitating online course delivery and management.</p></div></li><li><span class="ml-num">02</span><div><strong>Virtual Classroom Solutions</strong><p>Providing technology for interactive and remote learning.</p></div></li><li><span class="ml-num">03</span><div><strong>Student Information System (SIS) Implementation</strong><p>Streamlining administrative processes in educational institutions.</p></div></li><li><span class="ml-num">04</span><div><strong>E-learning Content Development</strong><p>Creating engaging and interactive digital learning materials.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Incorporating Augmented Reality (AR) for immersive educational experiences.</p></div></li></ol>
@@ -161,7 +265,17 @@
         </div>
       </li>
       <li class="svc-row" id="healthcare-services" data-img="assets/img/svc/healthcare-services.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/healthcare-services.jpg"><span class="ix-num">11</span><span class="ix-title">Healthcare Services</span><span class="ix-text">In the healthcare sector, our consultancy focuses on providing technology-driven solutions.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/healthcare-services.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">11</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>Electronic Health Record (EHR) Implementation</span><span>Telemedicine Integration</span><span>Healthcare Analytics</span><span>Cybersecurity for Healthcare</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">Healthcare Services</span>
+          <span class="svc-text">In the healthcare sector, our consultancy focuses on providing technology-driven solutions.</span>
+          <span class="svc-tags"><span class="svc-tag">Electronic Health Record (EHR) Implementation</span><span class="svc-tag">Telemedicine Integration</span><span class="svc-tag">Healthcare Analytics</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">In the healthcare sector, our consultancy focuses on providing technology-driven solutions, including:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>Electronic Health Record (EHR) Implementation</strong><p>Streamlining patient data management.</p></div></li><li><span class="ml-num">02</span><div><strong>Telemedicine Integration</strong><p>Facilitating remote patient consultations and monitoring.</p></div></li><li><span class="ml-num">03</span><div><strong>Healthcare Analytics</strong><p>Utilizing data analytics for insights into patient care and operational efficiency.</p></div></li><li><span class="ml-num">04</span><div><strong>Cybersecurity for Healthcare</strong><p>Ensuring the security and privacy of sensitive health information.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Implementation of AI for medical imaging and diagnostics.</p></div></li></ol>
@@ -169,7 +283,17 @@
         </div>
       </li>
       <li class="svc-row" id="retail-implementation-services" data-img="assets/img/svc/retail-implementation-services.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/retail-implementation-services.jpg"><span class="ix-num">12</span><span class="ix-title">Retail Implementation Services</span><span class="ix-text">Our consultancy specializes in providing Retail Implementation Services.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/retail-implementation-services.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">12</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>Point of Sale (POS) System Integration</span><span>Inventory Management Solutions</span><span>E-commerce Platform Integration</span><span>Customer Loyalty Programs</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">Retail Implementation Services</span>
+          <span class="svc-text">Our consultancy specializes in providing Retail Implementation Services.</span>
+          <span class="svc-tags"><span class="svc-tag">Point of Sale (POS) System Integration</span><span class="svc-tag">Inventory Management Solutions</span><span class="svc-tag">E-commerce Platform Integration</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">Our consultancy specializes in providing Retail Implementation Services, including:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>Point of Sale (POS) System Integration</strong><p>Seamless integration of POS systems for efficient transactions.</p></div></li><li><span class="ml-num">02</span><div><strong>Inventory Management Solutions</strong><p>Implementing technology for real-time tracking and optimization.</p></div></li><li><span class="ml-num">03</span><div><strong>E-commerce Platform Integration</strong><p>Facilitating the integration of online and offline retail channels.</p></div></li><li><span class="ml-num">04</span><div><strong>Customer Loyalty Programs</strong><p>Designing and implementing loyalty programs for enhanced customer engagement.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Incorporating RFID technology for advanced inventory tracking.</p></div></li></ol>
@@ -177,7 +301,17 @@
         </div>
       </li>
       <li class="svc-row" id="smart-farming" data-img="assets/img/svc/smart-farming.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/smart-farming.jpg"><span class="ix-num">13</span><span class="ix-title">Smart Farming</span><span class="ix-text">In the realm of agriculture technology, our consultancy focuses on Smart Farming solutions.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/smart-farming.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">13</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>Precision Agriculture</span><span>Automated Irrigation Systems</span><span>Crop Monitoring with Drones</span><span>Weather Data Integration</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">Smart Farming</span>
+          <span class="svc-text">In the realm of agriculture technology, our consultancy focuses on Smart Farming solutions.</span>
+          <span class="svc-tags"><span class="svc-tag">Precision Agriculture</span><span class="svc-tag">Automated Irrigation Systems</span><span class="svc-tag">Crop Monitoring with Drones</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">In the realm of agriculture technology, our consultancy focuses on Smart Farming solutions, including:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>Precision Agriculture</strong><p>Using IoT and data analytics for optimized crop management.</p></div></li><li><span class="ml-num">02</span><div><strong>Automated Irrigation Systems</strong><p>Implementing technology for efficient water usage.</p></div></li><li><span class="ml-num">03</span><div><strong>Crop Monitoring with Drones</strong><p>Utilizing drones for real-time crop health assessments.</p></div></li><li><span class="ml-num">04</span><div><strong>Weather Data Integration</strong><p>Incorporating weather forecasts for informed decision-making.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Implementing AI for crop yield prediction and disease detection.</p></div></li></ol>
@@ -185,7 +319,17 @@
         </div>
       </li>
       <li class="svc-row" id="bot-services" data-img="assets/img/svc/bot-services.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/bot-services.jpg"><span class="ix-num">14</span><span class="ix-title">Bot Services</span><span class="ix-text">In the domain of Bot Services, our consultancy focuses on creating intelligent conversational agents and virtual assistants.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/bot-services.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">14</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>Chatbot Development</span><span>Voice-enabled Bots</span><span>Multi-Channel Bot Integration</span><span>Bot Analytics and Insights</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">Bot Services</span>
+          <span class="svc-text">In the domain of Bot Services, our consultancy focuses on creating intelligent conversational agents and virtual assistants.</span>
+          <span class="svc-tags"><span class="svc-tag">Chatbot Development</span><span class="svc-tag">Voice-enabled Bots</span><span class="svc-tag">Multi-Channel Bot Integration</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">In the domain of Bot Services, our consultancy focuses on creating intelligent conversational agents and virtual assistants:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>Chatbot Development</strong><p>Creating conversational bots for customer support and engagement.</p></div></li><li><span class="ml-num">02</span><div><strong>Voice-enabled Bots</strong><p>Implementing bots that respond to voice commands for enhanced user interaction.</p></div></li><li><span class="ml-num">03</span><div><strong>Multi-Channel Bot Integration</strong><p>Ensuring bots are accessible across various communication channels.</p></div></li><li><span class="ml-num">04</span><div><strong>Bot Analytics and Insights</strong><p>Utilizing data to optimize bot performance and user experience.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Implementing advanced Natural Language Processing (NLP) for more human-like interactions.</p></div></li></ol>
@@ -193,7 +337,17 @@
         </div>
       </li>
       <li class="svc-row" id="it-ot-services" data-img="assets/img/svc/it-ot-services.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/it-ot-services.jpg"><span class="ix-num">15</span><span class="ix-title">IT/OT Services</span><span class="ix-text">In the domain of IT/OT (Information Technology/Operational Technology) convergence, our services connect and optimize industrial operations.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/it-ot-services.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">15</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>Industrial IoT (IIoT) Implementation</span><span>Cyber-Physical System Integration</span><span>SCADA System Deployment</span><span>Legacy System Modernization</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">IT/OT Services</span>
+          <span class="svc-text">In the domain of IT/OT (Information Technology/Operational Technology) convergence, our services connect and optimize industrial operations.</span>
+          <span class="svc-tags"><span class="svc-tag">Industrial IoT (IIoT) Implementation</span><span class="svc-tag">Cyber-Physical System Integration</span><span class="svc-tag">SCADA System Deployment</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">In the domain of IT/OT (Information Technology/Operational Technology) convergence, our services include:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>Industrial IoT (IIoT) Implementation</strong><p>Connecting and optimizing industrial processes through IoT.</p></div></li><li><span class="ml-num">02</span><div><strong>Cyber-Physical System Integration</strong><p>Integrating digital and physical systems for efficient operations.</p></div></li><li><span class="ml-num">03</span><div><strong>SCADA System Deployment</strong><p>Implementing Supervisory Control and Data Acquisition systems for real-time monitoring.</p></div></li><li><span class="ml-num">04</span><div><strong>Legacy System Modernization</strong><p>Upgrading older operational technology for improved efficiency.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Integration of edge computing for real-time data processing in industrial environments.</p></div></li></ol>
@@ -201,7 +355,17 @@
         </div>
       </li>
       <li class="svc-row" id="zoho-sap-vodoo-crm-salesforce" data-img="assets/img/svc/zoho-sap-vodoo-crm-salesforce.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/zoho-sap-vodoo-crm-salesforce.jpg"><span class="ix-num">16</span><span class="ix-title">Zoho, SAP, Odoo, CRM – Salesforce</span><span class="ix-text">Specializing in Customer Relationship Management (CRM) solutions.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/zoho-sap-vodoo-crm-salesforce.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">16</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>CRM Implementation and Customization</span><span>Data Migration and Integration</span><span>User Training and Support</span><span>Automation of Sales Processes</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">Zoho, SAP, Odoo, CRM – Salesforce</span>
+          <span class="svc-text">Specializing in Customer Relationship Management (CRM) solutions.</span>
+          <span class="svc-tags"><span class="svc-tag">CRM Implementation and Customization</span><span class="svc-tag">Data Migration and Integration</span><span class="svc-tag">User Training and Support</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">Specializing in Customer Relationship Management (CRM) solutions, our consultancy provides:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>CRM Implementation and Customization</strong><p>Tailoring CRM systems to meet specific business requirements.</p></div></li><li><span class="ml-num">02</span><div><strong>Data Migration and Integration</strong><p>Seamless transfer of data from legacy systems to modern CRM platforms.</p></div></li><li><span class="ml-num">03</span><div><strong>User Training and Support</strong><p>Ensuring effective use of CRM tools across the organization.</p></div></li><li><span class="ml-num">04</span><div><strong>Automation of Sales Processes</strong><p>Implementing workflow automation for increased efficiency.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Integration of AI for predictive analytics and customer insights.</p></div></li></ol>
@@ -209,7 +373,17 @@
         </div>
       </li>
       <li class="svc-row" id="av-setup-meeting-room-solutions" data-img="assets/img/svc/av-setup-meeting-room-solutions.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/av-setup-meeting-room-solutions.jpg"><span class="ix-num">17</span><span class="ix-title">AV Setup, Meeting Room Solutions</span><span class="ix-text">Specializing in Audio-Visual (AV) solutions, our consultancy enhances collaboration and communication.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/av-setup-meeting-room-solutions.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">17</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>AV System Design and Installation</span><span>Unified Communication Integration</span><span>Smart Meeting Room Solutions</span><span>Video Conferencing Solutions</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">AV Setup, Meeting Room Solutions</span>
+          <span class="svc-text">Specializing in Audio-Visual (AV) solutions, our consultancy enhances collaboration and communication.</span>
+          <span class="svc-tags"><span class="svc-tag">AV System Design and Installation</span><span class="svc-tag">Unified Communication Integration</span><span class="svc-tag">Smart Meeting Room Solutions</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">Specializing in Audio-Visual (AV) solutions, our consultancy enhances collaboration and communication with services such as:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>AV System Design and Installation</strong><p>Tailoring audio-visual setups to meet specific business needs.</p></div></li><li><span class="ml-num">02</span><div><strong>Unified Communication Integration</strong><p>Integrating communication tools for seamless collaboration.</p></div></li><li><span class="ml-num">03</span><div><strong>Smart Meeting Room Solutions</strong><p>Implementing IoT and automation for efficient meeting room management.</p></div></li><li><span class="ml-num">04</span><div><strong>Video Conferencing Solutions</strong><p>Leveraging the latest technologies for high-quality virtual meetings.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Integration of AI for voice recognition and transcription in meetings.</p></div></li></ol>
@@ -217,7 +391,17 @@
         </div>
       </li>
       <li class="svc-row" id="managed-services" data-img="assets/img/svc/managed-services.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/managed-services.jpg"><span class="ix-num">18</span><span class="ix-title">Managed Services</span><span class="ix-text">Our Managed Services offering ensures the smooth operation of IT systems and applications.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/managed-services.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">18</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>Proactive Monitoring and Maintenance</span><span>Remote IT Support</span><span>Patch Management</span><span>Backup and Disaster Recovery</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">Managed Services</span>
+          <span class="svc-text">Our Managed Services offering ensures the smooth operation of IT systems and applications.</span>
+          <span class="svc-tags"><span class="svc-tag">Proactive Monitoring and Maintenance</span><span class="svc-tag">Remote IT Support</span><span class="svc-tag">Patch Management</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">Our Managed Services offering ensures the smooth operation of IT systems and applications. Key services include:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>Proactive Monitoring and Maintenance</strong><p>Continuous monitoring to identify and address issues before they impact operations.</p></div></li><li><span class="ml-num">02</span><div><strong>Remote IT Support</strong><p>Providing efficient support services for remote and distributed teams.</p></div></li><li><span class="ml-num">03</span><div><strong>Patch Management</strong><p>Ensuring that systems are up-to-date with the latest security patches.</p></div></li><li><span class="ml-num">04</span><div><strong>Backup and Disaster Recovery</strong><p>Implementing robust strategies to safeguard data.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Incorporating AI-driven automation for predictive maintenance.</p></div></li></ol>
@@ -225,7 +409,17 @@
         </div>
       </li>
       <li class="svc-row" id="information-security-services" data-img="assets/img/svc/information-security-services.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/information-security-services.jpg"><span class="ix-num">19</span><span class="ix-title">Information Security Services</span><span class="ix-text">Specializing in Information Security, we offer comprehensive solutions to safeguard sensitive data and ensure regulatory compliance.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/information-security-services.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">19</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>Penetration Testing</span><span>Incident Response and Forensics</span><span>Identity and Access Management (IAM)</span><span>Blockchain Security</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">Information Security Services</span>
+          <span class="svc-text">Specializing in Information Security, we offer comprehensive solutions to safeguard sensitive data and ensure regulatory compliance.</span>
+          <span class="svc-tags"><span class="svc-tag">Penetration Testing</span><span class="svc-tag">Incident Response and Forensics</span><span class="svc-tag">Identity and Access Management (IAM)</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">Specializing in Information Security, we offer comprehensive solutions to safeguard sensitive data and ensure regulatory compliance. Our services include:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>Penetration Testing</strong><p>Identifying and addressing vulnerabilities in IT systems.</p></div></li><li><span class="ml-num">02</span><div><strong>Incident Response and Forensics</strong><p>Swift response to security incidents and forensic investigations.</p></div></li><li><span class="ml-num">03</span><div><strong>Identity and Access Management (IAM)</strong><p>Implementing robust access control systems.</p></div></li><li><span class="ml-num">04</span><div><strong>Blockchain Security</strong><p>Securing transactions and data on blockchain networks.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Implementing AI-driven cyber security solutions for threat detection.</p></div></li></ol>
@@ -233,7 +427,17 @@
         </div>
       </li>
       <li class="svc-row" id="network-services-cabling-structured-cabling" data-img="assets/img/svc/network-services-cabling-structured-cabling.jpg">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="assets/img/svc/network-services-cabling-structured-cabling.jpg"><span class="ix-num">20</span><span class="ix-title">Network Services Cabling/Structured Cabling</span><span class="ix-text">With expertise in Network Services and Structured Cabling, we ensure a reliable and efficient network infrastructure.</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></button>
+        <button class="svc-card" type="button" data-svc-open aria-haspopup="dialog">
+        <span class="svc-media"><span class="tone"><img src="assets/img/svc/network-services-cabling-structured-cabling.jpg" alt="" loading="lazy" decoding="async" width="1000" height="667"></span><span class="svc-num">20</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list"><span>Network Design and Installation</span><span>Fiber Optic Cabling</span><span>Wireless Networking</span><span>Network Performance Optimization</span><span>Latest Technologies</span></span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">Network Services Cabling/Structured Cabling</span>
+          <span class="svc-text">With expertise in Network Services and Structured Cabling, we ensure a reliable and efficient network infrastructure.</span>
+          <span class="svc-tags"><span class="svc-tag">Network Design and Installation</span><span class="svc-tag">Fiber Optic Cabling</span><span class="svc-tag">Wireless Networking</span></span>
+          <span class="svc-foot"><span>See full details</span><span class="ix-go" aria-hidden="true"><svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></span>
+        </span>
+      </button>
         <div class="svc-detail" hidden>
           <p class="modal-intro">With expertise in Network Services and Structured Cabling, we ensure a reliable and efficient network infrastructure. Our services encompass:</p>
           <ol class="modal-list"><li><span class="ml-num">01</span><div><strong>Network Design and Installation</strong><p>Planning and implementing network architectures.</p></div></li><li><span class="ml-num">02</span><div><strong>Fiber Optic Cabling</strong><p>Deploying high-speed and reliable fiber optic cabling solutions.</p></div></li><li><span class="ml-num">03</span><div><strong>Wireless Networking</strong><p>Implementing Wi-Fi and other wireless connectivity solutions.</p></div></li><li><span class="ml-num">04</span><div><strong>Network Performance Optimization</strong><p>Identifying and resolving bottlenecks for enhanced performance.</p></div></li><li><span class="ml-num">05</span><div><strong>Latest Technologies</strong><p>Implementing Power over Ethernet (PoE) for efficient device connectivity.</p></div></li></ol>
@@ -343,7 +547,7 @@
   <div class="curtain-main" data-curtain-main>
     <div class="curtain-inner">
       <img class="curtain-logo" src="assets/img/logo.svg" width="176" height="136" alt="" data-curtain-logo>
-      <p class="curtain-label"><span data-curtain-label></span></p>
+      <p class="curtain-label"><span data-curtain-label>What We Do</span></p>
       <span class="curtain-line"><i data-curtain-line></i></span>
     </div>
   </div>

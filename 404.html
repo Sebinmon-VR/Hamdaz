@@ -22,22 +22,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="assets/css/style.css">
-<script>(function(d){var r=d.documentElement;r.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches){r.classList.add('reduce')}else{r.classList.add('anim');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('anim')},4000)}try{if(sessionStorage.getItem('hz-morph-state')){r.classList.add('morphing');if('onpageswap' in window)r.classList.add('vt-arrive');setTimeout(function(){r.classList.remove('morphing')},4000)}if(sessionStorage.getItem('hz-nav')){r.classList.add('from-nav');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('from-nav')},3000)}}catch(e){}})(document)</script>
+<link rel="stylesheet" href="assets/css/style.css?v=mw4v9gur">
+<script>(function(d){var r=d.documentElement;r.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches){r.classList.add('reduce')}else{r.classList.add('anim');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('anim')},4000)}try{if(sessionStorage.getItem('hz-nav')){r.classList.add('from-nav');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('from-nav')},3000)}}catch(e){}})(document)</script>
 <link rel="modulepreload" href="assets/vendor/three.module.min.js">
 <script src="assets/vendor/gsap.min.js" defer></script>
 <script src="assets/vendor/ScrollTrigger.min.js" defer></script>
 <script src="assets/vendor/lenis.min.js" defer></script>
-<script src="assets/js/main.js" defer></script>
-<script type="module" src="assets/js/morph.js" blocking="render"></script>
-<script type="module" src="assets/js/earth.js"></script>
+<script src="assets/js/main.js?v=mw4v9gur" defer></script>
+<script type="module" src="assets/js/earth.js?v=mw4v9gur"></script>
 </head>
 <body id="top" class="">
-
 <a class="skip" href="#main">Skip to content</a>
 <header class="header" data-header>
   <a class="brand" href="index.html" aria-label="Hamdaz Technologies, home"><img src="assets/img/logo.svg" width="176" height="136" alt=""><span>Technologies</span></a>
-  <nav class="nav" aria-label="Primary"><ul><li><a href="about.html" data-hover><span>Who We Are</span><span aria-hidden="true">Who We Are</span></a></li><li><a href="services.html" data-hover><span>What We Do</span><span aria-hidden="true">What We Do</span></a></li><li><a href="solutions.html" data-hover><span>How We Do</span><span aria-hidden="true">How We Do</span></a></li><li><a href="contact.html" data-hover><span>Contact Us</span><span aria-hidden="true">Contact Us</span></a></li></ul></nav>
+  <nav class="nav" aria-label="Primary"><ul><li><a href="about.html">Who We Are</a></li><li><a href="services.html">What We Do</a></li><li><a href="solutions.html">How We Do</a></li></ul></nav>
   <div class="header-end">
     <a class="pill" href="contact.html" data-magnetic>Contact Now <svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn><span class="menu-btn-label">Menu</span><span class="menu-btn-lines"><i></i><i></i></span></button>
@@ -60,10 +58,12 @@
 </div>
 <main id="main">
 <section class="page-hero" data-dark>
-  <div class="earth earth--page" data-earth="page">
+  <div class="earth earth--page" data-earth="page" data-element="spark">
     <canvas aria-hidden="true"></canvas>
-    <div class="earth-label" data-earth-label="uae"><i></i><span>Abu Dhabi</span><span class="dim">24.45° N · 54.38° E</span><span class="clock" data-clock="Asia/Dubai" data-clock-label="GST">--:-- GST</span></div>
-    <div class="earth-label" data-earth-label="india"><i></i><span>India</span><span class="dim">Kerala</span><span class="clock" data-clock="Asia/Kolkata" data-clock-label="IST">--:-- IST</span></div>
+    <div class="earth-label" data-side="left" data-earth-label="ai" aria-hidden="true"><span>Generative AI</span><span class="dim">Custom GPT · Bots</span><span class="tag">Node 01</span></div>
+    <div class="earth-label" data-side="left" data-earth-label="cloud" aria-hidden="true"><span>Cloud</span><span class="dim">Azure · AWS · GCP · OCI</span><span class="tag">Node 02</span></div>
+    <div class="earth-label" data-earth-label="data" aria-hidden="true"><span>Data & Analytics</span><span class="dim">Predictive insight</span><span class="tag">Node 03</span></div>
+    <div class="earth-label" data-side="left" data-earth-label="security" aria-hidden="true"><span>Security</span><span class="dim">Information security</span><span class="tag">Node 04</span></div>
   </div>
   <div class="page-hero-shade" aria-hidden="true"></div>
   <div class="page-hero-inner">

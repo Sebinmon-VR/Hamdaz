@@ -1,17 +1,17 @@
 import { site, services, defaultServiceCta, waLink } from '../data.mjs';
 import { icon } from '../icons.mjs';
-import { pageHero, content, head, btn, pad2, svcImg, techStrip, contactSection } from '../components.mjs';
+import { pageHero, content, head, btn, pad2, svcImg, svcCard, techStrip, contactSection } from '../components.mjs';
 
-const hero = pageHero({ crumb: 'What We Do', eyebrow: 'Services', title: 'What We Do', text: site.description, scene: 'blocks' });
+const hero = pageHero({ crumb: 'What We Do', eyebrow: 'Services', title: 'What We Do', text: site.description, hero: 'layers' });
 
 const list = `<section class="sec">
   <div class="wrap">
-    ${head({ idx: '01', label: 'Services', meta: `${services.length} services`, title: 'Our managed services', text: 'Select a service to see everything it includes.' })}
-    <ol class="index index--full" data-preview>${services
+    ${head({ idx: '01', label: 'Services', meta: `${services.length} services`, title: 'Our managed services', text: 'Hover a service to see what it includes, or open it for the full details.' })}
+    <ol class="svc-grid">${services
       .map(
         (s, i) => `
       <li class="svc-row" id="${s.slug}" data-img="${svcImg(s)}">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="${svcImg(s)}"><span class="ix-num">${pad2(i + 1)}</span><span class="ix-title">${s.title}</span><span class="ix-text">${s.summary}</span><span class="ix-go" aria-hidden="true">${icon('arrow-up-right')}</span></button>
+        ${svcCard(s, i, { open: true })}
         <div class="svc-detail" hidden>
           <p class="modal-intro">${s.intro}</p>
           <ol class="modal-list">${s.items.map(([t, d], k) => `<li><span class="ml-num">${pad2(k + 1)}</span><div><strong>${t}</strong><p>${d}</p></div></li>`).join('')}</ol>
@@ -44,7 +44,7 @@ export default {
   file: 'services.html',
   path: 'services.html',
   active: 'services',
-  scene: true,
+  earth: true,
   title: 'Services',
   description:
     'Hamdaz managed services: Generative AI, Data Analytics, Business Process Automation, Data Center, Cloud Services & Migration, Azure, AWS, GCP, OCI, Information Security and more.',

@@ -3,7 +3,7 @@ import { icon } from '../icons.mjs';
 import { clock } from '../layout.mjs';
 import { pageHero, content, head, btn, officeLabel } from '../components.mjs';
 
-const hero = pageHero({ crumb: 'Contact Us', eyebrow: 'Contact Us', title: 'Connect with HAMDAZ', text: 'Where Passion Meets Technology, and Your Success is Our Mission!' });
+const hero = pageHero({ crumb: 'Contact Us', eyebrow: 'Contact Us', title: 'Connect with HAMDAZ', text: 'Where Passion Meets Technology, and Your Success is Our Mission!', hero: 'globe' });
 
 const offices = `<section class="sec">
   <div class="wrap">

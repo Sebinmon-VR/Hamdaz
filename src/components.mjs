@@ -1,4 +1,4 @@
-import { site, contact, helpCta, gpt, technologies, services, serviceBySlug, featuredServices, products, industries, whoWeAre, needs, waLink } from './data.mjs';
+import { site, contact, heroNodes, helpCta, gpt, technologies, services, serviceBySlug, featuredServices, products, industries, whoWeAre, needs, waLink } from './data.mjs';
 import { icon } from './icons.mjs';
 import { clock } from './layout.mjs';
 
@@ -23,20 +23,22 @@ export const tlink = (label, href, attrs = '') => `<a class="tlink" href="${href
 export const tone = (src, alt = '', w = 1000, h = 667) => `<span class="tone"><img src="${src}" alt="${alt}" loading="lazy" decoding="async" width="${w}" height="${h}"></span>`;
 const go = `<span class="ix-go" aria-hidden="true">${icon('arrow-up-right')}</span>`;
 
-/* ---------- First section of every page (kept as is: dark 3D Earth) ---------- */
-export function earth(mode) {
-  return `<div class="earth earth--${mode}" data-earth="${mode}">
+/* ---------- First section: dark 3D AI chip on a circuit board (assets/js/earth.js) ---------- */
+// hero: which element this page shows (assets/js/heroes/framings.js tells the story)
+export function earth(mode, hero = 'chip') {
+  return `<div class="earth earth--${mode}" data-earth="${mode}" data-element="${hero}">
     <canvas aria-hidden="true"></canvas>
-    <div class="earth-label" data-earth-label="uae"><i></i><span>${uae.city}</span><span class="dim">${uae.coords}</span>${clock(uae)}</div>
-    <div class="earth-label" data-earth-label="india"><i></i><span>${india.city}</span><span class="dim">${india.coords}</span>${clock(india)}</div>
+    ${hero === 'bloom' || hero === 'scan' ? '' : hero === 'globe'
+      ? [uae, india].map((o) => `<div class="earth-label" data-earth-label="${o.id}"><span>${o.city}</span><span class="dim">${o.coords}</span>${clock(o)}</div>`).join('\n    ')
+      : heroNodes.map((n) => `<div class="earth-label"${n.side === 'left' ? ' data-side="left"' : ''} data-earth-label="${n.id}" aria-hidden="true"><span>${n.title}</span><span class="dim">${n.text}</span><span class="tag">${n.tag}</span></div>`).join('\n    ')}
   </div>`;
 }
 
-// scene: 'network' | 'blocks' | 'neural' gives the page its own 3D animation (assets/js/scenes.js);
-// without one, the page shows the 3D Earth.
-export function pageHero({ crumb, eyebrow, title, text, scene }) {
+// Each page's own 3D element: scene: 'network' (assets/js/scenes.js), or hero: 'layers' | 'waves' |
+// 'globe' | 'beacon' | 'spark' | 'chip' (assets/js/earth.js, heroes/).
+export function pageHero({ crumb, eyebrow, title, text, scene, hero = 'chip' }) {
   return `<section class="page-hero" data-dark>
-  ${scene ? `<div class="earth earth--scene" data-scene="${scene}"><canvas aria-hidden="true"></canvas></div>` : earth('page')}
+  ${scene ? `<div class="earth earth--scene" data-scene="${scene}"><canvas aria-hidden="true"></canvas></div>` : earth('page', hero)}
   <div class="page-hero-shade" aria-hidden="true"></div>
   <div class="page-hero-inner">
     <p class="mono crumbs"><a href="index.html">Home</a> <span aria-hidden="true">/</span> ${crumb}</p>
@@ -75,39 +77,73 @@ export const facts = (extra = '') => `<div class="facts">
     </div>`;
 
 /* ---------- Home 01: who we are ---------- */
-export function intro() {
+// art: the home page shows the people network (assets/js/stage.js) beside the text
+export function intro({ art = false } = {}) {
   const s = sentences(whoWeAre.text);
+  const body = `${head({ idx: '01', label: whoWeAre.eyebrow, meta: `${uae.city} — India`, title: 'Excellence in managed software services', text: s[2] })}
+    ${facts(`<div class="fact fact--text" data-reveal><p>We craft intelligent solutions that propel your business forward.</p>${tlink('More about Hamdaz', 'about.html')}</div>`)}`;
   return `<section class="sec intro">
   <div class="wrap">
-    ${head({ idx: '01', label: whoWeAre.eyebrow, meta: `${uae.city} — India`, title: 'Excellence in managed software services', text: s[2] })}
-    ${facts(`<div class="fact fact--text" data-reveal><p>We craft intelligent solutions that propel your business forward.</p>${tlink('More about Hamdaz', 'about.html')}</div>`)}
+    ${art ? `<div class="intro-grid"><div class="intro-text">${body}</div><div class="intro-art" data-art aria-hidden="true"></div></div>` : body}
   </div>
 </section>`;
 }
 
-/* ---------- Services index: hairline rows with a hover image preview ---------- */
-const ixRow = (s, i) => `<span class="ix-num">${pad2(i + 1)}</span><span class="ix-title">${s.title}</span><span class="ix-text">${s.summary}</span>${go}`;
+/* ---------- Managed services, as cards (What We Do) ---------- */
+// a service as a card: its image, title, summary and main areas; hovering it lists everything included.
+// With `open` (What We Do) it opens the service's full details; otherwise it links to the service.
+export const svcCard = (s, i, { open = false } = {}) => {
+  const areas = s.items.map(([name]) => name).filter((n) => !/^latest technolog/i.test(n));
+  const tag = open ? 'button' : 'a';
+  const attrs = open ? 'type="button" data-svc-open aria-haspopup="dialog"' : `href="services.html#${s.slug}" data-reveal`;
+  return `<${tag} class="svc-card" ${attrs}>
+        <span class="svc-media">${tone(svcImg(s))}<span class="svc-num">${pad2(i + 1)}</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list">${s.items.map(([name]) => `<span>${name}</span>`).join('')}</span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">${s.title}</span>
+          <span class="svc-text">${s.summary}</span>
+          <span class="svc-tags">${areas.slice(0, 3).map((n) => `<span class="svc-tag">${n}</span>`).join('')}</span>
+          <span class="svc-foot"><span>${open ? 'See full details' : 'Explore service'}</span>${go}</span>
+        </span>
+      </${tag}>`;
+};
 
-export function servicesIndex() {
+/* ---------- Home: our managed services, as a list with a detail panel ---------- */
+// The main services as a compact list; the panel beside it shows the one you point at (image, summary,
+// what it includes), switched by main.js. On phones each row shows its summary instead.
+export function servicesIndex({ idx = '02' } = {}) {
   const featured = featuredServices.map((slug) => serviceBySlug[slug]);
-  const rest = services.filter((s) => !featuredServices.includes(s.slug));
-  const restNames = rest.slice(0, 6).map((s) => s.title.split(/\s[(–]/)[0]).join(', ');
+  const rest = services.length - featured.length;
   return `<section class="sec svc-sec">
   <div class="wrap">
-    ${head({ idx: '02', label: 'What we do', meta: `${services.length} services`, title: 'Our managed services', text: sentences(site.description)[0], action: btn('View all services', 'services.html', { magnetic: true }) })}
-    <ol class="index index--compact" data-preview>
-      ${featured.map((s, i) => `<li><a class="ix" href="services.html#${s.slug}" data-img="${svcImg(s)}">${ixRow(s, i)}</a></li>`).join('\n      ')}
-      <li><a class="ix ix--more" href="services.html"><span class="ix-num">+${rest.length}</span><span class="ix-title">More services</span><span class="ix-text">${restNames} and more.</span>${go}</a></li>
-    </ol>
+    ${head({ idx, label: 'What we do', meta: `${services.length} services`, title: 'Our managed services', text: sentences(site.description)[0], action: btn('View all services', 'services.html', { magnetic: true }) })}
+    <div class="svx" data-svx>
+      <ol class="svx-list">
+        ${featured.map((s, i) => `<li><a class="svx-row${i ? '' : ' is-on'}" href="services.html#${s.slug}" data-svx-row="${i}"><span class="svx-num">${pad2(i + 1)}</span><span class="svx-name"><span class="svx-title">${s.title}</span><span class="svx-text">${s.summary}</span></span><span class="svx-go" aria-hidden="true">${icon('arrow-right')}</span></a></li>`).join('\n        ')}
+        <li><a class="svx-row svx-row--more" href="services.html"><span class="svx-num">+${rest}</span><span class="svx-name"><span class="svx-title">More services</span></span><span class="svx-go" aria-hidden="true">${icon('arrow-right')}</span></a></li>
+      </ol>
+      <div class="svx-panels" aria-hidden="true">
+        ${featured.map((s, i) => `<div class="svx-panel${i ? '' : ' is-on'}" data-svx-panel="${i}">
+          <div class="svx-media">${tone(svcImg(s))}</div>
+          <div class="svx-body">
+            <p class="svx-p-title">${s.title}</p>
+            <p class="svx-p-text">${s.summary}</p>
+            <p class="svx-p-label">What's included</p>
+            <ul class="svx-p-list">${s.items.map(([name]) => `<li>${name}</li>`).join('')}</ul>
+          </div>
+        </div>`).join('\n        ')}
+      </div>
+    </div>
   </div>
 </section>`;
 }
 
 /* ---------- AI products grid ---------- */
-export function productsGrid() {
+export function productsGrid({ idx = '03' } = {}) {
   return `<section class="sec prod-sec">
   <div class="wrap">
-    ${head({ idx: '03', label: products.eyebrow, meta: `${industries.length} industries`, title: 'AI products for every industry', text: sentences(products.intro)[0] })}
+    ${head({ idx, label: products.eyebrow, meta: `${industries.length} industries`, title: 'AI products for every industry', text: sentences(products.intro)[0] })}
     <div class="prod-grid">
       ${industries
         .map(

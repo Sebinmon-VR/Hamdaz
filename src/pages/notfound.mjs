@@ -17,7 +17,7 @@ export default {
   earth: true,
   title: 'Page not found',
   description: 'The page you were looking for could not be found.',
-  body: `${pageHero({ crumb: '404', eyebrow: 'Error 404', title: 'Lost in orbit', text: 'This page has moved or no longer exists. Everything from the old site now lives on the pages below.' })}
+  body: `${pageHero({ crumb: '404', eyebrow: 'Error 404', title: 'Lost in orbit', text: 'This page has moved or no longer exists. Everything from the old site now lives on the pages below.', hero: 'spark' })}
 ${content(`<section class="sec">
   <div class="wrap">
     ${head({ idx: '404', label: 'Not found', title: 'Where would you like to go?' })}

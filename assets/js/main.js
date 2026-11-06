@@ -72,14 +72,8 @@
     return $$('.w > span', el);
   }
   const introScope = (el) => !!el.closest('.hero, .page-hero');
-  // Arrived through a browser page transition: the title and hero are animated by the
-  // transition itself (CSS ::view-transition), so they start fully visible.
-  const vtArrive = doc.classList.contains('vt-arrive');
   if (animate) {
-    $$('[data-split]').forEach((el) => {
-      const words = split(el);
-      if (!(vtArrive && introScope(el))) gsap.set(words, { yPercent: 115 });
-    });
+    $$('[data-split]').forEach((el) => gsap.set(split(el), { yPercent: 115 }));
   } else {
     $$('[data-split]').forEach((el) => el.classList.add('is-split'));
   }
@@ -189,9 +183,12 @@
   const fromNav = doc.classList.contains('from-nav');
   try { sessionStorage.removeItem('hz-nav'); } catch (e) { /* storage blocked */ }
 
+  let introDone = false;
   function intro() {
+    if (introDone) return;
+    introDone = true;
     doc.classList.remove('from-nav');
-    if (!animate || vtArrive) {
+    if (!animate) {
       $$('[data-intro]').forEach((el) => (el.style.opacity = 1));
       return;
     }
@@ -237,29 +234,46 @@
     intro();
   }
 
-  // Page-switch transition (runs for everyone, including reduced-motion visitors who asked for it)
+  // Page switches: a parallax wipe (runs for everyone, including reduced-motion visitors).
+  // Leaving, a colour band and then the navy panel sweep up over the page, each at its own pace, with the
+  // logo and the next page's name rising inside the panel a little behind it. The next page opens covered
+  // (html.from-nav, set in <head> before first paint) and waits until its 3D element has drawn, so nothing
+  // stutters; then the panel lifts away while the page glides up behind it, slower, into place.
   const cAccent = $('[data-curtain-accent]', curtain);
   const cMain = $('[data-curtain-main]', curtain);
+  const cInner = $('.curtain-inner', curtain);
   const cLabel = $('[data-curtain-label]', curtain);
   const cLogo = $('[data-curtain-logo]', curtain);
   const cLine = $('[data-curtain-line]', curtain);
+  const pageMain = $('#main');
   const hideCurtain = () => {
     gsap.set(curtain, { visibility: 'hidden' });
-    gsap.set([cAccent, cMain], { yPercent: 100 });
+    gsap.set([cAccent, cMain], { yPercent: 100, clearProps: 'borderRadius' });
     gsap.set(cLine, { scaleX: 0, transformOrigin: 'left' });
-    gsap.set([cLabel, cLogo], { clearProps: 'transform,opacity' });
+    gsap.set([cInner, cLabel, cLogo], { clearProps: 'transform,opacity' });
   };
-  const revealPage = () => {
-    // the page loads covered (html.from-nav); take over with inline styles, then lift the curtain
+  // resolves once this page's 3D element has drawn (or straight away when it has none)
+  const elementReady = () => new Promise((resolve) => {
+    const done = () => requestAnimationFrame(() => requestAnimationFrame(resolve));
+    const host = $('[data-earth], [data-scene], [data-stage]');
+    if (!host || host.classList.contains('is-ready') || doc.classList.contains('no-webgl')) return done();
+    window.addEventListener('earth:ready', done, { once: true });
+    window.addEventListener('scene:ready', done, { once: true });
+    setTimeout(done, 1800);
+  });
+  const revealPage = async () => {
     gsap.set(curtain, { visibility: 'visible' });
     gsap.set([cAccent, cMain], { yPercent: 0 });
     gsap.set(cLine, { scaleX: 1 });
-    gsap.timeline({ delay: 0.12, onComplete: hideCurtain })
-      .to(cLabel, { yPercent: -110, duration: 0.5, ease: 'expo.in' }, 0)
-      .to(cLogo, { opacity: 0, y: -12, duration: 0.35, ease: 'power2.in' }, 0)
-      .to(cLine, { scaleX: 0, transformOrigin: 'right', duration: 0.4, ease: 'expo.in' }, 0)
-      .to(cMain, { yPercent: -100, duration: 0.8, ease: 'expo.inOut' }, 0.3)
-      .to(cAccent, { yPercent: -100, duration: 0.8, ease: 'expo.inOut' }, 0.4);
+    await Promise.all([elementReady(), document.fonts ? Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 500))]) : null]);
+    gsap.timeline({ onComplete: () => { hideCurtain(); gsap.set(pageMain, { clearProps: 'transform' }); } })
+      .to(cLabel, { yPercent: -110, duration: 0.45, ease: 'power3.in' }, 0)
+      .to(cLogo, { opacity: 0, y: -16, duration: 0.35, ease: 'power2.in' }, 0)
+      .to(cLine, { scaleX: 0, transformOrigin: 'right', duration: 0.35, ease: 'power3.in' }, 0)
+      .to(cMain, { yPercent: -100, borderBottomLeftRadius: 48, borderBottomRightRadius: 48, duration: 1, ease: 'power4.inOut' }, 0.2)
+      .to(cAccent, { yPercent: -100, duration: 1, ease: 'power4.inOut' }, 0.3)
+      .fromTo(pageMain, { y: () => innerHeight * 0.16 }, { y: 0, duration: 1.25, ease: 'power3.out' }, 0.38)
+      .add(intro, 0.55);
   };
 
   const loaderVisible = loader && getComputedStyle(loader).display !== 'none';
@@ -268,7 +282,6 @@
     loader?.remove();
     if (fromNav && ok) {
       revealPage();
-      setTimeout(intro, 650);
     } else {
       if (ok) hideCurtain();
       intro();
@@ -283,6 +296,7 @@
     return url;
   };
   let leaving = false;
+  const PAGE_NAMES = { '': 'Home', 'index.html': 'Home', 'about.html': 'Who We Are', 'services.html': 'What We Do', 'solutions.html': 'How We Do', 'contact.html': 'Contact Us' };
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a[href]');
     if (!ok || leaving || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -292,26 +306,23 @@
     leaving = true;
     if (menuOpen) setMenu(false);
 
-    // Morph: this page's 3D object turns into particles that keep flying into the next page's
-    // object through the page load (morph.js). The browser's page transition (CSS) blends the rest.
-    if (window.HamdazMorph && window.HamdazMorph.leave(url.href, { x: e.clientX, y: e.clientY })) {
-      // two frames, so the particles are on screen before the browser snapshots this page
-      requestAnimationFrame(() => requestAnimationFrame(() => { location.href = url.href; }));
-      return;
-    }
-
-    // Fallback without WebGL: a quick cover
+    // the panel sweeps up over the page with the next page's name; the next page starts loading as soon
+    // as the screen is covered, while the name settles
     try { sessionStorage.setItem('hz-nav', '1'); } catch (err) { /* ignore */ }
+    cLabel.textContent = PAGE_NAMES[url.pathname.split('/').pop()] || '';
     gsap.set(curtain, { visibility: 'visible' });
     gsap.set(cLabel, { yPercent: 110 });
-    gsap.set(cLogo, { opacity: 0, y: 12 });
+    gsap.set(cLogo, { opacity: 0, y: 16 });
     gsap.set(cLine, { scaleX: 0, transformOrigin: 'left' });
-    gsap.timeline({ onComplete: () => (location.href = url.href) })
-      .fromTo(cAccent, { yPercent: 100 }, { yPercent: 0, duration: 0.55, ease: 'expo.inOut' }, 0)
-      .fromTo(cMain, { yPercent: 100 }, { yPercent: 0, duration: 0.55, ease: 'expo.inOut' }, 0.07)
-      .to(cLogo, { opacity: 1, y: 0, duration: 0.4, ease: 'expo.out' }, 0.38)
-      .to(cLabel, { yPercent: 0, duration: 0.45, ease: 'expo.out' }, 0.36)
-      .to(cLine, { scaleX: 1, duration: 0.42, ease: 'expo.inOut' }, 0.4);
+    gsap.set(cMain, { borderTopLeftRadius: 48, borderTopRightRadius: 48 });
+    gsap.timeline()
+      .fromTo(cAccent, { yPercent: 100 }, { yPercent: 0, duration: 0.75, ease: 'power4.inOut' }, 0)
+      .fromTo(cMain, { yPercent: 100 }, { yPercent: 0, borderTopLeftRadius: 0, borderTopRightRadius: 0, duration: 0.8, ease: 'power4.inOut' }, 0.08)
+      .fromTo(cInner, { y: () => innerHeight * 0.3 }, { y: 0, duration: 0.95, ease: 'power3.out' }, 0.2)
+      .to(cLogo, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }, 0.42)
+      .to(cLabel, { yPercent: 0, duration: 0.55, ease: 'power3.out' }, 0.46)
+      .to(cLine, { scaleX: 1, duration: 0.55, ease: 'power3.inOut' }, 0.5)
+      .call(() => { location.href = url.href; }, null, 0.9);
   });
   // start loading the next page as soon as a link is hovered, so the switch feels instant
   const prefetched = new Set();
@@ -392,18 +403,12 @@
       });
     }
 
-    // Re-measuring every scroll animation is a heavy, blocking task: after a page-switch morph,
-    // wait until the circuit has landed so it never interrupts the transition.
-    const refresh = () => {
-      if (doc.classList.contains('morphing') && !window.__hzSettled) {
-        window.addEventListener('hz:morph-settle', () => setTimeout(() => ST.refresh(), 400), { once: true });
-      } else ST.refresh();
-    };
+    const refresh = () => ST.refresh();
     window.addEventListener('load', refresh);
     document.fonts?.ready.then(refresh);
   }
 
-  /* ---------------------------------------------------------------- Home hero: scroll hands over to the 3D Earth */
+  /* ---------------------------------------------------------------- Home hero: the chip follows the scroll, the words hand over */
   const hero = $('[data-hero]');
   if (hero && ok) {
     ST.create({
@@ -416,6 +421,13 @@
       .to([a, $('[data-ticker]'), $('.hero-scroll')], { autoAlpha: 0, y: -80, duration: 0.35, ease: 'none' }, 0.02)
       .fromTo(b, { autoAlpha: 0, y: 70 }, { autoAlpha: 1, y: 0, duration: 0.3, ease: 'none' }, 0.55)
       .to({}, { duration: 0.15 });
+  }
+  // the scan horizon hero: while the header sits over its light side, the header's button turns dark
+  if ($('.hero--scan')) {
+    const heroEl = $('.hero--scan');
+    const onTop = () => doc.classList.toggle('hero-scan-top', window.scrollY < heroEl.offsetHeight - window.innerHeight * 0.6);
+    onTop();
+    window.addEventListener('scroll', onTop, { passive: true });
   }
   const ticker = $('[data-ticker]');
   if (ticker) {
@@ -432,7 +444,6 @@
       }, 5000);
     }
   }
-
   /* ---------------------------------------------------------------- Marquee: speeds up with scroll, flips with scroll direction */
   // Runs for everyone (slower and without the scroll boost under reduced motion);
   // the Pause button and hovering stop it.
@@ -514,6 +525,20 @@
     });
   });
 
+  /* ---------------------------------------------------------------- Home services: the panel shows the row you point at */
+  $$('[data-svx]').forEach((box) => {
+    const rows = $$('[data-svx-row]', box);
+    const panels = $$('[data-svx-panel]', box);
+    const set = (i) => {
+      rows.forEach((r) => r.classList.toggle('is-on', r.dataset.svxRow === i));
+      panels.forEach((p) => p.classList.toggle('is-on', p.dataset.svxPanel === i));
+    };
+    rows.forEach((r) => {
+      r.addEventListener('pointerenter', () => set(r.dataset.svxRow));
+      r.addEventListener('focus', () => set(r.dataset.svxRow));
+    });
+  });
+
   /* ---------------------------------------------------------------- Index lists: image follows the cursor */
   const lists = $$('[data-preview]');
   if (lists.length && fine && animate) {
@@ -570,9 +595,9 @@
   function openService(tile, scroll) {
     if (!modal || !tile) return;
     lastTile = tile;
-    const title = $('.ix-title', tile).textContent.trim();
+    const title = $('.svc-title, .ix-title', tile).textContent.trim();
     $('[data-modal-img]', modal).src = tile.dataset.img;
-    $('[data-modal-num]', modal).textContent = $('.ix-num', tile).textContent;
+    $('[data-modal-num]', modal).textContent = $('.svc-num, .ix-num', tile).textContent;
     $('[data-modal-title]', modal).textContent = title;
     $('[data-modal-body]', modal).innerHTML = $('.svc-detail', tile).innerHTML;
     $('[data-modal-contact]', modal).href = `contact.html?about=${encodeURIComponent(title)}`;

@@ -53,6 +53,15 @@ export const contact = {
   ],
 };
 
+// Labelled nodes on the AI chip in the first section (positions are in assets/js/earth.js, ANCHORS).
+// side: 'left' puts the label to the left of its node.
+export const heroNodes = [
+  { id: 'ai', title: 'Generative AI', text: 'Custom GPT · Bots', tag: 'Node 01', side: 'left' },
+  { id: 'cloud', title: 'Cloud', text: 'Azure · AWS · GCP · OCI', tag: 'Node 02', side: 'left' },
+  { id: 'data', title: 'Data & Analytics', text: 'Predictive insight', tag: 'Node 03' },
+  { id: 'security', title: 'Security', text: 'Information security', tag: 'Node 04', side: 'left' },
+];
+
 export const waLink = (text) =>
   `https://wa.me/${contact.whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
 

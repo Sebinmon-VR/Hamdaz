@@ -3,7 +3,7 @@ import { pageHero, content, head, btn, tlink, tone, pad2, productImg, gptSection
 
 const firstSentence = (t) => t.split(/(?<=[.!])\s+/)[0];
 
-const hero = pageHero({ crumb: 'How We Do', eyebrow: products.eyebrow, title: 'How We Do', text: products.intro, scene: 'neural' });
+const hero = pageHero({ crumb: 'How We Do', eyebrow: products.eyebrow, title: 'How We Do', text: products.intro, hero: 'waves' });
 
 const list = `<section class="sec">
   <div class="wrap">
@@ -30,7 +30,7 @@ export default {
   file: 'solutions.html',
   path: 'solutions.html',
   active: 'solutions',
-  scene: true,
+  earth: true,
   title: 'Products',
   description:
     'Hamdaz AI products for the Oil and Gas Industry, Small and Medium Enterprises, Schools and Educational Institutions, Online Education and Sports, plus custom ChatGPT solutions for your business.',

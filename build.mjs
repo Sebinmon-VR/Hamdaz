@@ -46,7 +46,8 @@ if (process.argv.includes('--serve')) {
       res.writeHead(404, { 'content-type': types['.html'] });
       return res.end(readFileSync(join(root, '404.html')));
     }
-    res.writeHead(200, { 'content-type': types[extname(file)] || 'application/octet-stream' });
+    // never let the browser reuse an old copy while previewing (every reload shows the latest build)
+    res.writeHead(200, { 'content-type': types[extname(file)] || 'application/octet-stream', 'cache-control': 'no-store' });
     res.end(readFileSync(file));
   }).listen(port, () => console.log(`\n  Serving on http://localhost:${port}\n`));
 }
