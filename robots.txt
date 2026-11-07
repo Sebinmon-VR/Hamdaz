@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+# design option pages, not part of the site
+Disallow: /docs/
 
 Sitemap: https://hamdaz.com/sitemap.xml

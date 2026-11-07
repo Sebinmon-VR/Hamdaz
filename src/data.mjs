@@ -27,13 +27,13 @@ export const contact = {
       lon: 54.3773,
       coords: '24.45° N · 54.38° E',
       entity: 'HAMDAZTECH TECHNOLOGY SERVICES LLC',
-      lines: ['PO Box. 5758, Office 22 | 2nd Floor,', 'Millenium Tower, OPP. Hamdan Centre,', 'Hamdan Street, Abu Dhabi, U. A. E.'],
+      lines: ['PO Box. 5758, Office 22 | 2nd Floor,', 'Millennium Tower, OPP. Hamdan Centre,', 'Hamdan Street, Abu Dhabi, U. A. E.'],
       phones: [
         { label: '+971 23090211', tel: '+97123090211' },
         { label: '+971 26265780', tel: '+97126265780' },
       ],
-      map: 'https://www.google.com/maps/search/?api=1&query=Millenium+Tower+Hamdan+Street+Abu+Dhabi',
-      postal: { street: 'Office 22, 2nd Floor, Millenium Tower, Hamdan Street', locality: 'Abu Dhabi', region: 'Abu Dhabi', code: '5758', country: 'AE' },
+      map: 'https://www.google.com/maps/search/?api=1&query=Millennium+Tower+Hamdan+Street+Abu+Dhabi',
+      postal: { street: 'Office 22, 2nd Floor, Millennium Tower, Hamdan Street', locality: 'Abu Dhabi', region: 'Abu Dhabi', pobox: '5758', country: 'AE' },
     },
     {
       id: 'india',
@@ -305,7 +305,7 @@ export const services = [
   },
   {
     slug: 'zoho-sap-vodoo-crm-salesforce',
-    title: 'Zoho, SAP, Odoo, CRM – Salesforce',
+    title: 'CRM: Salesforce, Zoho, SAP & Odoo',
     summary: 'Specializing in Customer Relationship Management (CRM) solutions.',
     intro: 'Specializing in Customer Relationship Management (CRM) solutions, our consultancy provides:',
     items: [
@@ -314,6 +314,46 @@ export const services = [
       ['User Training and Support', 'Ensuring effective use of CRM tools across the organization.'],
       ['Automation of Sales Processes', 'Implementing workflow automation for increased efficiency.'],
       ['Latest Technologies', 'Integration of AI for predictive analytics and customer insights.'],
+    ],
+  },
+  // Software development (added 2026-11): custom software, ERP and LMS beside mobile apps and CRM
+  {
+    slug: 'custom-software-web-development',
+    title: 'Custom Software & Web Development',
+    summary: 'Business software, web portals and integrations built around the way your organisation works.',
+    intro: 'When off-the-shelf software does not fit, we design and build it around your processes:',
+    items: [
+      ['Custom Business Applications', 'Web-based systems for approvals, operations, field work and reporting.'],
+      ['Web Portals and Websites', 'Customer, supplier and employee portals, and fast, secure company websites.'],
+      ['Integrations and APIs', 'Connecting your ERP, CRM, HR and finance systems so data stays in step.'],
+      ['Cloud-Ready Architecture', 'Applications built to run on Azure, AWS, Google Cloud or Oracle Cloud.'],
+      ['Support and Enhancement', 'Hosting, monitoring, fixes and new features after go-live.'],
+    ],
+  },
+  {
+    slug: 'erp-solutions',
+    title: 'ERP Implementation: SAP, Odoo & Zoho',
+    summary: 'ERP systems for finance, inventory, procurement, sales and HR, set up and supported end to end.',
+    intro: 'We implement and support ERP systems that bring your core operations onto one platform:',
+    items: [
+      ['ERP Selection and Planning', 'Choosing between SAP, Odoo and Zoho based on your processes, size and budget.'],
+      ['Implementation and Configuration', 'Finance, inventory, procurement, sales, HR and payroll modules set up for you.'],
+      ['Customisation and Integration', 'Workflows, reports and connections to your existing systems and apps.'],
+      ['Data Migration and Training', 'Moving records from legacy systems and spreadsheets, and training your users.'],
+      ['Support and Upgrades', 'Help desk, enhancements and version upgrades after go-live.'],
+    ],
+  },
+  {
+    slug: 'lms-elearning-platforms',
+    title: 'LMS & e-Learning Platforms',
+    summary: 'Learning management systems for schools, universities and corporate training, set up and supported.',
+    intro: 'We deliver learning management systems that make teaching and training easier to run:',
+    items: [
+      ['LMS Implementation', 'Setting up and configuring a learning management system for your institution or team.'],
+      ['Courses and Content', 'Course structures, assessments, certificates and interactive content.'],
+      ['Integrations and Single Sign-On', 'Connecting the LMS to student information, HR systems and Microsoft 365 or Google accounts.'],
+      ['Virtual Classrooms and Hybrid Learning', 'Live classes, recordings and classroom technology that work with the LMS.'],
+      ['Reports, Hosting and Support', 'Progress analytics, secure hosting and support for staff and learners.'],
     ],
   },
   {
@@ -579,12 +619,16 @@ export const categories = [
   { id: 'elv-security', title: 'ELV & Security Systems', short: 'ELV & Security', icon: 'cctv', text: 'MCC-certified CCTV, access control, gate barriers, ANPR, intercom and data centre infrastructure.', services: ['cctv-video-surveillance', 'access-control-gate-barriers', 'anpr-intercom-car-parks', 'data-centre-power-cooling'] },
   { id: 'audio-visual', title: 'Audio Visual', short: 'Audio Visual', icon: 'monitor-play', text: 'Design, supply, installation, programming and support of AV and collaboration systems across the UAE.', services: ['meeting-rooms-video-conferencing', 'video-walls-digital-signage', 'pro-audio-pa-systems', 'immersive-smart-spaces', 'av-setup-meeting-room-solutions'] },
   { id: 'network-wifi', title: 'Networking & Wi-Fi', short: 'Networking & Wi-Fi', icon: 'wifi', text: 'Enterprise wired and wireless networks, structured cabling and fibre.', services: ['enterprise-networking-wifi', 'network-services-cabling-structured-cabling'] },
-  { id: 'apps-business', title: 'Apps & Business Systems', short: 'Apps & ERP', icon: 'smartphone', text: 'Mobile apps and the business platforms you run on: Zoho, SAP, Odoo and Salesforce.', services: ['mobile-app-development', 'zoho-sap-vodoo-crm-salesforce'] },
+  { id: 'software-development', title: 'Software Development', short: 'Software', icon: 'blocks', text: 'Custom software, ERP, LMS, CRM and mobile apps, built and set up around the way you work.', services: ['custom-software-web-development', 'erp-solutions', 'lms-elearning-platforms', 'zoho-sap-vodoo-crm-salesforce', 'mobile-app-development'] },
   { id: 'industry', title: 'Industry Solutions', short: 'Industries', icon: 'building-2', text: 'Technology shaped for education, healthcare, retail and agriculture.', services: ['education-services', 'healthcare-services', 'retail-implementation-services', 'smart-farming'] },
   { id: 'staffing', title: 'Staffing & Outsourcing', short: 'Staffing', icon: 'users', text: 'Resident engineers, project teams and outsourced IT operations.', services: ['it-staffing-resident-engineers', 'it-outsourcing-managed-operations'] },
 ];
 
 export const serviceBySlug = Object.fromEntries(services.map((s) => [s.slug, s]));
+// each service's area, and the page addresses (relative to the site root; build.mjs adjusts them on nested pages)
+export const categoryOf = Object.fromEntries(categories.flatMap((c) => c.services.map((slug) => [slug, c])));
+export const svcUrl = (slug) => `service/${slug}/`;
+export const areaUrl = (id) => `services/${id}/`;
 export const defaultServiceCta = 'Unlock Infinite Possibilities with Our Services : Explore Managed Services Now!';
 
 // "Our Managed Services" on the original homepage
@@ -664,13 +708,13 @@ export const technologies = ['Generative AI', 'OpenAI', 'Microsoft Azure', 'AWS'
 // Every service appears under at least one goal.
 export const needs = [
   { id: 'ai', label: 'Use AI in my business', services: ['generative-ai', 'bot-services', 'data-analytics-predictive-services'] },
-  { id: 'automate', label: 'Automate manual work', services: ['business-process-automation-and-digital-transformation-services', 'rpa-robotic-process-automation', 'zoho-sap-vodoo-crm-salesforce'] },
+  { id: 'automate', label: 'Automate manual work', services: ['business-process-automation-and-digital-transformation-services', 'rpa-robotic-process-automation', 'erp-solutions', 'zoho-sap-vodoo-crm-salesforce'] },
   { id: 'cloud', label: 'Move to the cloud', services: ['cloud-services-migration', 'partner-services-msft-azure-aws-gcp-oci', 'data-center-infrastructure-services'] },
   { id: 'secure', label: 'Secure my systems', services: ['managed-ai-secops', 'cyber-assessment-audit', 'zero-trust-identity-data-security', 'ransomware-resilience', 'information-security-services'] },
   { id: 'building', label: 'Secure my building or site', services: ['cctv-video-surveillance', 'access-control-gate-barriers', 'anpr-intercom-car-parks', 'data-centre-power-cooling'] },
   { id: 'rooms', label: 'Set up meeting rooms and AV', services: ['meeting-rooms-video-conferencing', 'video-walls-digital-signage', 'pro-audio-pa-systems', 'immersive-smart-spaces'] },
   { id: 'people', label: 'Get engineers or outsource IT', services: ['it-staffing-resident-engineers', 'it-outsourcing-managed-operations', 'managed-services'] },
-  { id: 'app', label: 'Build an app', services: ['mobile-app-development', 'bot-services', 'digital-twin'] },
+  { id: 'app', label: 'Build an app or software', services: ['custom-software-web-development', 'mobile-app-development', 'lms-elearning-platforms', 'erp-solutions', 'bot-services'] },
   { id: 'office', label: 'Set up office IT', services: ['enterprise-networking-wifi', 'network-services-cabling-structured-cabling', 'av-setup-meeting-room-solutions', 'managed-services', 'data-center-infrastructure-services'] },
   { id: 'industry', label: 'Get solutions for my industry', services: ['healthcare-services', 'education-services', 'retail-implementation-services', 'smart-farming'] },
   { id: 'data', label: 'Make sense of my data', services: ['data-analytics-predictive-services', 'digital-twin', 'it-ot-services'] },

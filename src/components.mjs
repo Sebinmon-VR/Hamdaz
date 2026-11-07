@@ -1,12 +1,12 @@
-import { site, contact, heroNodes, helpCta, gpt, technologies, services, serviceBySlug, featuredServices, products, industries, whoWeAre, needs, waLink, clients, partners } from './data.mjs';
+import { site, contact, heroNodes, helpCta, gpt, technologies, services, serviceBySlug, featuredServices, products, industries, whoWeAre, needs, waLink, clients, partners, svcUrl } from './data.mjs';
 import { icon } from './icons.mjs';
 import { clock } from './layout.mjs';
 
 const [uae, india] = contact.offices;
 export const sentences = (t) => t.split(/(?<=\.)\s+/);
 export const pad2 = (n) => String(n).padStart(2, '0');
-export const svcImg = (s) => `assets/img/svc/${s.slug}.jpg`;
-export const productImg = (p) => `assets/img/products/${p.slug}.jpg`;
+export const svcImg = (s) => `assets/img/svc/${s.slug}.webp`;
+export const productImg = (p) => `assets/img/products/${p.slug}.webp`;
 // The India office is labelled "India", so its small label shows the state instead
 export const officeLabel = (o) => (o.city.toUpperCase() === o.region ? o.coords : o.region);
 
@@ -69,19 +69,21 @@ export function head({ idx, label, meta = '', title, text = '', action = '' }) {
 }
 
 /* ---------- Facts row ---------- */
+// what stands behind the work: partner brands, round-the-clock support and the security-systems certification
 export const facts = (extra = '') => `<div class="facts">
-      <div class="fact" data-reveal><span class="fact-label">Managed services</span><span class="fact-num" data-count="${services.length}">${services.length}</span></div>
-      <div class="fact" data-reveal><span class="fact-label">AI products for industry</span><span class="fact-num" data-count="${industries.length}">${industries.length}</span></div>
-      <div class="fact" data-reveal><span class="fact-label">Countries · UAE &amp; India</span><span class="fact-num" data-count="2">2</span></div>
+      <div class="fact" data-reveal><span class="fact-label">Technology brands we deliver</span><span class="fact-num">100+</span></div>
+      <div class="fact" data-reveal><span class="fact-label">Support · NOC &amp; SOC</span><span class="fact-num">24/7</span></div>
+      <div class="fact" data-reveal><span class="fact-label">Certified for security systems · Abu Dhabi</span><span class="fact-num">MCC</span></div>
       ${extra}
     </div>`;
+export const certLine = `<p class="fact-certs">ISO 9001 · 14001 · 45001 <span>·</span> ICV certified <span>·</span> Registered ADNOC supplier</p>`;
 
 /* ---------- Home 01: who we are ---------- */
 // art: the home page shows the people network (assets/js/stage.js) beside the text
 export function intro({ art = false } = {}) {
   const s = sentences(whoWeAre.text);
   const body = `${head({ idx: '01', label: whoWeAre.eyebrow, meta: `${uae.city} — India`, title: 'Excellence in managed software services', text: s[2] })}
-    ${facts(`<div class="fact fact--text" data-reveal><p>We craft intelligent solutions that propel your business forward.</p>${tlink('More about Hamdaz', 'about.html')}</div>`)}`;
+    ${facts(`<div class="fact fact--text" data-reveal>${certLine}<p>We craft intelligent solutions that propel your business forward.</p>${tlink('More about Hamdaz', 'about.html')}</div>`)}`;
   return `<section class="sec intro">
   <div class="wrap">
     ${art ? `<div class="intro-grid"><div class="intro-text">${body}</div><div class="intro-art" data-art aria-hidden="true"></div></div>` : body}
@@ -91,12 +93,10 @@ export function intro({ art = false } = {}) {
 
 /* ---------- Managed services, as cards (What We Do) ---------- */
 // a service as a card: its image, title, summary and main areas; hovering it lists everything included.
-// With `open` (What We Do) it opens the service's full details; otherwise it links to the service.
-export const svcCard = (s, i, { open = false } = {}) => {
+// It links to the service's own page (service/<slug>/).
+export const svcCard = (s, i) => {
   const areas = s.items.map(([name]) => name).filter((n) => !/^latest technolog/i.test(n));
-  const tag = open ? 'button' : 'a';
-  const attrs = open ? 'type="button" data-svc-open aria-haspopup="dialog"' : `href="services.html#${s.slug}" data-reveal`;
-  return `<${tag} class="svc-card" ${attrs}>
+  return `<a class="svc-card" href="${svcUrl(s.slug)}" data-reveal>
         <span class="svc-media">${tone(svcImg(s))}<span class="svc-num">${pad2(i + 1)}</span>
           <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list">${s.items.map(([name]) => `<span>${name}</span>`).join('')}</span></span>
         </span>
@@ -104,9 +104,9 @@ export const svcCard = (s, i, { open = false } = {}) => {
           <span class="svc-title">${s.title}</span>
           <span class="svc-text">${s.summary}</span>
           <span class="svc-tags">${areas.slice(0, 3).map((n) => `<span class="svc-tag">${n}</span>`).join('')}</span>
-          <span class="svc-foot"><span>${open ? 'See full details' : 'Explore service'}</span>${go}</span>
+          <span class="svc-foot"><span>Explore service</span>${go}</span>
         </span>
-      </${tag}>`;
+      </a>`;
 };
 
 /* ---------- Home: our managed services, as a list with a detail panel ---------- */
@@ -120,7 +120,7 @@ export function servicesIndex({ idx = '02' } = {}) {
     ${head({ idx, label: 'What we do', meta: `${services.length} services`, title: 'Our managed services', text: sentences(site.description)[0], action: btn('View all services', 'services.html', { magnetic: true }) })}
     <div class="svx" data-svx>
       <ol class="svx-list">
-        ${featured.map((s, i) => `<li><a class="svx-row${i ? '' : ' is-on'}" href="services.html#${s.slug}" data-svx-row="${i}"><span class="svx-num">${pad2(i + 1)}</span><span class="svx-name"><span class="svx-title">${s.title}</span><span class="svx-text">${s.summary}</span></span><span class="svx-go" aria-hidden="true">${icon('arrow-right')}</span></a></li>`).join('\n        ')}
+        ${featured.map((s, i) => `<li><a class="svx-row${i ? '' : ' is-on'}" href="${svcUrl(s.slug)}" data-svx-row="${i}"><span class="svx-num">${pad2(i + 1)}</span><span class="svx-name"><span class="svx-title">${s.title}</span><span class="svx-text">${s.summary}</span></span><span class="svx-go" aria-hidden="true">${icon('arrow-right')}</span></a></li>`).join('\n        ')}
         <li><a class="svx-row svx-row--more" href="services.html"><span class="svx-num">+${rest}</span><span class="svx-name"><span class="svx-title">More services</span></span><span class="svx-go" aria-hidden="true">${icon('arrow-right')}</span></a></li>
       </ol>
       <div class="svx-panels" aria-hidden="true">
@@ -241,7 +241,7 @@ export function serviceFinder({ idx = '04' } = {}) {
           <ul class="np-list">${n.services
             .map((slug) => {
               const s = serviceBySlug[slug];
-              return `<li><a href="services.html#${slug}"><span class="np-title">${s.title}</span><span class="np-text">${s.summary}</span>${go}</a></li>`;
+              return `<li><a href="${svcUrl(slug)}"><span class="np-title">${s.title}</span><span class="np-text">${s.summary}</span>${go}</a></li>`;
             })
             .join('')}</ul>
           <div class="np-actions">

@@ -6,20 +6,22 @@ The design pairs a dark, cinematic 3D scene at the top of every page with a ligh
 
 ## What's in it
 
-- **Loading screen** with a percentage counter that tracks the loading of the 3D scene.
 - **Home hero:** one screen that plays like a short film (`assets/js/heroes/glass.js`, played by `assets/js/stage.js`): the headline, then AI, Cloud, Data, Infrastructure and Security, each with its details as tags. A tech object made of iridescent glass floats over dark abstract photos (`assets/img/hero/`, Unsplash License) that dissolve into each other between frames, and turns to the cursor on hover. The rail on the right shows the frame playing, jumps to any frame and pauses the film; one scroll goes straight to the content, and the object breaks into the particles that form the people network. The previous chip hero is kept on the local branch `backup/chip-hero-2026-11-07`; `HERO` in `src/pages/home.mjs` switches back to it.
-- **Services:** 35 services in 9 areas (`categories` in `src/data.mjs`): AI, data & automation; cybersecurity; cloud & infrastructure; ELV & security systems (MCC-certified CCTV, access control, gate barriers, ANPR, intercom, data centre); audio visual; networking & Wi-Fi; apps & business systems; industry solutions; staffing & outsourcing. The new AV, ELV, cybersecurity and staffing content comes from the 2026 company profiles. The services page has one section per area; the "What We Do" mega menu in the header lists every area and service.
+- **Services:** 38 services in 9 areas (`categories` in `src/data.mjs`): AI, data & automation; cybersecurity; cloud & infrastructure; ELV & security systems (MCC-certified CCTV, access control, gate barriers, ANPR, intercom, data centre); audio visual; networking & Wi-Fi; software development (custom software, ERP, LMS, CRM, mobile apps); industry solutions; staffing & outsourcing. The new AV, ELV, cybersecurity and staffing content comes from the 2026 company profiles. The services page has one section per area; the "What We Do" mega menu in the header lists every area and service.
+- **A page for every service and area (SEO):** each service has its own page at its old WordPress address, `/service/<slug>/` (overview, what's included, how we deliver it, brands and sectors, FAQs, related services, contact), and each area has one at `/services/<area>/`. Their text (search titles and descriptions, H1s, overviews, benefits, process, brands, sectors and FAQs) is in `src/content/*.mjs`, written from the 2026 company profiles; `src/content/index.mjs` stops the build if a service or area has none. Pages carry structured data (Organization, the two offices as ProfessionalService, WebSite, Service, BreadcrumbList, FAQPage, Article) built in `src/blocks.mjs`.
+- **Clients & projects** (`projects.html`): selected projects from the ELV profile (`src/content/projects.mjs`), the client and partner rows, sectors and credentials.
+- **Insights** (`insights.html`, `/insights/<slug>/`): practical guides for buyers in the UAE (`articles` in `src/content/*.mjs`).
 - **Clients & partners:** moving rows of client names and partner brands on the home page (`clients` and `partners` in `src/data.mjs`); names only, so logo files can be added later.
 - **Light theme below the hero:** the page content sits on a light sheet that overlaps the hero and the navy footer. The header turns white automatically whenever it is over the light sheet.
 - **Colours:** the hero, one panel per page (Custom ChatGPT) and the footer use the logo's navy. Photos get a navy duotone so they match each other, and show full colour on hover.
-- **Home sections:** Who We Are with key numbers, the main managed services as a list with a detail panel (point at one to see its image, summary and what it includes), a grid of AI products, a "find the right service" guide, a technology marquee, and a contact, offices and careers block.
-- **Find the right service:** visitors pick a goal (for example "Move to the cloud") and see the services that fit, with WhatsApp and enquiry buttons that arrive pre-filled with that goal. The goals and their services are in `needs` in `src/data.mjs`; every one of the 20 services is listed under at least one goal.
+- **Home sections:** Who We Are with the credentials (100+ technology brands, 24/7 support, MCC certified; ISO, ICV, ADNOC supplier), the main managed services as a list with a detail panel (point at one to see its image, summary and what it includes), a grid of AI products, a "find the right service" guide, a technology marquee, and a contact, offices and careers block.
+- **Find the right service:** visitors pick a goal (for example "Move to the cloud") and see the services that fit, with WhatsApp and enquiry buttons that arrive pre-filled with that goal. The goals and their services are in `needs` in `src/data.mjs`; every service is listed under at least one goal.
 - **Smooth scrolling** (Lenis) with GSAP ScrollTrigger: headlines rise in word by word, content fades up, numbers count.
 - **One element per page, told as a story:** Home shows the AI chip, Who We Are a network of people (`assets/js/scenes.js`), What We Do a technology stack of four glass platforms (Security, Cloud, Data, AI), How We Do flowing ribbons of light, Contact the night-side Earth with the Abu Dhabi and India offices (with their local time) joined by a glowing arc (`heroes/globe.js`), and the 404 page a spark of light. The elements are in `assets/js/heroes/`; where each one sits is in `assets/js/heroes/framings.js`, and each page picks its element with `hero:` in `src/pages/*.mjs`.
 - **Home page, chip to network** (`assets/js/stage.js`): the hero's AI chip sits on a dark layer behind the page. As the white sheet rises over the hero, the chip breaks up into particles (from its own shape) that stream down onto the sheet and settle as a people network drawn in ink (`assets/js/heroes/inknet.js`), beside the intro text. Further down, a dark section before Contact opens and the network's particles stream down into it, swirling into a spiral galaxy (`assets/js/heroes/galaxy.js`). Both streams follow the scroll (smoothed), so scrolling back up sends the particles back. A particle only shows once it has left its element, so no outline of the last element is ever drawn over the next section.
 - **Page switches** (`assets/js/main.js`, the cover is in `src/layout.mjs`): a parallax wipe. A colour band and then a navy panel with the next page's name sweep up over the page; the next page opens covered, waits until its 3D element has drawn, then the panel lifts away as the page glides up into place.
 - **Interaction details:** a custom cursor, magnetic buttons, rolling-text link hovers, and pages start loading as soon as a link is hovered.
-- **Services page:** an index of all 20 services. Selecting one opens a pop-up with its original sub-services. Each one is deep-linkable (e.g. `services.html#generative-ai`), which matches the old `/service/<slug>/` URLs.
+- **Services page:** every service as a card, grouped by area; each card opens the service's own page. Old links to `services.html#<slug>` forward to that page.
 - **Accessibility and fallbacks:** reduced-motion users get a calm static version. Without WebGL, the hero falls back to a CSS circuit-grid glow.
 
 ## Pages
@@ -31,6 +33,10 @@ The design pairs a dark, cinematic 3D scene at the top of every page with a ligh
 | `services.html` | What We Do (Services) |
 | `solutions.html` | How We Do (Products) |
 | `contact.html` | Contact Us |
+| `projects.html` | Clients & Projects (new) |
+| `insights.html`, `insights/<slug>/` | Insights (new) |
+| `service/<slug>/` | One page per service (the old service pages) |
+| `services/<area>/` | One page per service area (new) |
 | `404.html` | Not found |
 
 ## Editing content
@@ -42,9 +48,11 @@ node build.mjs           # regenerate all pages and sitemap.xml
 node build.mjs --serve   # rebuild and preview at http://localhost:8080
 ```
 
-- **Header, menu, footer, loader:** `src/layout.mjs`
+- **Header, menu, footer:** `src/layout.mjs`
 - **Shared blocks (each page's 3D element, page hero, light sheet, services list, product cards, ChatGPT section, contact and careers):** `src/components.mjs`
-- **Page layouts:** `src/pages/*.mjs`
+- **Page layouts:** `src/pages/*.mjs`. A page module exports one page or a list of pages; pages in folders (`service/<slug>/index.html`) have their relative links rewritten by `build.mjs`, so the source always writes paths from the site root.
+- **Service, area and insight text (SEO):** `src/content/*.mjs`; sections and structured data for those pages: `src/blocks.mjs`
+- **Images:** pages use the WebP copies (`assets/img/**/*.webp`); the JPGs stay for social-card previews. The images for Custom Software, ERP and LMS are crops of other service photos until real ones are added.
 - **Styles:** `assets/css/style.css`. The dark tokens (hero, header, menu, footer) are at the top; the light-theme tokens are scoped to `.content` further down.
 - **Motion and interactions:** `assets/js/main.js`
 - **3D elements:** `assets/js/earth.js` runs them (the file keeps its old name); the elements are in `assets/js/heroes/` (`chip.js`, `network.js`, `layers.js`, `waves.js`, `beacon.js`, `globe.js`, `spark.js`; the home page uses `logowin.js`, page also uses `inknet.js` and `galaxy.js`). The chip's board layout and camera framings (`presets()`) are in `assets/js/circuit.js`; its label positions are `ANCHORS` in `heroes/chip.js`.
@@ -62,10 +70,10 @@ The night-Earth images (the Contact globe and the Custom ChatGPT panel) are NASA
 
 ## Deploying
 
-Upload everything except `src/`, `build.mjs`, `package.json` and `README.md` to the web root.
+Upload everything except `src/`, `docs/`, `build.mjs`, `package.json` and `README.md` to the web root (including the `service/`, `services/` and `insights/` folders). See `docs/SEO.md` for the search-engine set-up after launch.
 
 On Apache hosting (cPanel and most shared hosts), the included `.htaccess` file:
-- 301-redirects the old WordPress URLs (`/about-us`, `/services`, `/products`, `/contact-us`, `/service/<slug>/`, `/product/<slug>/`) to the new pages
+- 301-redirects the old WordPress URLs (`/about-us`, `/services`, `/products`, `/contact-us`, `/product/<slug>/`) to the new pages; the old `/service/<slug>/` addresses are real pages again
 - forces HTTPS, sets up the 404 page, and turns on compression and caching
 
 ## Contact form

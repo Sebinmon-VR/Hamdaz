@@ -11,10 +11,10 @@ import * as THREE from '../../vendor/three.module.min.js';
 
 // the photos (with how much each is dimmed so the words read over it)
 const BG = [
-  { src: 'assets/img/hero/c6.jpg', tint: 0.85 }, // light curves on black
-  { src: 'assets/img/hero/c8.jpg', tint: 0.46 }, // swirling chrome
-  { src: 'assets/img/hero/c15.jpg', tint: 0.42 }, // rainbow liquid metal
-  { src: 'assets/img/hero/c7.jpg', tint: 0.44 }, // liquid metal
+  { src: 'assets/img/hero/c6.webp', tint: 0.85 }, // light curves on black
+  { src: 'assets/img/hero/c8.webp', tint: 0.46 }, // swirling chrome
+  { src: 'assets/img/hero/c15.webp', tint: 0.42 }, // rainbow liquid metal
+  { src: 'assets/img/hero/c7.webp', tint: 0.44 }, // liquid metal
 ];
 // the frames: the headline, then one per service area (the page shows each one's details beside it)
 const FRAMES = [

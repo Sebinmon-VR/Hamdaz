@@ -323,7 +323,15 @@
     return url;
   };
   let leaving = false;
-  const PAGE_NAMES = { '': 'Home', 'index.html': 'Home', 'about.html': 'Who We Are', 'services.html': 'What We Do', 'solutions.html': 'How We Do', 'contact.html': 'Contact Us' };
+  const PAGE_NAMES = { '': 'Home', 'index.html': 'Home', 'about.html': 'Who We Are', 'services.html': 'What We Do', 'solutions.html': 'How We Do', 'projects.html': 'Clients & Projects', 'insights.html': 'Insights', 'contact.html': 'Contact Us' };
+  // pages in folders take their section's name: service/<slug>/ and services/<area>/ → What We Do
+  const FOLDER_NAMES = { service: 'What We Do', services: 'What We Do', insights: 'Insights' };
+  const pageName = (url) => {
+    const parts = url.pathname.split('/').filter(Boolean);
+    const last = parts[parts.length - 1] || '';
+    if (!last || last.endsWith('.html')) return PAGE_NAMES[last] ?? '';
+    return FOLDER_NAMES[parts[parts.length - 2]] ?? '';
+  };
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a[href]');
     if (!ok || leaving || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -336,7 +344,7 @@
     // the panel sweeps up over the page with the next page's name; the next page starts loading as soon
     // as the screen is covered, while the name settles
     try { sessionStorage.setItem('hz-nav', '1'); } catch (err) { /* ignore */ }
-    cLabel.textContent = PAGE_NAMES[url.pathname.split('/').pop()] || '';
+    cLabel.textContent = pageName(url);
     gsap.set(curtain, { visibility: 'visible' });
     gsap.set(cLabel, { yPercent: 110 });
     gsap.set(cLogo, { opacity: 0, y: 16 });
@@ -674,7 +682,11 @@
   const modal = $('[data-modal]');
   let lastTile = null;
   function openService(tile, scroll) {
-    if (!modal || !tile) return;
+    if (!tile) return;
+    // no pop-up: each service has its own page now, so an old services.html#<slug> link goes there
+    const page = !modal && $('a.svc-card', tile);
+    if (page) return location.replace(page.href);
+    if (!modal) return;
     lastTile = tile;
     const title = $('.svc-title, .ix-title', tile).textContent.trim();
     $('[data-modal-img]', modal).src = tile.dataset.img;

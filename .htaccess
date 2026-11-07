@@ -18,14 +18,18 @@ ErrorDocument 404 /404.html
   RewriteRule ^products/?$            /solutions.html [R=301,L]
   RewriteRule ^contact-us/?$          /contact.html   [R=301,L]
 
-  # Old service & product detail pages → anchors on the new pages
-  # (e.g. /service/generative-ai/ → /services.html#generative-ai, which opens that service's details)
-  RewriteRule ^service/([a-z0-9-]+)/?$ /services.html#$1  [R=301,NE,L]
+  # Old service detail pages (/service/<slug>/) are real pages again (service/<slug>/index.html, built by
+  # build.mjs), so they need no rule. Apache adds the trailing slash itself.
+  # Old product pages → anchors on the products page
   RewriteRule ^product/([a-z0-9-]+)/?$ /solutions.html#$1 [R=301,NE,L]
 </IfModule>
 
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript image/svg+xml application/xml
+</IfModule>
+
+<IfModule mod_mime.c>
+  AddType image/webp .webp
 </IfModule>
 
 <IfModule mod_expires.c>
@@ -36,4 +40,6 @@ ErrorDocument 404 /404.html
   ExpiresByType application/javascript "access plus 7 days"
   ExpiresByType image/jpeg "access plus 30 days"
   ExpiresByType image/png "access plus 30 days"
+  ExpiresByType image/webp "access plus 30 days"
+  ExpiresByType image/svg+xml "access plus 30 days"
 </IfModule>

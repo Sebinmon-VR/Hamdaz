@@ -1,4 +1,5 @@
-import { site, contact, heroSlides, services, industries } from '../data.mjs';
+import { site, contact, heroSlides, services, industries, svcUrl } from '../data.mjs';
+import { ldScript, orgNode, officeNodes, websiteNode } from '../blocks.mjs';
 import { icon } from '../icons.mjs';
 import { earth, content, intro, servicesIndex, productsGrid, serviceFinder, techStrip, contactSection, clientsPartners } from '../components.mjs';
 
@@ -35,7 +36,7 @@ const framePanels = () => `<div class="hero-frames">
         <h2 class="hf-title">${s.title.replace("/", "/<wbr>")}</h2>
         <p class="hf-text">${s.summary}</p>
         <ul class="hf-tags" aria-label="Includes">${s.items.filter(([t]) => t !== 'Latest Technologies').slice(0, 4).map(([t], k) => `<li style="--i:${k}">${t}</li>`).join('')}</ul>
-        <a class="hf-go" href="services.html#${slug}">Explore ${area === 'AI' ? 'AI services' : area} ${icon('arrow-right')}</a>
+        <a class="hf-go" href="${svcUrl(slug)}">Explore ${area === 'AI' ? 'AI services' : area} ${icon('arrow-right')}</a>
       </article>`;
       }).join('\n      ')}
     </div>`;
@@ -88,27 +89,8 @@ const galaxy = `<section class="galaxy-sec" data-galaxy data-dark>
   </div>
 </section>`;
 
-const jsonld = `<script type="application/ld+json">${JSON.stringify({
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: site.name,
-  url: site.url,
-  logo: `${site.url}/assets/img/logo.png`,
-  email: contact.email,
-  sameAs: [contact.linkedin],
-  description: site.description,
-  address: contact.offices.map((o) => ({
-    '@type': 'PostalAddress',
-    streetAddress: o.postal.street,
-    addressLocality: o.postal.locality,
-    addressRegion: o.postal.region,
-    postalCode: o.postal.code,
-    addressCountry: o.postal.country,
-  })),
-  contactPoint: contact.offices.flatMap((o) =>
-    o.phones.map((p) => ({ '@type': 'ContactPoint', telephone: p.tel, contactType: 'sales', areaServed: o.postal.country })),
-  ),
-})}</script>\n`;
+// structured data: the company, its two offices and the website
+const jsonld = ldScript(orgNode(), officeNodes(), websiteNode());
 
 export default {
   file: 'index.html',
@@ -116,6 +98,8 @@ export default {
   active: 'home',
   stage: true,
   bodyClass: 'page-home',
+  fullTitle: 'Hamdaz Technologies | IT, AI, Cybersecurity & ELV in Abu Dhabi',
+  description: 'Abu Dhabi system integrator for AI, cloud, cybersecurity, MCC-certified CCTV, audio visual, networking and software. ISO certified, registered ADNOC supplier.',
   jsonld,
   body: [stage, hero, content(intro({ art: true }), clientsPartners({ idx: '02' }), servicesIndex({ idx: '03' }), productsGrid({ idx: '04' }), serviceFinder({ idx: '05' }), techStrip()), galaxy, content(contactSection({ idx: '06' }))].join('\n'),
 };
