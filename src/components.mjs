@@ -1,4 +1,4 @@
-import { site, contact, heroNodes, helpCta, gpt, technologies, services, serviceBySlug, featuredServices, products, industries, whoWeAre, needs, waLink, clients, partners, svcUrl } from './data.mjs';
+import { site, contact, heroNodes, helpCta, gpt, technologies, services, serviceBySlug, featuredServices, products, industries, whoWeAre, needs, waLink, clients, partners, partnerLogos, svcUrl } from './data.mjs';
 import { icon } from './icons.mjs';
 import { clock } from './layout.mjs';
 
@@ -279,7 +279,22 @@ export function techStrip() {
 export function clientsPartners({ idx = '04' } = {}) {
   const groups = Object.entries(partners);
   const total = groups.reduce((n, [, list]) => n + list.length, 0);
-  const row = (list, cls) => { const ul = `<ul>${list.map((n) => `<li>${n}</li>`).join('')}</ul>`; return `<div class="mq-track">${ul}${ul}</div>`; };
+  // a partner as its logo, all logos about equally heavy: wide wordmarks shorter, square marks taller
+  const logo = (n) => {
+    const [file, ratio, mark] = partnerLogos[n] || [];
+    if (!file) return `<li class="mq-name">${n}</li>`;
+    const h = mark ? 26 : Math.round(Math.min(38, Math.max(22, Math.sqrt(3000 / ratio))));
+    const img = `<img src="assets/img/logos/${file}" alt="${mark ? '' : n}" width="${Math.round(h * ratio)}" height="${h}" style="height:${h}px" loading="lazy" decoding="async" draggable="false">`;
+    return mark ? `<li class="mq-logo mq-logo--mark">${img}<span>${n}</span></li>` : `<li class="mq-logo">${img}</li>`;
+  };
+  // logo rows alternate logos with the names that have none yet, so no stretch reads as a plain list
+  const mix = (list) => {
+    const [withLogo, without] = [list.filter((n) => partnerLogos[n]), list.filter((n) => !partnerLogos[n])];
+    const out = [];
+    while (withLogo.length || without.length) { if (withLogo.length) out.push(withLogo.shift()); if (without.length) out.push(without.shift()); }
+    return out;
+  };
+  const row = (list, logos = false) => { const ul = `<ul>${(logos ? mix(list) : list).map((n) => (logos ? logo(n) : `<li>${n}</li>`)).join('')}</ul>`; return `<div class="mq-track">${ul}${ul}</div>`; };
   return `<section class="sec cp-sec" id="clients" aria-labelledby="cp-title">
   <div class="wrap">
     ${head({ idx, label: 'Clients & partners', meta: `${clients.length} featured clients · ${total}+ partners`, title: 'Trusted across the UAE', text: 'Government, energy, education and enterprise clients, backed by the industry\u2019s leading technology brands.' }).replace('<h2 class="sh-title"', '<h2 class="sh-title" id="cp-title"')}
@@ -288,7 +303,7 @@ export function clientsPartners({ idx = '04' } = {}) {
     <div class="cp-head"><p>Selected clients</p><button class="mq-toggle" type="button" aria-pressed="false" data-marquee-toggle><span class="mq-toggle-icon" aria-hidden="true"></span><span data-marquee-toggle-label>Pause</span></button></div>
     <div class="mq mq--clients" data-marquee="1" aria-hidden="true">${row(clients)}</div>
     ${groups.map(([label, list], i) => `<div class="cp-head"><p>${label}</p></div>
-    <div class="mq mq--partners" data-marquee="${i % 2 ? 1 : -1}" aria-hidden="true">${row(list)}</div>`).join('\n    ')}
+    <div class="mq mq--partners mq--logos" data-marquee="${i % 2 ? 1 : -1}" aria-hidden="true">${row(list, true)}</div>`).join('\n    ')}
     <p class="sr-only">Clients: ${clients.join(', ')}. Partners: ${groups.map(([, l]) => l.join(', ')).join(', ')}.</p>
   </div>
 </section>`;

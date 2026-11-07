@@ -727,6 +727,19 @@ export const clients = [
   'ADNOC', 'Mohamed Bin Zayed University', 'Tawazun Industrial Park', 'Liwa University', 'Fatima College of Health Sciences',
   'American International School', 'Al Jazira Institute', 'Donaldson', 'Al Lul Transport & General Contracting',
 ];
+// Partner logos in assets/img/logos/: [file, width ÷ height, mark]. From Simple Icons (CC0) and Wikimedia Commons;
+// swap in the official files from each partner portal when you have them. mark: the file is only the brand's
+// symbol, so its name shows beside it. A partner without a logo here shows as its name.
+export const partnerLogos = {
+  Microsoft: ['microsoft.svg', 4.37], Cisco: ['cisco.svg', 1.86], Fortinet: ['fortinet.svg', 1.39, true],
+  'Palo Alto Networks': ['paloaltonetworks.svg', 1.39, true], 'Check Point': ['checkpoint.png', 2.22], CrowdStrike: ['crowdstrike.svg', 5.17],
+  Netskope: ['netskope.svg', 5.87], Proofpoint: ['proofpoint.svg', 4.94], Qualys: ['qualys.svg', 0.84, true], Rubrik: ['rubrik.svg', 3.33],
+  Veeam: ['veeam.svg', 5.1], Nutanix: ['nutanix.svg', 1.42, true], 'Pure Storage': ['purestorage.svg', 5.23], Secureworks: ['secureworks.svg', 6.86],
+  'HPE Aruba': ['hpearuba.svg', 4.14], Dell: ['dell.svg', 1.0], 'Schneider Electric': ['schneiderelectric.svg', 1.03, true], Vertiv: ['vertiv.svg', 3.76],
+  'Bose Professional': ['bose.svg', 7.4], Sennheiser: ['sennheiser.svg', 1.32, true], Samsung: ['samsung.svg', 5.9], LG: ['lg.svg', 2.21],
+  Hikvision: ['hikvision.svg', 6.95], Axis: ['axis.svg', 2.68], 'Hanwha Vision': ['hanwhavision.svg', 1.27],
+  Crestron: ['crestron.png', 8.83], Yealink: ['yealink.png', 4.74], Milestone: ['milestone.png', 1.15], Kramer: ['kramer.png', 3.27],
+};
 export const partners = {
   'IT, cloud & cybersecurity': ['Microsoft', 'Cisco', 'Fortinet', 'Palo Alto Networks', 'Check Point', 'CrowdStrike', 'Netskope', 'Proofpoint', 'Qualys', 'Rubrik', 'Veeam', 'Nutanix', 'Pure Storage', 'Halcyon', 'Secureworks', 'HPE Aruba', 'Dell', 'Schneider Electric', 'Vertiv'],
   'AV, ELV & security systems': ['Extron', 'Crestron', 'Q-SYS', 'Kramer', 'Barco', 'Shure', 'Sennheiser', 'Biamp', 'Bose Professional', 'Yealink', 'Logitech', 'Samsung', 'LG', 'Hikvision', 'Axis', 'Hanwha Vision', 'Milestone', 'Genetec', 'HID', 'Suprema', 'FAAC'],

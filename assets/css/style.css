@@ -908,6 +908,16 @@ html.reduce .np:not([hidden]) { animation: none; }
 .mq--clients li::after { content: ""; width: 9px; height: 9px; margin: 0 0.9em; border-radius: 50%; background: var(--cyan-ink); flex: none; }
 .mq--partners li { font-size: clamp(17px, 1.5vw, 24px); color: var(--ink-2); padding-right: 0; }
 .mq--partners li::after { content: "/"; margin: 0 0.8em; color: var(--rule-2); }
+/* partner logos: one ink colour, all about equally heavy (sizes in components.mjs), full colour on hover;
+   a partner without a logo yet shows its name in the same ink */
+.mq--logos li { height: 64px; padding: 0 clamp(22px, 2.6vw, 40px); }
+.mq--logos li::after { content: none; }
+.mq--logos img { display: block; width: auto; max-width: none; filter: grayscale(1) brightness(0); opacity: 0.62; transition: filter 0.4s, opacity 0.4s; pointer-events: none; }
+.mq--logos li:hover img { filter: none; opacity: 1; }
+.mq-logo--mark { gap: 10px; }
+.mq-logo--mark span, .mq--logos .mq-name { font-family: var(--display); font-weight: 600; font-size: clamp(17px, 1.4vw, 21px); letter-spacing: -0.02em; color: var(--ink); opacity: 0.62; transition: opacity 0.4s, color 0.3s; }
+.mq--logos li:hover span, .mq--logos .mq-name:hover { opacity: 1; color: var(--ink); }
+@media (max-width: 760px) { .mq--logos li { height: 52px; } .mq--logos img { transform: scale(0.82); } }
 /* Reduced motion: drifts slowly (main.js); CSS fallback is slower too */
 html.reduce .mq-track { animation-duration: 140s; }
 
