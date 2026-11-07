@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hero Subjects – Hamdaz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  /* Hamdaz home hero, round 5: the same editorial layout with five different 3D subjects to switch between
+     (robot arm, drone, VR headset, glass AI core, satellite): huge type behind, thin callouts to its parts,
+     a glass info strip. Light and dark versions (switch top right). Open with internet on (Three.js
+     loads from unpkg). */
+  :root {
+    --bg: #e2e6eb; --ink: #0b1b2b; --dim: #5d6b7b; --type: #ffffff; --line: rgba(11, 27, 43, .14);
+    --glass: rgba(255, 255, 255, .42); --glass-line: rgba(255, 255, 255, .7); --accent: #2547ff; --cyan: #30c1f8; --pink: #fb4994;
+    --call: rgba(11, 27, 43, .55);
+  }
+  body[data-theme="dark"] {
+    --bg: #04070b; --ink: #eef3f8; --dim: #8b98a7; --type: #ffffff; --line: rgba(255, 255, 255, .07);
+    --glass: rgba(18, 24, 32, .55); --glass-line: rgba(255, 255, 255, .08); --call: rgba(238, 243, 248, .5);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; }
+  body { background: var(--bg); color: var(--ink); font: 15px/1.55 Inter, system-ui, sans-serif; overflow: hidden; transition: background .6s; }
+  .mono { font: 500 11px/1.3 "JetBrains Mono", monospace; letter-spacing: .1em; text-transform: uppercase; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  .hero { position: relative; height: 100vh; min-height: 620px; overflow: hidden; isolation: isolate; }
+  /* backdrops */
+  .halo { position: absolute; width: 78vh; height: 78vh; border-radius: 50%; left: calc(66% - 39vh); top: calc(44% - 39vh); background: radial-gradient(circle, rgba(255,255,255,.75), rgba(255,255,255,.35) 60%, rgba(255,255,255,0) 71%); z-index: 0; transition: opacity .6s; }
+  body[data-theme="dark"] .halo { background: radial-gradient(circle, rgba(48,193,248,.16), rgba(107,80,246,.08) 45%, rgba(0,0,0,0) 70%); }
+  .grid-lines { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .grid-lines i { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line); }
+
+  /* the big words: one copy behind the android, the second line again in front of it */
+  .type { position: absolute; left: clamp(16px, 4vw, 64px); top: 17vh; font-family: Archivo, sans-serif; font-weight: 800; font-stretch: 125%; text-transform: uppercase; font-size: clamp(64px, 12.6vw, 230px); line-height: .84; letter-spacing: -.02em; color: var(--type); pointer-events: none; white-space: nowrap; }
+  .type span { display: block; }
+  .type--back { z-index: 1; }
+  .type--front { z-index: 3; }
+  .type--front .l1 { visibility: hidden; }
+  body[data-theme="light"] .type { text-shadow: 0 10px 40px rgba(11, 27, 43, .08); }
+  .eyebrow { position: absolute; left: clamp(16px, 4vw, 64px); top: calc(17vh - 46px); z-index: 4; display: flex; align-items: center; gap: 12px; }
+  .eyebrow b { width: 30px; height: 30px; background: var(--accent); display: block; }
+  .eyebrow span { font: 600 15px/1 Archivo, sans-serif; font-stretch: 125%; letter-spacing: .12em; text-transform: uppercase; }
+
+  #gl { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; display: block; -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 96%); mask-image: linear-gradient(to bottom, #000 72%, transparent 96%); }
+
+  header { position: absolute; inset: 0 0 auto; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 22px clamp(16px, 4vw, 64px); }
+  header .brand { display: flex; align-items: center; gap: 10px; font: 800 19px/1 Archivo, sans-serif; font-stretch: 112%; letter-spacing: .06em; }
+  header .brand img { height: 30px; width: auto; }
+  header nav { display: flex; gap: 30px; font-size: 14px; }
+  header nav a { color: inherit; text-decoration: none; opacity: .7; }
+  header nav a.on { opacity: 1; font-weight: 600; }
+  header nav a.on::before { content: ""; display: inline-block; width: 8px; height: 8px; background: var(--pink); margin-right: 8px; transform: skewX(-12deg); }
+  .talk { height: 40px; padding: 0 18px; border-radius: 99px; border: 1px solid var(--ink); display: inline-flex; align-items: center; font-weight: 600; font-size: 13px; color: inherit; text-decoration: none; }
+
+  .intro { position: absolute; left: clamp(16px, 4vw, 64px); top: 60vh; z-index: 4; max-width: 360px; }
+  .intro h3 { font: 600 15px/1.3 Inter, sans-serif; margin-bottom: 8px; }
+  .intro p { color: var(--dim); font-size: 13.5px; border-left: 2px solid var(--line); padding-left: 12px; }
+  .ctas { display: flex; gap: 10px; margin-top: 22px; }
+  .btn { height: 44px; padding: 0 20px; display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 13.5px; text-decoration: none; color: var(--bg); background: var(--ink); border-radius: 99px; }
+  .btn--ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+  .btn i { width: 22px; height: 22px; border-radius: 50%; background: var(--pink); color: #fff; display: grid; place-items: center; font-style: normal; font-size: 15px; }
+
+  .side { position: absolute; right: clamp(16px, 4vw, 64px); top: 40vh; z-index: 4; text-align: right; }
+  .side p:first-child { font: 300 40px/1 Archivo, sans-serif; font-stretch: 112%; }
+  .side .mono { color: var(--dim); margin-top: 6px; }
+
+  /* callouts drawn over the android */
+  #calls { position: absolute; inset: 0; z-index: 5; pointer-events: none; overflow: visible; }
+  #calls path { fill: none; stroke: var(--call); stroke-width: 1; }
+  #calls circle { fill: var(--bg); stroke: var(--ink); stroke-width: 1.5; }
+  .call { position: absolute; left: 0; top: 0; z-index: 6; pointer-events: none; white-space: nowrap; }
+  .call b { display: block; font: 600 13px/1.2 Inter, sans-serif; }
+  .call span { display: block; font: 500 10px/1.6 "JetBrains Mono", monospace; letter-spacing: .06em; color: var(--dim); text-transform: uppercase; }
+  .call.r { text-align: right; }
+
+  /* glass strip */
+  .strip { position: absolute; left: 0; right: 0; bottom: 0; z-index: 7; display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; align-items: center; gap: 0; padding: 0 clamp(16px, 4vw, 64px); height: 15vh; min-height: 104px; background: var(--glass); backdrop-filter: blur(22px) saturate(1.2); -webkit-backdrop-filter: blur(22px) saturate(1.2); border-top: 1px solid var(--glass-line); }
+  .strip > div { padding: 0 24px; border-left: 1px solid var(--line); }
+  .strip > div:first-child { border-left: 0; padding-left: 0; }
+  .strip .mono { color: var(--dim); }
+  .strip strong { display: block; font: 800 34px/1.1 Archivo, sans-serif; font-stretch: 112%; margin-top: 4px; }
+  .strip p.t { font-weight: 600; margin-top: 4px; }
+  .strip p.d { color: var(--dim); font-size: 13px; }
+  .dots { display: flex; gap: 6px; margin-top: 10px; }
+  .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--pink); opacity: .3; }
+  .dots i.on { opacity: 1; }
+
+  /* prototype switch */
+  .proto { position: fixed; right: 16px; top: 84px; z-index: 30; display: flex; align-items: center; gap: 6px; padding: 6px; border-radius: 99px; background: rgba(6, 20, 35, .88); color: #fff; font: 500 12px Inter, sans-serif; box-shadow: 0 10px 40px rgba(0,0,0,.25); }
+  .proto span { padding: 0 8px 0 10px; opacity: .7; }
+  .proto button { height: 30px; padding: 0 14px; border-radius: 99px; border: 0; background: transparent; color: #fff; font: 600 12px Inter, sans-serif; cursor: pointer; }
+  .proto button[aria-pressed="true"] { background: #fff; color: #061423; }
+  .loading { position: absolute; left: 66%; top: 44%; transform: translate(-50%, -50%); z-index: 2; font: 500 11px "JetBrains Mono", monospace; letter-spacing: .1em; color: var(--dim); }
+
+  .proto { flex-wrap: wrap; max-width: calc(100vw - 32px); justify-content: flex-end; border-radius: 22px; }
+  .proto .sep { width: 1px; height: 20px; background: rgba(255,255,255,.2); margin: 0 4px; }
+  .subj-name { position: absolute; right: clamp(16px, 4vw, 64px); bottom: calc(15vh + 22px); z-index: 4; text-align: right; }
+  .subj-name p:first-child { font: 300 34px/1 Archivo, sans-serif; font-stretch: 112%; }
+  .subj-name .mono { color: var(--dim); margin-top: 6px; }
+
+  @media (max-width: 860px) {
+    header nav, .side, .call, #calls { display: none; }
+    .type { top: 14vh; font-size: 17vw; }
+    .eyebrow { top: calc(14vh - 44px); }
+    .intro { top: auto; bottom: calc(15vh + 130px); max-width: 80vw; }
+    .strip { grid-template-columns: 1fr 1fr; }
+    .strip > div:nth-child(n+3) { display: none; }
+    .halo { left: calc(55% - 30vh); width: 60vh; height: 60vh; }
+  }
+</style>
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
+</script>
+</head>
+<body data-theme="light">
+<section class="hero">
+  <div class="halo" aria-hidden="true"></div>
+  <div class="grid-lines" aria-hidden="true"><i style="left:18%"></i><i style="left:49%"></i><i style="left:86%"></i></div>
+
+  <header>
+    <div class="brand"><img src="../assets/img/logo.svg" alt="">HAMDAZ</div>
+    <nav><a href="#" class="on">Home</a><a href="#">Who We Are</a><a href="#">What We Do</a><a href="#">How We Do</a></nav>
+    <a class="talk" href="#">Let's talk</a>
+  </header>
+
+  <h1 class="sr">Delivering the Digital Future</h1>
+  <p class="eyebrow" aria-hidden="true"><b></b><span>Delivering the</span></p>
+  <div class="type type--back" aria-hidden="true"><span class="l1">Digital</span><span>Future</span></div>
+  <p class="loading" id="loading">LOADING 3D…</p>
+  <canvas id="gl" aria-hidden="true"></canvas>
+
+  <svg id="calls" aria-hidden="true"></svg>
+  <div class="call" data-call="ai"><b>Generative AI</b><span>Custom GPT · Bots</span></div>
+  <div class="call" data-call="cloud"><b>Cloud</b><span>Azure · AWS · GCP · OCI</span></div>
+  <div class="call" data-call="data"><b>Data &amp; Analytics</b><span>Predictive insight</span></div>
+  <div class="call" data-call="sec"><b>Security</b><span>Information security</span></div>
+
+
+  <div class="intro">
+    <h3>Pioneering tomorrow</h3>
+    <p>Unleashing the power of AI for a bold future: intelligent solutions built with cutting-edge technology, expertly managed.</p>
+    <div class="ctas"><a class="btn" href="#"><i>+</i>Contact Now</a><a class="btn btn--ghost" href="#">What We Do</a></div>
+  </div>
+
+  <div class="subj-name" aria-hidden="true"><p id="subjNum">01</p><p class="mono" id="subjName">Robot arm</p></div>
+
+  <div class="strip">
+    <div><p class="mono">Hamdaz Technologies</p><p class="t">TechCraft Innovations</p><p class="d">Intelligent solutions with cutting-edge technology</p></div>
+    <div><p class="mono">Managed services</p><strong>20</strong></div>
+    <div><p class="mono">AI products</p><strong>05</strong></div>
+    <div><p class="mono">Highlights</p><p class="t">Streamlined Excellence</p><div class="dots"><i class="on"></i><i></i><i></i></div></div>
+  </div>
+</section>
+
+<div class="proto" role="group" aria-label="Prototype controls">
+  <span>Subject</span>
+  <button type="button" data-subj="arm" aria-pressed="true">Robot arm</button>
+  <button type="button" data-subj="drone" aria-pressed="false">Drone</button>
+  <button type="button" data-subj="vr" aria-pressed="false">VR headset</button>
+  <button type="button" data-subj="core" aria-pressed="false">Glass core</button>
+  <button type="button" data-subj="sat" aria-pressed="false">Satellite</button>
+  <i class="sep"></i>
+  <button type="button" data-theme-btn="light" aria-pressed="true">Light</button>
+  <button type="button" data-theme-btn="dark" aria-pressed="false">Dark</button>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+const canvas = document.getElementById('gl');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+const camera = new THREE.PerspectiveCamera(28, 1, .1, 100);
+camera.position.set(0, 0, 9);
+
+/* ------------------------------------------------------------------ materials (recoloured by the theme) */
+const M = {
+  shell: new THREE.MeshPhysicalMaterial({ color: 0xe9edf2, roughness: .26, metalness: .05, clearcoat: 1, clearcoatRoughness: .06 }),
+  dark: new THREE.MeshStandardMaterial({ color: 0x1b1f26, roughness: .32, metalness: .85 }),
+  rubber: new THREE.MeshStandardMaterial({ color: 0x14171c, roughness: .6, metalness: .15 }),
+  glass: new THREE.MeshPhysicalMaterial({ color: 0x04060a, roughness: .05, metalness: .6, clearcoat: 1, clearcoatRoughness: .02 }),
+  glow: new THREE.MeshBasicMaterial({ color: 0x30c1f8, toneMapped: false }),
+  pink: new THREE.MeshBasicMaterial({ color: 0xfb4994, toneMapped: false }),
+  copper: new THREE.MeshStandardMaterial({ color: 0xc79b3e, roughness: .38, metalness: 1 }),
+  clear: new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: .04, metalness: 0, clearcoat: 1, transparent: true, opacity: .2, depthWrite: false, envMapIntensity: 1.6 }),
+  blur: new THREE.MeshBasicMaterial({ color: 0x9fb3c4, transparent: true, opacity: .1, depthWrite: false, side: THREE.DoubleSide }),
+};
+const glowTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d'); const g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.3, 'rgba(255,255,255,.35)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
+const sprites = [];
+function glowSprite(size, color = 0x30c1f8) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true })); s.scale.setScalar(size); sprites.push(s); return s; }
+const solarTex = (() => {
+  const c = document.createElement('canvas'); c.width = 256; c.height = 384; const x = c.getContext('2d');
+  x.fillStyle = '#0b1f4a'; x.fillRect(0, 0, 256, 384);
+  for (let i = 0; i < 8; i++) for (let j = 0; j < 12; j++) { const g = x.createLinearGradient(i * 32, j * 32, i * 32 + 32, j * 32 + 32); g.addColorStop(0, '#173a7a'); g.addColorStop(1, '#0a1838'); x.fillStyle = g; x.fillRect(i * 32 + 1.5, j * 32 + 1.5, 29, 29); }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+})();
+M.solar = new THREE.MeshStandardMaterial({ map: solarTex, roughness: .22, metalness: .55 });
+
+/* ------------------------------------------------------------------ helpers */
+const HALF = Math.PI / 2;
+function add(parent, geo, mat, pos = [0, 0, 0], rot = [0, 0, 0]) { const m = new THREE.Mesh(geo, mat); m.position.set(...pos); m.rotation.set(...rot); parent.add(m); return m; }
+const rbox = (w, h, d, r = .08) => new RoundedBoxGeometry(w, h, d, 5, Math.min(r, w / 2 - .001, h / 2 - .001, d / 2 - .001));
+const cyl = (rt, rb, h, s = 48) => new THREE.CylinderGeometry(rt, rb, h, s);
+const ring = (r, t = .01) => new THREE.TorusGeometry(r, t, 12, 96);
+const anchor = (parent, pos) => { const o = new THREE.Object3D(); o.position.set(...pos); parent.add(o); return o; };
+
+/* ------------------------------------------------------------------ the subjects */
+const SUBJECTS = {
+  arm: {
+    name: 'Robot arm', face: -2.45,
+    build(g) {
+      add(g, cyl(.66, .74, .16, 64), M.dark, [0, -1.32, 0]);
+      add(g, cyl(.52, .58, .22, 64), M.shell, [0, -1.13, 0]);
+      add(g, ring(.53, .012), M.glow, [0, -1.02, 0], [HALF, 0, 0]);
+      const turn = new THREE.Group(); turn.position.y = -1.02; g.add(turn);
+      add(turn, rbox(.66, .52, .66, .14), M.shell, [0, .26, 0]);
+      const sh = new THREE.Group(); sh.position.y = .42; turn.add(sh);
+      add(sh, cyl(.25, .25, .76), M.dark, [0, 0, 0], [HALF, 0, 0]);
+      add(sh, ring(.245), M.glow, [0, 0, .385]); add(sh, ring(.245), M.glow, [0, 0, -.385]);
+      add(sh, rbox(.34, 1.3, .4, .15), M.shell, [0, .64, 0]);
+      const el = new THREE.Group(); el.position.y = 1.3; sh.add(el);
+      add(el, cyl(.2, .2, .56), M.dark, [0, 0, 0], [HALF, 0, 0]);
+      add(el, ring(.198), M.glow, [0, 0, .285]);
+      add(el, rbox(1.05, .26, .3, .11), M.shell, [.52, 0, 0]);
+      const wr = new THREE.Group(); wr.position.x = 1.05; el.add(wr);
+      add(wr, cyl(.14, .16, .24), M.dark, [.08, 0, 0], [0, 0, HALF]);
+      add(wr, cyl(.18, .18, .05), M.dark, [.22, 0, 0], [0, 0, HALF]);
+      add(wr, ring(.18, .009), M.glow, [.245, 0, 0], [0, HALF, 0]);
+      add(wr, rbox(.24, .055, .1, .025), M.shell, [.37, .11, 0]);
+      add(wr, rbox(.24, .055, .1, .025), M.shell, [.37, -.11, 0]);
+      add(wr, new THREE.SphereGeometry(.085, 32, 24), M.glow, [.43, 0, 0]);
+      const orbGlow = glowSprite(.7); orbGlow.position.set(.43, 0, 0); wr.add(orbGlow);
+      this.j = { turn, sh, el, wr, orbGlow };
+      g.position.y = -.25;
+      return {
+        ai: anchor(wr, [.43, 0, 0]), cloud: anchor(turn, [0, .52, .33]), data: anchor(el, [0, 0, .28]), sec: anchor(g, [.4, -1.05, .3]),
+      };
+    },
+    update(t) {
+      const { turn, sh, el, wr, orbGlow } = this.j;
+      turn.rotation.y = Math.sin(t * .35) * .18;
+      sh.rotation.z = -.42 + Math.sin(t * .45) * .1;
+      el.rotation.z = .05 + Math.sin(t * .55 + 1) * .14;
+      wr.rotation.z = -.55 + Math.sin(t * .7 + 2) * .2;
+      orbGlow.scale.setScalar(.6 + .12 * Math.sin(t * 2.4));
+    },
+  },
+
+  drone: {
+    name: 'Drone', face: -.9, tilt: .32, fitW: .8,
+    build(g) {
+      add(g, rbox(1.05, .26, .72, .12), M.shell);
+      const can = add(g, new THREE.SphereGeometry(1, 48, 24, 0, Math.PI * 2, 0, HALF), M.glass, [0, .12, -.02]); can.scale.set(.36, .13, .26);
+      this.rotors = [];
+      for (const [sx, sz] of [[1, 1], [-1, 1], [1, -1], [-1, -1]]) {
+        const ang = Math.atan2(sz, sx);
+        add(g, rbox(.9, .07, .11, .03), M.dark, [sx * .46, 0, sz * .34], [0, -ang, 0]);
+        const mx = sx * .86, mz = sz * .64;
+        add(g, cyl(.085, .1, .14), M.dark, [mx, .04, mz]);
+        add(g, ring(.09, .008), sz > 0 ? M.glow : M.pink, [mx, .115, mz], [HALF, 0, 0]);
+        const r = new THREE.Group(); r.position.set(mx, .14, mz); g.add(r);
+        add(r, cyl(.46, .46, .004, 64), M.blur);
+        add(r, rbox(.86, .012, .07, .006), M.rubber);
+        add(r, cyl(.035, .035, .03), M.shell, [0, .015, 0]);
+        this.rotors.push(r);
+        add(g, cyl(.016, .016, .26, 12), M.dark, [sx * .3, -.23, sz * .24]);
+      }
+      add(g, cyl(.016, .016, .7, 12), M.dark, [.3, -.36, 0], [HALF, 0, 0]);
+      add(g, cyl(.016, .016, .7, 12), M.dark, [-.3, -.36, 0], [HALF, 0, 0]);
+      add(g, rbox(.48, .02, .02, .008), M.glow, [0, .0, .365]);
+      add(g, rbox(.4, .02, .02, .008), M.pink, [0, .0, -.365]);
+      const gim = new THREE.Group(); gim.position.set(0, -.2, .26); g.add(gim);
+      add(gim, rbox(.12, .1, .12, .03), M.dark, [0, .06, 0]);
+      add(gim, new THREE.SphereGeometry(.12, 40, 30), M.shell, [0, -.06, 0]);
+      add(gim, cyl(.065, .065, .05), M.glass, [0, -.06, .1], [HALF, 0, 0]);
+      add(gim, ring(.06, .008), M.glow, [0, -.06, .126]);
+      const lensGlow = glowSprite(.3); lensGlow.position.set(0, -.06, .15); gim.add(lensGlow);
+      this.gim = gim; this.g = g;
+      return { ai: anchor(gim, [0, -.06, .13]), cloud: anchor(g, [.86, .16, .64]), data: anchor(g, [0, .2, 0]), sec: anchor(g, [0, 0, -.37]) };
+    },
+    update(t) {
+      this.rotors.forEach((r, i) => (r.rotation.y = t * (i % 2 ? -38 : 38)));
+      this.g.position.y = Math.sin(t * 1.3) * .05;
+      this.g.rotation.z = Math.sin(t * .7) * .04; this.g.rotation.x = Math.sin(t * .5) * .03;
+      this.gim.rotation.y = Math.sin(t * .4) * .3;
+    },
+  },
+
+  vr: {
+    name: 'VR headset', face: -1.05, tilt: .22,
+    build(g) {
+      add(g, rbox(1.72, .86, .56, .24), M.shell);
+      add(g, rbox(1.6, .74, .06, .2), M.glass, [0, 0, .28]);
+      add(g, rbox(1.0, .022, .02, .01), M.glow, [0, -.2, .315]);
+      for (const sx of [-1, 1]) for (const sy of [-1, 1]) {
+        add(g, cyl(.05, .05, .03), M.dark, [sx * .6, sy * .24, .315], [HALF, 0, 0]);
+        add(g, ring(.05, .006), sy > 0 ? M.glow : M.pink, [sx * .6, sy * .24, .33]);
+      }
+      add(g, rbox(1.56, .72, .22, .16), M.rubber, [0, 0, -.36]);
+      const band = new THREE.MeshStandardMaterial({ color: 0x14171c, roughness: .7, metalness: .1, side: THREE.DoubleSide });
+      const strap = add(g, new THREE.CylinderGeometry(.92, .92, .2, 72, 1, true, HALF, Math.PI), band, [0, 0, -.32]); strap.scale.set(.96, 1, 1.3);
+      const top = add(g, new THREE.CylinderGeometry(.66, .66, .14, 56, 1, true, 0, Math.PI), band, [0, .2, -.9], [0, 0, HALF]); top.scale.set(1, .85, 1);
+      for (const sx of [-1, 1]) { add(g, cyl(.11, .11, .1), M.dark, [sx * .87, 0, -.3], [0, 0, HALF]); add(g, ring(.105, .008), M.glow, [sx * .925, 0, -.3], [0, HALF, 0]); }
+      const shine = glowSprite(.5); shine.position.set(0, -.2, .36); g.add(shine);
+      this.g = g;
+      return { ai: anchor(g, [-.25, .1, .32]), cloud: anchor(g, [0, .55, -.85]), data: anchor(g, [.6, .24, .33]), sec: anchor(g, [.93, 0, -.3]) };
+    },
+    update(t) { this.g.position.y = Math.sin(t * .9) * .05; this.g.rotation.z = Math.sin(t * .5) * .03; },
+  },
+
+  core: {
+    name: 'Glass AI core', face: -.55, tilt: .45, fitH: .72, fitW: .45,
+    build(g) {
+      add(g, rbox(1.6, 1.6, 1.6, .2), M.clear);
+      const edges = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1.56, 1.56, 1.56)), new THREE.LineBasicMaterial({ color: 0x30c1f8, transparent: true, opacity: .45 }));
+      g.add(edges); this.edges = edges;
+      const inner = new THREE.Group(); g.add(inner);
+      add(inner, new THREE.IcosahedronGeometry(.42, 1), new THREE.MeshBasicMaterial({ color: 0x30c1f8, wireframe: true, transparent: true, opacity: .55, toneMapped: false }));
+      add(inner, new THREE.SphereGeometry(.2, 40, 30), M.glow);
+      inner.add(glowSprite(1.6)); inner.add(glowSprite(.7, 0xffffff));
+      this.cubes = [];
+      for (let i = 0; i < 10; i++) { const c = add(g, rbox(.13, .13, .13, .03), i % 4 === 0 ? M.pink : M.shell); this.cubes.push({ c, r: .55 + (i % 3) * .1, a: i / 10 * Math.PI * 2, s: .4 + (i % 4) * .12, y: ((i * 37) % 10) / 10 - .5 }); }
+      this.inner = inner; this.g = g;
+      return { ai: anchor(g, [0, 0, 0]), cloud: anchor(g, [-.8, .8, .8]), data: anchor(this.cubes[3].c, [0, 0, 0]), sec: anchor(g, [.8, -.8, .8]) };
+    },
+    update(t) {
+      this.g.rotation.y = t * .18;
+      this.inner.rotation.set(t * .4, t * .3, 0);
+      this.cubes.forEach((o) => { const a = o.a + t * o.s; o.c.position.set(Math.cos(a) * o.r, o.y * .8 + Math.sin(t + o.a) * .05, Math.sin(a) * o.r); o.c.rotation.set(t, t * .7, 0); });
+    },
+  },
+
+  sat: {
+    name: 'Satellite', face: -.35, tilt: .55, fitW: 1.0,
+    build(g) {
+      add(g, new THREE.BoxGeometry(.72, .84, .72), M.copper);
+      add(g, new THREE.BoxGeometry(.76, .05, .76), M.shell, [0, .44, 0]);
+      add(g, new THREE.BoxGeometry(.76, .05, .76), M.shell, [0, -.44, 0]);
+      for (const sx of [-1, 1]) {
+        add(g, cyl(.025, .025, .42, 12), M.dark, [sx * .57, 0, 0], [0, 0, HALF]);
+        for (let i = 0; i < 3; i++) {
+          const p = add(g, new THREE.BoxGeometry(.66, .02, .98), M.solar, [sx * (1.13 + i * .68), 0, 0]);
+          add(g, new THREE.BoxGeometry(.67, .024, .02), M.shell, [sx * (1.13 + i * .68), 0, .5]);
+          add(g, new THREE.BoxGeometry(.67, .024, .02), M.shell, [sx * (1.13 + i * .68), 0, -.5]);
+        }
+      }
+      const pts = []; for (let i = 0; i <= 24; i++) { const r = i / 24 * .5; pts.push(new THREE.Vector2(r, r * r * .7)); }
+      const dish = add(g, new THREE.LatheGeometry(pts, 64), new THREE.MeshPhysicalMaterial({ color: 0xeef2f6, roughness: .3, metalness: .1, clearcoat: .6, side: THREE.DoubleSide }), [0, .1, .62], [-HALF, 0, 0]);
+      M.dish = dish.material;
+      add(g, cyl(.012, .012, .32, 8), M.dark, [0, .1, .78], [HALF, 0, 0]);
+      add(g, new THREE.SphereGeometry(.035, 16, 12), M.glow, [0, .1, .94]);
+      const tip = glowSprite(.35); tip.position.set(0, .1, .95); g.add(tip);
+      add(g, cyl(.01, .01, .5, 8), M.dark, [.25, .68, -.2]);
+      add(g, new THREE.SphereGeometry(.025, 12, 10), M.pink, [.25, .94, -.2]);
+      this.g = g;
+      return { ai: anchor(g, [0, .1, .94]), cloud: anchor(g, [-1.8, 0, .3]), data: anchor(g, [.36, -.2, .36]), sec: anchor(g, [.25, .94, -.2]) };
+    },
+    update(t) { this.g.rotation.z = Math.sin(t * .3) * .06; this.g.position.y = Math.sin(t * .6) * .04; },
+  },
+};
+
+/* build every subject once, show one at a time */
+const holders = {};
+for (const [id, S] of Object.entries(SUBJECTS)) {
+  const outer = new THREE.Group(), inner = new THREE.Group();
+  outer.add(inner); scene.add(outer); outer.visible = false;
+  S.anchors = S.build(inner);
+  // measure it so every subject is framed the same way
+  const box = new THREE.Box3().setFromObject(outer), size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
+  inner.position.sub(c);
+  holders[id] = { outer, inner, S, size };
+}
+
+/* ------------------------------------------------------------------ theme */
+const key = new THREE.DirectionalLight(0xffffff, 2); key.position.set(-3, 4, 5); scene.add(key);
+const fill = new THREE.HemisphereLight(0xffffff, 0x7d8a99, .6); scene.add(fill);
+const rimC = new THREE.DirectionalLight(0x30c1f8, .6); rimC.position.set(-4, 2, -4); scene.add(rimC);
+const rimP = new THREE.DirectionalLight(0xfb4994, 0); rimP.position.set(4, -1, -3); scene.add(rimP);
+function theme(name) {
+  document.body.dataset.theme = name;
+  document.querySelectorAll('[data-theme-btn]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.themeBtn === name)));
+  const dark = name === 'dark';
+  M.shell.color.set(dark ? 0x0c0f14 : 0xe9edf2); M.shell.envMapIntensity = dark ? .45 : 1;
+  M.clear.color.set(dark ? 0x9fdcff : 0xffffff); M.clear.opacity = dark ? .12 : .28;
+  M.blur.color.set(dark ? 0x30c1f8 : 0x5d6b7b); M.blur.opacity = dark ? .08 : .1;
+  if (M.dish) M.dish.color.set(dark ? 0x1a1f27 : 0xeef2f6);
+  key.intensity = dark ? .7 : 2; fill.intensity = dark ? .15 : .6; rimC.intensity = dark ? 3.2 : .6; rimP.intensity = dark ? 1.6 : 0;
+  sprites.forEach((s) => (s.material.opacity = dark ? .95 : .45));
+  renderer.toneMappingExposure = dark ? 1.15 : 1;
+}
+
+/* ------------------------------------------------------------------ framing and switching */
+let W = 0, H = 0, cur = null, center = new THREE.Vector3();
+function frame() {
+  if (!cur) return;
+  const halfH = 9 * Math.tan(THREE.MathUtils.degToRad(14)), halfW = halfH * camera.aspect, narrow = W < 860;
+  const sx = narrow ? .56 : .69, sy = narrow ? .5 : .44, { size } = holders[cur];
+  const s = Math.min((holders[cur].S.fitH || 1.15) * halfH /Math.max(size.y, .01), (narrow ? 1.1 : (holders[cur].S.fitW || .62)) * halfW / Math.max(size.x, size.z, .01));
+  const o = holders[cur].outer;
+  o.position.set((sx * 2 - 1) * halfW, (1 - 2 * sy) * halfH, 0); o.scale.setScalar(s);
+  center.copy(o.position);
+}
+function layout() {
+  W = innerWidth; H = Math.max(innerHeight, 620);
+  renderer.setSize(W, H, false); camera.aspect = W / H; camera.updateProjectionMatrix(); frame();
+}
+let switchedAt = 0;
+function show(id) {
+  if (!holders[id]) id = 'arm';
+  for (const k in holders) holders[k].outer.visible = k === id;
+  cur = id; switchedAt = performance.now();
+  document.querySelectorAll('[data-subj]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.subj === id)));
+  const i = Object.keys(SUBJECTS).indexOf(id);
+  document.getElementById('subjNum').textContent = String(i + 1).padStart(2, '0');
+  document.getElementById('subjName').textContent = SUBJECTS[id].name;
+  frame();
+}
+document.querySelectorAll('[data-subj]').forEach((b) => b.addEventListener('click', () => show(b.dataset.subj)));
+document.querySelectorAll('[data-theme-btn]').forEach((b) => b.addEventListener('click', () => theme(b.dataset.themeBtn)));
+const q = new URLSearchParams(location.search);
+theme(q.get('theme') === 'dark' ? 'dark' : 'light');
+layout(); show(q.get('s') || 'arm');
+addEventListener('resize', layout);
+
+/* ------------------------------------------------------------------ callouts */
+const svg = document.getElementById('calls'), tmp = new THREE.Vector3(), cen = new THREE.Vector3();
+const CALLS = ['ai', 'cloud', 'data', 'sec'].map((id) => {
+  const c = { id, el: document.querySelector(`[data-call="${id}"]`) };
+  c.path = document.createElementNS('http://www.w3.org/2000/svg', 'path'); svg.appendChild(c.path);
+  c.dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); c.dot.setAttribute('r', 4); svg.appendChild(c.dot);
+  return c;
+});
+// labels sit just outside the object's outline on screen: Generative AI on the left, the rest on the right,
+// each at its point's height, pushed apart so they never overlap
+const bb = new THREE.Box3(), corner = new THREE.Vector3();
+function updateCalls(alpha) {
+  bb.setFromObject(holders[cur].outer);
+  let x0 = Infinity, x1 = -Infinity;
+  for (let i = 0; i < 8; i++) { corner.set(i & 1 ? bb.max.x : bb.min.x, i & 2 ? bb.max.y : bb.min.y, i & 4 ? bb.max.z : bb.min.z).project(camera); const sx = (corner.x * .5 + .5) * W; x0 = Math.min(x0, sx); x1 = Math.max(x1, sx); }
+  const pts = CALLS.map((c) => { holders[cur].S.anchors[c.id].getWorldPosition(tmp); tmp.project(camera); return { c, x: (tmp.x * .5 + .5) * W, y: (-tmp.y * .5 + .5) * H, right: c.id !== 'ai' }; });
+  for (const side of [true, false]) {
+    const list = pts.filter((p) => p.right === side).sort((a, b) => a.y - b.y);
+    let prev = -Infinity;
+    for (const p of list) { p.ly = Math.max(p.y, prev + 54, H * .17); prev = p.ly; }
+    const over = prev - H * .76; if (over > 0) list.forEach((p) => (p.ly -= over));
+  }
+  for (const p of pts) {
+    const { c, x, y, right, ly } = p;
+    const lx = right ? Math.min(W - 200, Math.max(x1 + 30, x + 60)) : Math.max(250, Math.min(x0 - 30, x - 60));
+    c.path.setAttribute('d', `M${x.toFixed(1)} ${y.toFixed(1)} L${(x + (lx - x) * .35).toFixed(1)} ${ly.toFixed(1)} L${lx.toFixed(1)} ${ly.toFixed(1)}`);
+    c.dot.setAttribute('cx', x.toFixed(1)); c.dot.setAttribute('cy', y.toFixed(1));
+    c.el.classList.toggle('r', !right);
+    c.el.style.transform = `translate(${(right ? lx + 8 : lx - 8).toFixed(1)}px, ${(ly - 22).toFixed(1)}px) translateX(${right ? '0' : '-100%'})`;
+    c.el.style.opacity = alpha; c.path.style.opacity = alpha; c.dot.style.opacity = alpha;
+  }
+}
+
+/* ------------------------------------------------------------------ motion */
+const pointer = { x: 0, y: 0 };
+addEventListener('pointermove', (e) => { pointer.x = e.clientX / innerWidth * 2 - 1; pointer.y = e.clientY / innerHeight * 2 - 1; });
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const ease = (t) => 1 - Math.pow(1 - t, 3);
+let yaw = 0, pitch = 0, start = null;
+document.getElementById('loading').remove();
+function tick(now) {
+  if (start === null) start = now;
+  const t = reduce ? 4 : (now - start) / 1000, k = ease(Math.min(1, (now - switchedAt) / 1200));
+  yaw += (pointer.x * .3 - yaw) * .04; pitch += (pointer.y * .12 - pitch) * .04;
+  const h = holders[cur], S = h.S;
+  h.outer.rotation.set((S.tilt || 0) + pitch, S.face + yaw * .5 + Math.sin(t * .25) * .05 + (1 - k) * .6, 0);
+  h.outer.position.y = center.y - (1 - k) * .4;
+  if (!reduce) S.update(t);
+  renderer.render(scene, camera);
+  updateCalls(Math.max(0, Math.min(1, (now - switchedAt) / 600 - 1)));
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>

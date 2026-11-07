@@ -517,6 +517,7 @@ function init(host, kind) {
   let W = 1;
   let H = 1;
   let dirty = true;
+  let baseScale = 1;
   const resize = () => {
     W = host.clientWidth;
     H = host.clientHeight;
@@ -530,6 +531,7 @@ function init(host, kind) {
     const halfW = halfH * camera.aspect;
     const p = s.place(halfW, halfH, camera.aspect < 0.9);
     root.position.set(p.x, p.y, 0);
+    baseScale = p.s;
     root.scale.setScalar(p.s);
     dirty = true;
   };
@@ -576,6 +578,7 @@ function init(host, kind) {
     pointer.y += (pointer.ty - pointer.y) * damp(dt, 3);
     U.uTime.value = reduceMotion ? 3.2 : time;
     s.update({ t: reduceMotion ? 3.2 : time, dt, scroll, px: pointer.x, py: pointer.y });
+    root.scale.setScalar(baseScale);
     renderer.render(scene, camera);
     adapt(dt);
   };
@@ -601,8 +604,6 @@ function init(host, kind) {
   renderer.compile(scene, camera);
   frame();
   host.classList.add('is-ready');
-  // live placement of the main object (scene units: fov 35, z 10), read by morph.js
-  window.HamdazScene = { kind, host, live: () => ({ ...s.live(), t: time }) };
   window.dispatchEvent(new CustomEvent('scene:ready'));
 
   let visible = true;
@@ -617,13 +618,5 @@ function fail() {
   document.documentElement.classList.add('no-webgl');
 }
 
-// After a page-switch morph the particles fly first; the scene is built once they land (morph.js).
-const whenSettled = (start) => {
-  if (!document.documentElement.classList.contains('morphing') || window.__hzSettled) return start();
-  let done = false;
-  const go = () => { if (!done) { done = true; start(); } };
-  window.addEventListener('hz:morph-settle', go, { once: true });
-  setTimeout(go, 2500);
-};
 const host = document.querySelector('[data-scene]');
-if (host) whenSettled(() => init(host, host.dataset.scene));
+if (host) init(host, host.dataset.scene);

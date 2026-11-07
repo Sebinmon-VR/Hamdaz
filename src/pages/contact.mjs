@@ -2,8 +2,9 @@ import { contact, services, waLink } from '../data.mjs';
 import { icon } from '../icons.mjs';
 import { clock } from '../layout.mjs';
 import { pageHero, content, head, btn, officeLabel } from '../components.mjs';
+import { ldScript, orgNode, officeNodes, breadcrumbNode } from '../blocks.mjs';
 
-const hero = pageHero({ crumb: 'Contact Us', eyebrow: 'Contact Us', title: 'Connect with HAMDAZ', text: 'Where Passion Meets Technology, and Your Success is Our Mission!' });
+const hero = pageHero({ crumb: 'Contact Us', eyebrow: 'Contact Us', title: 'Connect with HAMDAZ', text: 'Where Passion Meets Technology, and Your Success is Our Mission!', hero: 'globe' });
 
 const offices = `<section class="sec">
   <div class="wrap">
@@ -73,7 +74,8 @@ export default {
   path: 'contact.html',
   active: 'contact',
   earth: true,
-  title: 'Contact Us',
-  description: `${contact.heading} UAE: +971 23090211. India: +91 9207773300. ${contact.email}`,
+  fullTitle: 'Contact Hamdaz | IT & Security Company in Abu Dhabi',
+  description: `Contact Hamdaz Technologies in Abu Dhabi (Millennium Tower, Hamdan Street) or Kozhikode, India. Call +971 2 626 5780 or email ${contact.email}.`,
+  jsonld: ldScript(orgNode(), officeNodes(), breadcrumbNode([['Contact Us', 'contact.html']])),
   body: [hero, content(offices, form)].join('\n'),
 };

@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scan Chip Story – Hamdaz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  /* Prototype of the home hero: the scan horizon (black meets white) with the AI chip on the dark side.
+     Scrolling carries the chip across the blue edge into the light (glowing on black, drawn in ink on white),
+     the light floods the screen, then the chip breaks into particles that become the people network and,
+     further down, the galaxy. A 2D canvas sketch of the motion, not the final Three.js build. */
+  :root { --ink: #0b1b2b; --paper: #f3f5f9; --navy: #061423; --fg: #eef6fb; --dim: #5a6b80; --cyan: #30c1f8; --pink: #fb4994; --blue: #2547ff; }
+  * { box-sizing: border-box; margin: 0; }
+  html { background: var(--paper); }
+  body { font: 16px/1.55 Inter, system-ui, sans-serif; color: var(--ink); background: var(--paper); overflow-x: hidden; }
+  .mono { font: 500 11.5px/1.3 "JetBrains Mono", ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; }
+
+  header.site { position: fixed; inset: 0 0 auto 0; z-index: 20; display: flex; justify-content: space-between; align-items: center; padding: 22px clamp(16px, 3.4vw, 56px); color: #fff; mix-blend-mode: difference; pointer-events: none; }
+  header.site b { font: 800 20px/1 Archivo, sans-serif; letter-spacing: .04em; }
+  header.site span { padding: 9px 16px; border: 1px solid currentColor; border-radius: 99px; font-size: 13px; font-weight: 600; }
+
+  /* the hero: pinned while the story plays */
+  .hero { position: relative; height: 330vh; background: var(--paper); }
+  .stick { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+  .stick canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .hero-a { position: absolute; left: clamp(16px, 3.4vw, 56px); bottom: clamp(28px, 8vh, 80px); color: #fff; max-width: 640px; will-change: transform, opacity; }
+  .hero-a h1 { font: 800 clamp(40px, 7vw, 104px)/.94 Archivo, sans-serif; letter-spacing: -.035em; }
+  .hero-a p { margin-top: 18px; color: rgba(238,246,251,.75); max-width: 44ch; }
+  .pills { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+  .pill { display: inline-flex; align-items: center; height: 46px; padding: 0 22px; border-radius: 99px; background: #fff; color: var(--navy); font-weight: 600; font-size: 14px; text-decoration: none; }
+  .pill--ghost { background: transparent; color: #fff; box-shadow: inset 0 0 0 1px rgba(255,255,255,.4); }
+  .hero-b { position: absolute; left: clamp(16px, 3.4vw, 56px); top: 50%; max-width: 520px; opacity: 0; will-change: transform, opacity; }
+  .hero-b .mono { color: var(--blue); }
+  .hero-b h2 { font: 800 clamp(34px, 4.6vw, 64px)/.98 Archivo, sans-serif; letter-spacing: -.03em; margin: 14px 0 16px; }
+  .hero-b p.lead { color: var(--dim); max-width: 42ch; }
+  .stats { display: flex; gap: 40px; margin-top: 28px; }
+  .stats p.n { font: 800 44px/1 Archivo, sans-serif; letter-spacing: -.03em; margin: 6px 0 2px; }
+  .stats .mono { color: var(--dim); }
+  .stats .d { font-size: 13px; color: var(--dim); }
+
+  /* particles above the page */
+  #oc { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 5; pointer-events: none; }
+
+  .who { position: relative; padding: 16vh clamp(16px, 3.4vw, 56px) 14vh; background: var(--paper); }
+  .who-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4vw; align-items: center; max-width: 1400px; margin: 0 auto; }
+  .bar { display: flex; gap: 18px; padding-bottom: 14px; border-bottom: 1px solid rgba(11,27,43,.14); color: var(--dim); }
+  .bar b { color: var(--ink); }
+  .who h2 { font: 800 clamp(34px, 4.4vw, 62px)/1 Archivo, sans-serif; letter-spacing: -.03em; margin: 28px 0 18px; }
+  .who p { color: var(--dim); max-width: 46ch; }
+  .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 40px; border-top: 1px solid rgba(11,27,43,.14); }
+  .facts div { padding: 18px 16px 0 0; }
+  .facts span { display: block; font-size: 12.5px; color: var(--dim); }
+  .facts strong { display: block; font: 800 52px/1.1 Archivo, sans-serif; letter-spacing: -.03em; margin-top: 8px; }
+  .art { height: 72vh; }
+
+  .gal { position: relative; height: 150vh; background: var(--navy); color: var(--fg); }
+  .gal-in { position: absolute; left: 0; right: 0; bottom: 16vh; text-align: center; padding: 0 16px; z-index: 6; }
+  .gal-in .mono { color: var(--pink); }
+  .gal-in h2 { font: 800 clamp(34px, 5vw, 72px)/1 Archivo, sans-serif; letter-spacing: -.03em; margin-top: 14px; text-shadow: 0 4px 30px rgba(0,0,0,.6); }
+  .end { padding: 18vh clamp(16px, 3.4vw, 56px); background: var(--paper); text-align: center; }
+  .end h2 { font: 800 clamp(30px, 4vw, 52px)/1 Archivo, sans-serif; letter-spacing: -.03em; margin-top: 12px; }
+  .end p { color: var(--dim); margin-top: 12px; }
+
+  /* prototype guide */
+  .hud { position: fixed; right: 16px; bottom: 16px; z-index: 30; background: rgba(6,20,35,.92); color: #fff; border-radius: 14px; padding: 14px 16px; width: 250px; box-shadow: 0 16px 50px rgba(0,0,0,.35); backdrop-filter: blur(8px); }
+  .hud .mono { color: var(--cyan); font-size: 10.5px; }
+  .hud ol { list-style: none; padding: 0; margin-top: 10px; display: grid; gap: 4px; }
+  .hud li { font-size: 13px; color: rgba(255,255,255,.4); display: flex; gap: 10px; transition: color .3s; }
+  .hud li i { font: 500 10.5px/1.9 "JetBrains Mono", monospace; font-style: normal; }
+  .hud li.on { color: #fff; }
+  .hud li.on i { color: var(--pink); }
+  .hud .track { height: 2px; background: rgba(255,255,255,.15); border-radius: 2px; margin-top: 12px; overflow: hidden; }
+  .hud .track i { display: block; height: 100%; width: 0; background: var(--cyan); }
+
+  @media (max-width: 760px) {
+    .who-grid { grid-template-columns: 1fr; }
+    .art { height: 56vh; }
+    .hero-b { top: auto; bottom: 10vh; }
+    .hud { width: auto; left: 16px; padding: 10px 14px; }
+    .hud ol { display: none; }
+  }
+</style>
+</head>
+<body>
+<header class="site"><b>HAMDAZ</b><span>Menu</span></header>
+
+<section class="hero" id="hero">
+  <div class="stick" id="stick">
+    <canvas id="hc"></canvas>
+    <div class="hero-a" id="heroA">
+      <h1>Delivering the<br>Digital Future</h1>
+      <p>+ Pioneering Tomorrow: Unleashing the Power of AI for a Bold Future</p>
+      <div class="pills"><a class="pill" href="#">Contact Now ↗</a><a class="pill pill--ghost" href="#">What We Do</a></div>
+    </div>
+    <div class="hero-b" id="heroB">
+      <p class="mono">(AI · Cloud · Data)</p>
+      <h2>Where Passion Meets Technology</h2>
+      <p class="lead">Connect with HAMDAZ – Where Passion Meets Technology, and Your Success is Our Mission!</p>
+      <div class="stats">
+        <div><p class="mono">Managed services</p><p class="n">20</p><p class="d">AI, cloud, data &amp; security</p></div>
+        <div><p class="mono">AI products</p><p class="n">05</p><p class="d">Built for industry</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="who" id="who">
+  <div class="who-grid">
+    <div>
+      <p class="bar mono"><b>01</b><span>Who We Are</span><span>Abu Dhabi — India</span></p>
+      <h2>Excellence in managed software services</h2>
+      <p>From cutting-edge Generative AI and Cloud Services to robust Information Security, our consultancy is committed to delivering transformative results.</p>
+      <div class="facts">
+        <div><span>Managed services</span><strong>20</strong></div>
+        <div><span>AI products</span><strong>5</strong></div>
+        <div><span>Countries</span><strong>2</strong></div>
+      </div>
+    </div>
+    <div class="art" id="art" aria-hidden="true"></div>
+  </div>
+</section>
+
+<section class="gal" id="gal">
+  <div class="gal-in"><p class="mono">(Delivering the digital future)</p><h2>Your success is our mission</h2></div>
+</section>
+
+<section class="end"><p class="mono" style="color:var(--blue)">04 · Contact</p><h2>The rest of the page continues as it is now</h2><p>End of the prototype. Scroll back up to play the story in reverse.</p></section>
+
+<canvas id="oc" aria-hidden="true"></canvas>
+
+<aside class="hud" aria-label="Prototype guide">
+  <p class="mono">Prototype · scroll slowly</p>
+  <ol id="steps">
+    <li><i>01</i>Chip on the dark side</li>
+    <li><i>02</i>Crosses the edge into the light</li>
+    <li><i>03</i>The light fills the screen</li>
+    <li><i>04</i>Chip breaks into particles</li>
+    <li><i>05</i>People network</li>
+    <li><i>06</i>Galaxy</li>
+  </ol>
+  <div class="track"><i id="track"></i></div>
+</aside>
+
+<script>
+/* ================================================================ helpers */
+const TAU = Math.PI * 2;
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = (t) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const rgba = (c, a) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a})`;
+const mixC = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const rotY = (p, a) => { const c = Math.cos(a), s = Math.sin(a); return [p[0] * c + p[2] * s, p[1], -p[0] * s + p[2] * c]; };
+const rotX = (p, a) => { const c = Math.cos(a), s = Math.sin(a); return [p[0], p[1] * c - p[2] * s, p[1] * s + p[2] * c]; };
+const proj = (p, v) => { const k = v.f / (v.dist - p[2]); return [v.cx + p[0] * k, v.cy - p[1] * k, p[2]]; };
+function glow(ctx, x, y, r, c, a) { const g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, rgba(c, a)); g.addColorStop(1, rgba(c, 0)); ctx.fillStyle = g; ctx.fillRect(x - r, y - r, r * 2, r * 2); }
+
+const CY = [48, 193, 248], PK = [251, 73, 148], VI = [107, 80, 246], WH = [255, 255, 255], NAVY = [14, 26, 80], BLUE = [37, 71, 255], INKC = [11, 27, 43];
+const LIGHT = '#f3f5f9';
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ================================================================ the chip (same units as assets/js/circuit.js: 1 x 1 on the board plane) */
+const CHIP = { half: .5, h: .09, pins: 10, pinGap: .082, pinLen: .13 };
+const CH = (() => {
+  const r = rng(42), { half, pins, pinGap, pinLen } = CHIP;
+  const N = [[1, 0], [0, 1], [-1, 0], [0, -1]], T = [[0, 1], [-1, 0], [0, -1], [1, 0]];
+  const traces = [], pinsList = [];
+  for (let s = 0; s < 4; s++) for (let k = 0; k < pins; k++) {
+    const o = (k - (pins - 1) / 2) * pinGap, dir = Math.sign(o) || 1;
+    const loc = [[half + pinLen, o]]; let out = half + pinLen, lat = o;
+    out += .05 + r() * .12; loc.push([out, lat]);
+    const d = Math.abs(o) * 1.25; out += d; lat += dir * d; loc.push([out, lat]);   // fan out, outer traces further
+    out += .2 + r() * .85; loc.push([out, lat]);
+    const W = ([a, b]) => [N[s][0] * a + T[s][0] * b, 0, N[s][1] * a + T[s][1] * b];
+    const pts = loc.map(W), len = [0];
+    for (let i = 1; i < pts.length; i++) len.push(len[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][2] - pts[i - 1][2]));
+    traces.push({ pts, len, total: len[len.length - 1], ph: r(), sp: .18 + r() * .3, pink: r() < .2 });
+    pinsList.push([W([half, o]), W([half + pinLen, o])]);
+  }
+  const vias = [];
+  while (vias.length < 150) { const a = r() * TAU, d = .75 + r() * 1.3, x = Math.cos(a) * d, z = Math.sin(a) * d; if (Math.max(Math.abs(x), Math.abs(z)) > .72) vias.push([x, 0, z]); }
+  const cells = [];
+  for (let i = 0; i < 6; i++) for (let j = 0; j < 6; j++) cells.push({ x: -.3 + i * .1 + .01, z: -.3 + j * .1 + .01, ph: r() * TAU, rate: .8 + r() * 2.4 });
+  return { traces, pinsList, vias, cells };
+})();
+function along(tr, d) {
+  for (let i = 1; i < tr.pts.length; i++) if (d <= tr.len[i] || i === tr.pts.length - 1) {
+    const a = tr.pts[i - 1], b = tr.pts[i], u = clamp((d - tr.len[i - 1]) / (tr.len[i] - tr.len[i - 1] || 1));
+    return [lerp(a[0], b[0], u), 0, lerp(a[2], b[2], u)];
+  }
+  return tr.pts[0];
+}
+// the chip's own points, where the particles start: traces, vias, the body and its compute cells
+const NP = 1100;
+const SAMPLES = (() => {
+  const r = rng(9), out = [];
+  for (let i = 0; i < NP; i++) {
+    const k = r();
+    if (k < .55) { const tr = CH.traces[Math.floor(r() * CH.traces.length)]; out.push({ p: along(tr, r() * tr.total), c: tr.pink ? PK : NAVY }); }
+    else if (k < .67) { const v = CH.vias[Math.floor(r() * CH.vias.length)]; out.push({ p: [v[0], 0, v[2]], c: BLUE }); }
+    else if (k < .82) { const e = r() * 4, u = (r() - .5) * 1, s = Math.floor(e); const p = [[u, .5], [.5, u], [u, -.5], [-.5, u]][s]; out.push({ p: [p[0], CHIP.h, p[1]], c: INKC }); }
+    else { out.push({ p: [(r() - .5) * .62, CHIP.h, (r() - .5) * .62], c: r() < .25 ? PK : BLUE }); }
+  }
+  return out;
+})();
+
+const NEON = {
+  dark: true, add: true,
+  trace: (f, pink) => rgba(pink ? PK : CY, .6 * f), via: (f) => rgba(CY, .55 * f),
+  pulse: (ctx, x, y, pink, f) => { glow(ctx, x, y, 9, pink ? PK : CY, .9 * f); ctx.fillStyle = rgba(WH, f); ctx.fillRect(x - 1.2, y - 1.2, 2.4, 2.4); },
+  top: '#0a1b2c', side: '#050f19', edge: rgba(CY, .95), pin: rgba(CY, .85), die: rgba(CY, .08), cell: (a) => rgba(CY, .12 + .7 * a), text: '#e4f7ff', box: '#ffffff', boxDim: 'rgba(255,255,255,.55)',
+};
+const INK = {
+  dark: false, add: false,
+  trace: (f, pink) => rgba(pink ? PK : NAVY, (pink ? .55 : .42) * f), via: (f) => rgba(BLUE, .5 * f),
+  pulse: (ctx, x, y, pink, f) => { ctx.fillStyle = rgba(pink ? PK : BLUE, .9 * f); ctx.beginPath(); ctx.arc(x, y, 1.9, 0, TAU); ctx.fill(); },
+  top: '#ffffff', side: '#d8dfe9', edge: '#0b1b2b', pin: '#0b1b2b', die: 'rgba(37,71,255,.06)', cell: (a) => rgba(BLUE, .08 + .6 * a), text: '#0b1b2b', box: '#2547ff', boxDim: 'rgba(37,71,255,.6)',
+};
+const ANCHORS = [[-1.2, -.78, 'Generative AI', 'Custom GPT · Bots', -1], [1.2, -.72, 'Cloud', 'Azure · AWS · GCP · OCI', 1], [1.25, .8, 'Data & Analytics', 'Predictive insight', 1], [-1.2, .85, 'Security', 'Information security', -1]];
+
+function chipP(s) { return (x, y, z) => proj(rotX(rotY([x, y, z], s.yaw), s.pitch), s.view); }
+
+function drawChip(ctx, s, t, sty, alpha) {
+  const P = chipP(s);
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  if (sty.add) { ctx.globalCompositeOperation = 'lighter'; glow(ctx, s.view.cx, s.view.cy, s.unit * 1.1, CY, .16); }
+  ctx.lineWidth = 1.15; ctx.lineCap = 'round';
+  for (const tr of CH.traces) {
+    const sp = tr.pts.map((p) => P(...p));
+    for (let i = 1; i < sp.length; i++) {
+      const p = tr.pts[i], f = clamp(1.3 - Math.hypot(p[0], p[2]) / 1.9);
+      ctx.strokeStyle = sty.trace(f, tr.pink); ctx.beginPath(); ctx.moveTo(sp[i - 1][0], sp[i - 1][1]); ctx.lineTo(sp[i][0], sp[i][1]); ctx.stroke();
+    }
+    const e = sp[sp.length - 1], fe = clamp(1.3 - Math.hypot(tr.pts[tr.pts.length - 1][0], tr.pts[tr.pts.length - 1][2]) / 1.9);
+    ctx.strokeStyle = sty.via(fe); ctx.beginPath(); ctx.arc(e[0], e[1], 2.4, 0, TAU); ctx.stroke();
+    const u = 1 - ((t * tr.sp + tr.ph) % 1), q = along(tr, u * tr.total), sq = P(...q);
+    sty.pulse(ctx, sq[0], sq[1], tr.pink, clamp(1.4 - Math.hypot(q[0], q[2]) / 1.6));
+  }
+  for (const v of CH.vias) { const sp = P(...v), f = clamp(1.3 - Math.hypot(v[0], v[2]) / 1.9); ctx.fillStyle = sty.via(f * .9); ctx.fillRect(sp[0] - 1, sp[1] - 1, 2, 2); }
+  ctx.globalCompositeOperation = 'source-over';
+
+  // pins
+  ctx.lineWidth = 2; ctx.strokeStyle = sty.pin;
+  for (const [a, b] of CH.pinsList) { const p = P(a[0], .02, a[2]), q = P(...b); ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke(); }
+
+  // the body: sides back to front, then the top
+  const h = CHIP.half, H = CHIP.h, c = [[-h, -h], [h, -h], [h, h], [-h, h]];
+  const faces = c.map((a, i) => { const b = c[(i + 1) % 4]; const q = [P(a[0], 0, a[1]), P(b[0], 0, b[1]), P(b[0], H, b[1]), P(a[0], H, a[1])]; return { q, z: q.reduce((m, p) => m + p[2], 0) / 4 }; }).sort((a, b) => a.z - b.z);
+  const poly = (q, fill) => { ctx.beginPath(); q.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); ctx.strokeStyle = sty.edge; ctx.lineWidth = 1.2; ctx.stroke(); };
+  faces.forEach((f) => poly(f.q, sty.side));
+  poly(c.map(([x, z]) => P(x, H, z)), sty.top);
+  // die and compute cells
+  const dh = .33; ctx.beginPath(); [[-dh, -dh], [dh, -dh], [dh, dh], [-dh, dh]].forEach(([x, z], i) => { const p = P(x, H + .001, z); i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }); ctx.closePath(); ctx.fillStyle = sty.die; ctx.fill(); ctx.strokeStyle = sty.edge; ctx.lineWidth = .8; ctx.stroke();
+  for (const cell of CH.cells) {
+    const a = Math.pow(Math.max(0, Math.sin(t * cell.rate + cell.ph)), 6), w = .08;
+    ctx.beginPath(); [[0, 0], [w, 0], [w, w], [0, w]].forEach(([x, z], i) => { const p = P(cell.x + x, H + .002, cell.z + z); i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }); ctx.closePath();
+    ctx.fillStyle = sty.cell(a); ctx.fill();
+  }
+  // "AI" printed on the die (affine approximation of the perspective)
+  const o = P(0, H + .003, 0), ex = P(.1, H + .003, 0), ez = P(0, H + .003, .1);
+  ctx.save();
+  const dpr = ctx.getTransform().a;
+  ctx.setTransform(dpr * (ex[0] - o[0]) / 10, dpr * (ex[1] - o[1]) / 10, dpr * (ez[0] - o[0]) / 10, dpr * (ez[1] - o[1]) / 10, dpr * o[0], dpr * o[1]);
+  ctx.fillStyle = sty.dark ? 'rgba(10,27,44,.85)' : 'rgba(255,255,255,.9)'; ctx.fillRect(-14, -10, 28, 20);
+  ctx.fillStyle = sty.text; ctx.font = '800 15px Archivo, "Arial Black", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('AI', 0, 1);
+  ctx.restore();
+  if (sty.add) { ctx.globalCompositeOperation = 'lighter'; glow(ctx, o[0], o[1], s.unit * .28, CY, .25); ctx.globalCompositeOperation = 'source-over'; }
+
+  // the scan box that tracks it
+  const bb = [];
+  for (const [x, z] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { bb.push(P(x * (h + CHIP.pinLen), 0, z * (h + CHIP.pinLen))); bb.push(P(x * h, H, z * h)); }
+  const pad = 18, x0 = Math.min(...bb.map((p) => p[0])) - pad, x1 = Math.max(...bb.map((p) => p[0])) + pad, y0 = Math.min(...bb.map((p) => p[1])) - pad, y1 = Math.max(...bb.map((p) => p[1])) + pad;
+  ctx.globalAlpha = alpha * s.boxA;
+  ctx.strokeStyle = sty.box; ctx.lineWidth = 1.6; const k = 16;
+  ctx.beginPath();
+  [[x0, y0, 1, 1], [x1, y0, -1, 1], [x1, y1, -1, -1], [x0, y1, 1, -1]].forEach(([x, y, sx, sy]) => { ctx.moveTo(x, y + sy * k); ctx.lineTo(x, y); ctx.lineTo(x + sx * k, y); });
+  ctx.stroke();
+  ctx.lineWidth = .6; ctx.strokeStyle = sty.boxDim; ctx.strokeRect(x0, y0, x1 - x0, y1 - y0);
+  ctx.fillStyle = sty.box; ctx.font = '500 12px "JetBrains Mono", monospace'; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.fillText('ai_core.chip', x0, y0 - 9);
+  ctx.fillStyle = sty.boxDim; ctx.font = '500 10.5px "JetBrains Mono", monospace';
+  ctx.fillText(`${(s.view.cx * .731 + Math.sin(t * .7) * 4).toFixed(3)}, ${(s.view.cy * 1.27 + Math.cos(t * .5) * 4).toFixed(2)}`, x0, y1 + 18);
+  ctx.textAlign = 'right'; ctx.fillText(`conf ${(.96 + .03 * Math.sin(t * 1.3)).toFixed(2)}`, x1, y0 - 9); ctx.textAlign = 'left';
+
+  // the labelled nodes (once it is in the light and seen from above)
+  if (!sty.dark && s.labA > 0) {
+    ctx.globalAlpha = alpha * s.labA;
+    for (const [x, z, title, sub, side] of ANCHORS) {
+      const p = P(x, 0, z), lx = p[0] + side * 30, ly = p[1] - 22;
+      ctx.fillStyle = '#2547ff'; ctx.beginPath(); ctx.arc(p[0], p[1], 3, 0, TAU); ctx.fill();
+      ctx.strokeStyle = 'rgba(11,27,43,.45)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(lx, ly); ctx.lineTo(lx + side * 14, ly); ctx.stroke();
+      ctx.textAlign = side > 0 ? 'left' : 'right';
+      ctx.fillStyle = '#0b1b2b'; ctx.font = '600 13px Inter, sans-serif'; ctx.fillText(title, lx + side * 20, ly + 4);
+      ctx.fillStyle = '#5a6b80'; ctx.font = '500 10px "JetBrains Mono", monospace'; ctx.fillText(sub, lx + side * 20, ly + 18);
+    }
+    ctx.textAlign = 'left';
+  }
+  ctx.restore();
+}
+
+/* ================================================================ the scan horizon behind it */
+const BG = (() => {
+  const r = rng(7);
+  const stars = Array.from({ length: 220 }, () => [r() * .72, r(), .4 + r() * 1.1, .15 + r() * .5]);
+  const spray = Array.from({ length: 480 }, () => { const d = Math.pow(r(), 2.4) * 360; return [(r() - .5) * .62, d, .6 + r() * 2.4 * (1 - d / 380), .25 + r() * .5, r() < .85]; });
+  return { stars, spray };
+})();
+const ICON = {
+  brain: new Path2D('M-4 -34C-22 -40 -40 -28 -38 -10C-48 -2 -46 18 -32 24C-30 38 -12 44 -4 34Z M4 -34C22 -40 40 -28 38 -10C48 -2 46 18 32 24C30 38 12 44 4 34Z M-4 -34V34 M4 -34V34'),
+  eye: new Path2D('M-46 0C-30 -26 30 -26 46 0C30 26 -30 26 -46 0Z M15 0A15 15 0 1 1 -15 0A15 15 0 1 1 15 0Z'),
+  data: new Path2D('M0 -38L34 -20V20L0 38L-34 20V-20Z M-34 -20L0 -2L34 -20 M0 -2V38'),
+  cloud: new Path2D('M-38 18C-52 18 -54 -4 -38 -6C-38 -26 -12 -32 -4 -16C4 -34 34 -28 32 -6C50 -6 50 18 34 18Z M-10 18V34 M10 18V34'),
+  lock: new Path2D('M-28 -6H28V38H-28Z M-18 -6V-18C-18 -42 18 -42 18 -18V-6'),
+  robot: new Path2D('M-30 -24H30V26H-30Z M0 -24V-36 M-12 14H12 M-12 -2A5 5 0 1 1 -12 -1.9 M12 -2A5 5 0 1 1 12 -1.9'),
+};
+const SUBJ = [['brain', .45, .19, 1, 'neural.map'], ['data', .14, .24, 1, 'data.store'], ['eye', .56, .37, 1, 'vision.eye'], ['cloud', .82, .27, 0, 'cloud.node'], ['lock', .92, .6, 0, 'secure.layer'], ['robot', .83, .78, 0, 'agent.model']];
+
+function drawBg(ctx, s, t) {
+  const { W, H, pcx, oy, R, ex } = s, k = H / 944;
+  ctx.fillStyle = LIGHT; ctx.fillRect(0, 0, W, H);
+  if (ex < -60) return;
+  const clipDark = () => { ctx.beginPath(); ctx.arc(pcx, oy, R, 0, TAU); ctx.clip(); };
+  const clipLight = () => { ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.arc(pcx, oy, R, 0, TAU); ctx.clip('evenodd'); };
+
+  ctx.fillStyle = '#03060c'; ctx.beginPath(); ctx.arc(pcx, oy, R, 0, TAU); ctx.fill();
+  ctx.save(); clipDark();
+  for (const [u, v, r, a] of BG.stars) { ctx.fillStyle = `rgba(255,255,255,${a})`; ctx.fillRect(u * W, v * H, r, r); }
+  ctx.restore();
+
+  // circles round the orb and the horizon line: white on the dark side, ink on the light
+  for (const [clip, c] of [[clipDark, [255, 255, 255]], [clipLight, [14, 26, 80]]]) {
+    ctx.save(); clip(); ctx.lineWidth = 1;
+    [.15, .28, .46, .68, .93].forEach((rr, i) => { ctx.strokeStyle = rgba(c, Math.max(.06, .22 - i * .035) * s.orbA); ctx.setLineDash(i === 2 ? [2, 6] : []); ctx.beginPath(); ctx.arc(ex, oy, rr * H, 0, TAU); ctx.stroke(); });
+    ctx.setLineDash([]);
+    ctx.strokeStyle = rgba(c, .5 * s.orbA); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(0, oy); ctx.lineTo(W, oy); ctx.stroke();
+    ctx.strokeStyle = rgba(c, .1 * s.orbA); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(ex, 0); ctx.lineTo(ex, H); ctx.stroke();
+    ctx.restore();
+  }
+
+  // the inky blue edge
+  const g = ctx.createRadialGradient(pcx, oy, R - H * .09, pcx, oy, R + H * .12);
+  g.addColorStop(0, 'rgba(31,69,255,0)'); g.addColorStop(.38, 'rgba(31,69,255,.3)'); g.addColorStop(.43, 'rgba(42,77,255,.95)'); g.addColorStop(.5, 'rgba(37,71,255,.5)'); g.addColorStop(1, 'rgba(37,71,255,0)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(143,166,255,.85)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(pcx, oy, R + 3, 0, TAU); ctx.stroke();
+  ctx.save(); clipLight();
+  for (const [a, d, r, op, blue] of BG.spray) { const rr = R + 6 + d * k; ctx.fillStyle = blue ? `rgba(37,71,255,${op})` : `rgba(11,26,102,${op})`; ctx.beginPath(); ctx.arc(pcx + Math.cos(a) * rr, oy + Math.sin(a) * rr, r * k, 0, TAU); ctx.fill(); }
+  ctx.restore();
+
+  // the other tracked AI elements, fading away as the story starts
+  if (s.subA > 0) {
+    const sc = k * .85;
+    SUBJ.forEach(([kind, x, y, dark, name], i) => {
+      const px = x * W + Math.sin(t * .6 + i) * 5, py = y * H + Math.cos(t * .5 + i * 2) * 4, b = 64 * sc, ink = dark ? '#ffffff' : '#2547ff';
+      ctx.save(); ctx.globalAlpha = s.subA;
+      ctx.strokeStyle = dark ? 'rgba(255,255,255,.35)' : 'rgba(20,40,140,.35)'; ctx.lineWidth = 1;
+      const dx = px - ex, dy = py - oy, e = 1 - b / Math.max(Math.abs(dx), Math.abs(dy));
+      ctx.beginPath(); ctx.moveTo(ex, oy); ctx.lineTo(ex + dx * e, oy + dy * e); ctx.stroke();
+      ctx.strokeStyle = ink; ctx.lineWidth = 1.4; const kk = 12;
+      ctx.beginPath(); [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([sx, sy]) => { ctx.moveTo(px + sx * b, py + sy * b - sy * kk); ctx.lineTo(px + sx * b, py + sy * b); ctx.lineTo(px + sx * b - sx * kk, py + sy * b); }); ctx.stroke();
+      ctx.save(); ctx.translate(px, py); ctx.scale(sc, sc); ctx.lineWidth = 2.2 / sc * .8; ctx.lineJoin = 'round'; ctx.stroke(ICON[kind]); ctx.restore();
+      ctx.fillStyle = ink; ctx.font = `500 ${Math.round(12 * sc + 2)}px "JetBrains Mono", monospace`; ctx.fillText(name, px - b, py - b - 8);
+      ctx.globalAlpha = s.subA * .7; ctx.font = `500 ${Math.round(10 * sc + 2)}px "JetBrains Mono", monospace`;
+      ctx.fillText(`${(px * .731 + Math.sin(t * .7 + py) * 4).toFixed(3)}, ${(py * 1.27).toFixed(2)}`, px - b, py + b + 16);
+      ctx.restore();
+    });
+  }
+
+  // the sweep and the orb
+  if (s.orbA > 0) {
+    ctx.save(); ctx.globalAlpha = s.orbA;
+    const a = t * .5, L = W * .4;
+    ctx.strokeStyle = 'rgba(91,123,255,.6)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(ex, oy); ctx.lineTo(ex + Math.cos(a) * L, oy + Math.sin(a) * L); ctx.stroke();
+    ctx.fillStyle = '#5b7bff'; ctx.beginPath(); ctx.arc(ex + Math.cos(a) * L, oy + Math.sin(a) * L, 3, 0, TAU); ctx.fill();
+    const pu = 1 + .06 * Math.sin(t * 2);
+    glow(ctx, ex, oy, H * .25 * pu, [47, 86, 255], .5);
+    const og = ctx.createRadialGradient(ex, oy, 0, ex, oy, H * .1 * pu);
+    og.addColorStop(0, '#ffffff'); og.addColorStop(.18, '#e6ecff'); og.addColorStop(.45, 'rgba(79,115,255,.85)'); og.addColorStop(1, 'rgba(27,61,255,0)');
+    ctx.fillStyle = og; ctx.beginPath(); ctx.arc(ex, oy, H * .1 * pu, 0, TAU); ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ex, oy, H * .025, 0, TAU); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(ex, oy, H * .01, 0, TAU); ctx.fill();
+    ctx.restore();
+  }
+}
+
+/* ================================================================ the people network and the galaxy (where the particles land) */
+const NET = (() => {
+  const r = rng(13), n = 72, nodes = [];
+  for (let i = 0; i < n; i++) { const y = 1 - (i + .5) / n * 2, rad = Math.sqrt(1 - y * y), a = i * 2.39996, R = 1 + (r() - .5) * .2; nodes.push({ p: [Math.cos(a) * rad * R, y * R, Math.sin(a) * rad * R], c: r() < .18 ? PK : r() < .3 ? CY : NAVY, s: 2 + r() * 2.4 }); }
+  const set = new Set();
+  nodes.forEach((a, i) => nodes.map((b, j) => [j, (a.p[0] - b.p[0]) ** 2 + (a.p[1] - b.p[1]) ** 2 + (a.p[2] - b.p[2]) ** 2]).filter(([j]) => j !== i).sort((x, y) => x[1] - y[1]).slice(0, 3).forEach(([j]) => set.add(i < j ? `${i},${j}` : `${j},${i}`)));
+  const edges = [...set].map((e) => e.split(',').map(Number));
+  // each particle lands on a node or somewhere along a line
+  const tgt = Array.from({ length: NP }, () => r() < .35 ? { n: Math.floor(r() * n), jx: (r() - .5) * .05, jy: (r() - .5) * .05 } : { e: Math.floor(r() * edges.length), u: r() });
+  const signals = Array.from({ length: 16 }, () => ({ e: Math.floor(r() * edges.length), ph: r(), sp: .3 + r() * .5, c: r() < .5 ? PK : CY }));
+  return { nodes, edges, tgt, signals };
+})();
+const GAL = (() => {
+  const r = rng(21);
+  return Array.from({ length: NP }, (_, i) => {
+    const arm = i % 3, rr = Math.pow(r(), .75), a = arm * TAU / 3 + rr * 4.4 + (r() - .5) * .55 * (1 - rr * .5);
+    const c = rr < .14 ? WH : rr < .45 ? CY : rr < .72 ? VI : PK;
+    return { r: rr + (r() - .5) * .04, a, y: (r() - .5) * .06 * (1 - rr), c };
+  });
+})();
+// per-particle flight: start delay and how far it curves
+const FLY = (() => { const r = rng(33); return Array.from({ length: NP }, () => ({ d1: r() * .35, d2: r() * .35, b1: (r() - .5) * .5, b2: (r() - .5) * .7, sz: 1.3 + r() * 1.1 })); })();
+
+/* ================================================================ layout, state and the loop */
+const $ = (id) => document.getElementById(id);
+const hc = $('hc'), oc = $('oc'), heroA = $('heroA'), heroB = $('heroB'), steps = [...$('steps').children], track = $('track');
+let W = 0, H = 0, dpr = 1, L = {};
+function layout() {
+  W = innerWidth; H = innerHeight; dpr = Math.min(devicePixelRatio || 1, 1.75);
+  for (const c of [hc, oc]) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); }
+  const top = (el) => el.getBoundingClientRect().top + scrollY;
+  const art = $('art'), ar = art.getBoundingClientRect();
+  L = { heroTop: top($('hero')), heroH: $('hero').offsetHeight, whoTop: top($('who')), artTop: top(art), artH: ar.height, artCx: ar.left + ar.width / 2, artR: Math.min(ar.width, ar.height) * .4, galTop: top($('gal')), galH: $('gal').offsetHeight };
+}
+
+function heroState(p, t) {
+  const narrow = W < 760, m = ease(clamp((p - .1) / .45));
+  const S = narrow ? [.34 * W, .34 * H] : [.3 * W, .43 * H], C = narrow ? [.5 * W, .52 * H] : [.55 * W, .7 * H], E = narrow ? [.62 * W, .36 * H] : [.75 * W, .47 * H];
+  const bz = (i) => (1 - m) ** 2 * S[i] + 2 * (1 - m) * m * C[i] + m * m * E[i];
+  const unit = Math.min(H * .3, W * (narrow ? .3 : .34)) * (1 + .12 * m);
+  const pE = ease(clamp((p - .5) / .3)), R = Math.max(W * .93, H * 1.3), ex = lerp(.685 * W, -.35 * W, pE);
+  return {
+    W, H, m, unit, ex, R, pcx: ex - R, oy: .5 * H,
+    pitch: lerp(.38, 1.4, ease(clamp((p - .12) / .5))),
+    yaw: -.6 + .6 * m + (reduce ? 0 : Math.sin(t * .25) * .05),
+    view: { cx: bz(0), cy: bz(1), f: unit * 5, dist: 5 },
+    orbA: 1 - pE, subA: 1 - clamp((p - .06) / .18), boxA: 1 - clamp((p - .55) / .15), labA: clamp((p - .5) / .14),
+  };
+}
+
+function drawHero(s, t, chipA) {
+  const ctx = hc.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  drawBg(ctx, s, t);
+  if (chipA <= 0) return;
+  if (s.ex > -60) { ctx.save(); ctx.beginPath(); ctx.arc(s.pcx, s.oy, s.R, 0, TAU); ctx.clip(); drawChip(ctx, s, t, NEON, chipA); ctx.restore(); }
+  ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, H); if (s.ex > -60) ctx.arc(s.pcx, s.oy, s.R, 0, TAU); ctx.clip('evenodd'); drawChip(ctx, s, t, INK, chipA); ctx.restore();
+}
+
+function drawOverlay(s, t, q1, q2, sy, stickTop) {
+  const ctx = oc.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+  if (q1 <= 0) return;
+  const P = chipP(s);
+  // the network, rotating in the art column
+  const nv = { cx: L.artCx, cy: L.artTop - sy + L.artH / 2, f: L.artR * 4, dist: 4 }, nrot = reduce ? .4 : t * .12;
+  const NS = NET.nodes.map((n) => proj(rotX(rotY(n.p, nrot), .32), nv));
+  // the galaxy, in the dark section
+  const gcx = W / 2, gcy = L.galTop - sy + L.galH * .4, GR = Math.min(W * .42, H * .5), grot = reduce ? 0 : t * .05;
+  const netA = clamp((q1 - .82) / .18) * (1 - clamp(q2 / .12));
+
+  if (q2 > 0) { ctx.save(); ctx.beginPath(); ctx.rect(0, L.galTop - sy, W, L.galH); ctx.clip(); ctx.globalCompositeOperation = 'lighter'; glow(ctx, gcx, gcy, GR * .9, VI, .22 * q2); glow(ctx, gcx, gcy, GR * .35, CY, .35 * q2); glow(ctx, gcx, gcy, GR * .1, WH, .8 * q2); ctx.restore(); }
+
+  if (netA > 0) {
+    ctx.lineWidth = 1;
+    for (const [a, b] of NET.edges) { const z = (NS[a][2] + NS[b][2]) / 2; ctx.strokeStyle = rgba(INKC, (.08 + .14 * clamp((z + 1) / 2)) * netA); ctx.beginPath(); ctx.moveTo(NS[a][0], NS[a][1]); ctx.lineTo(NS[b][0], NS[b][1]); ctx.stroke(); }
+  }
+
+  const fadeIn = clamp(q1 / .05);
+  for (let i = 0; i < NP; i++) {
+    const f = FLY[i], sm = SAMPLES[i], a = P(...sm.p); a[1] += stickTop;
+    const tg = NET.tgt[i];
+    let b;
+    if (tg.n !== undefined) { const n = NS[tg.n]; b = [n[0] + tg.jx * L.artR, n[1] + tg.jy * L.artR]; }
+    else { const [e0, e1] = NET.edges[tg.e]; b = [lerp(NS[e0][0], NS[e1][0], tg.u), lerp(NS[e0][1], NS[e1][1], tg.u)]; }
+    const g = GAL[i], ga = g.a + grot, c = [gcx + Math.cos(ga) * g.r * GR, gcy + (Math.sin(ga) * g.r * .42 + g.y) * GR];
+    const l1 = ease(clamp((q1 - f.d1) / .65)), l2 = ease(clamp((q2 - f.d2) / .65));
+    let x = lerp(a[0], b[0], l1) + Math.sin(l1 * Math.PI) * f.b1 * H * .35, y = lerp(a[1], b[1], l1);
+    x = lerp(x, c[0], l2) + Math.sin(l2 * Math.PI) * f.b2 * W * .3; y = lerp(y, c[1], l2);
+    const col = mixC(sm.c, g.c, l2), sz = f.sz * (1 + l2 * .2);
+    ctx.fillStyle = rgba(col, (.75 + .2 * l2) * fadeIn);
+    ctx.fillRect(x - sz / 2, y - sz / 2, sz, sz);
+  }
+
+  if (netA > 0) {
+    NET.nodes.forEach((n, i) => { const p = NS[i], z = clamp((p[2] + 1) / 2); ctx.fillStyle = rgba(n.c, (.35 + .6 * z) * netA); ctx.beginPath(); ctx.arc(p[0], p[1], n.s * (.7 + .5 * z), 0, TAU); ctx.fill(); });
+    for (const sg of NET.signals) { const [a, b] = NET.edges[sg.e], u = (t * sg.sp + sg.ph) % 1, x = lerp(NS[a][0], NS[b][0], u), y = lerp(NS[a][1], NS[b][1], u); ctx.fillStyle = rgba(sg.c, netA); ctx.beginPath(); ctx.arc(x, y, 2.2, 0, TAU); ctx.fill(); }
+  }
+}
+
+let sy = scrollY, last = -1;
+function frame(now) {
+  const t = reduce ? 2 : now / 1000;
+  sy += (scrollY - sy) * (reduce ? 1 : .14); if (Math.abs(scrollY - sy) < .2) sy = scrollY;
+  const range = L.heroH - H, p = clamp((sy - L.heroTop) / range);
+  const q1 = clamp((1 - (L.whoTop - sy) / H) / .85), q2 = clamp((1 - (L.galTop - sy) / H) / .75);
+  const s = heroState(p, t), stickTop = Math.min(0, L.heroTop + range - sy);
+  if (stickTop > -H) drawHero(s, t, 1 - clamp(q1 / .06));
+  drawOverlay(s, t, q1, q2, sy, stickTop);
+
+  // the words
+  const a = 1 - clamp((p - .02) / .22), b = clamp((p - .62) / .2);
+  heroA.style.opacity = a; heroA.style.transform = `translateY(${(1 - a) * -80}px)`; heroA.style.visibility = a > 0 ? '' : 'hidden';
+  heroB.style.opacity = b; heroB.style.transform = `translateY(calc(${W < 760 ? 0 : -50}% + ${(1 - b) * 70}px))`;
+
+  // the guide
+  const step = q2 > .05 ? 5 : q1 > .95 ? 4 : q1 > 0 ? 3 : p > .5 ? 2 : p > .1 ? 1 : 0;
+  if (step !== last) { steps.forEach((li, i) => li.classList.toggle('on', i === step)); last = step; }
+  track.style.width = `${clamp(sy / (document.documentElement.scrollHeight - H)) * 100}%`;
+  requestAnimationFrame(frame);
+}
+
+layout();
+// #v=1.5 opens the page scrolled 1.5 screens down (handy for checking a moment of the story)
+const jump = location.hash.match(/v=([\d.]+)/);
+if (jump) { history.scrollRestoration = 'manual'; scrollTo(0, +jump[1] * H); sy = scrollY; }
+addEventListener('resize', layout);
+document.fonts?.ready.then(layout);
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

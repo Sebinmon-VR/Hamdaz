@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hero Options – Hamdaz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  /* Hamdaz home hero: options to replace the AI chip. Each card plays a rough live sketch of the idea
+     (2D canvas, not the final 3D). Pick one and tell Claude its number. */
+  :root {
+    --bg: #061423; --panel: #0b1d31; --line: rgba(238, 246, 251, 0.12); --fg: #eef6fb; --fg2: #9fb0c2;
+    --cyan: #30c1f8; --pink: #fb4994; --violet: #6b50f6;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--fg); font: 15px/1.55 Inter, system-ui, sans-serif; padding: 48px 16px 140px; }
+  main { max-width: 1240px; margin: 0 auto; display: grid; gap: 36px; }
+  header.top { display: grid; gap: 12px; max-width: 760px; }
+  .eyebrow { font: 500 11.5px/1 "JetBrains Mono", ui-monospace, monospace; letter-spacing: 0.1em; text-transform: uppercase; color: var(--pink); }
+  h1 { font: 700 clamp(28px, 4vw, 46px)/1.08 Archivo, Inter, sans-serif; letter-spacing: -0.02em; }
+  header.top p { color: var(--fg2); }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .legend span { font-size: 12.5px; color: var(--fg2); padding: 4px 10px; border: 1px solid var(--line); border-radius: 99px; }
+
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+
+  .card { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: border-color .25s, box-shadow .25s; }
+  .card.is-picked { border-color: var(--cyan); box-shadow: 0 0 0 1px var(--cyan), 0 18px 60px -20px rgba(48, 193, 248, .45); }
+  .shot { position: relative; aspect-ratio: 16 / 9; background: #061423; }
+  .shot canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .shot .hl { position: absolute; left: 5%; bottom: 9%; pointer-events: none; }
+  .shot .hl b { display: block; font: 700 clamp(15px, 2.3vw, 26px)/1.02 Archivo, Inter, sans-serif; letter-spacing: -0.02em; color: #fff; text-shadow: 0 2px 18px rgba(0,0,0,.6); }
+  .shot .hl i { display: block; font: 500 9.5px/1 "JetBrains Mono", monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--fg2); font-style: normal; margin-bottom: 7px; }
+  .shot .num { position: absolute; top: 12px; left: 12px; font: 500 11px/1 "JetBrains Mono", monospace; padding: 5px 8px; border-radius: 99px; background: rgba(6, 20, 35, .7); border: 1px solid var(--line); }
+  .shot .badge { position: absolute; top: 12px; right: 12px; font: 500 11px/1 "JetBrains Mono", monospace; padding: 5px 9px; border-radius: 99px; background: var(--cyan); color: #061423; }
+  .shot .badge--built { background: #fff; }
+
+  .body { display: grid; gap: 10px; padding: 20px 22px 22px; flex: 1; align-content: start; }
+  .body h2 { font: 600 20px/1.2 Archivo, Inter, sans-serif; letter-spacing: -0.01em; }
+  .body h2 b { color: var(--cyan); font-weight: 700; margin-right: 8px; }
+  .body p { color: var(--fg2); }
+  dl { display: grid; grid-template-columns: 92px 1fr; gap: 6px 12px; font-size: 13.5px; margin-top: 2px; }
+  dt { font: 500 10.5px/1.9 "JetBrains Mono", monospace; letter-spacing: .06em; text-transform: uppercase; color: var(--fg2); }
+  dd { margin: 0; color: var(--fg); }
+  .pick { margin-top: 8px; justify-self: start; display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 18px; border-radius: 99px; border: 1px solid var(--line); background: transparent; color: var(--fg); font: 600 14px Inter, sans-serif; cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+  .pick:hover { border-color: var(--fg); }
+  .card.is-picked .pick { background: var(--cyan); border-color: var(--cyan); color: #061423; }
+
+  .skip { border-top: 1px solid var(--line); padding-top: 24px; color: var(--fg2); font-size: 14px; display: grid; gap: 6px; }
+  .skip strong { color: var(--fg); }
+
+  .bar { position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 140%); transition: transform .45s cubic-bezier(.16,1,.3,1); display: flex; align-items: center; gap: 14px; padding: 10px 10px 10px 20px; border-radius: 99px; background: #fff; color: #061423; box-shadow: 0 20px 60px rgba(0,0,0,.5); max-width: calc(100vw - 32px); }
+  .bar.is-on { transform: translate(-50%, 0); }
+  .bar p { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar button { height: 38px; padding: 0 16px; border-radius: 99px; border: 0; background: #061423; color: #fff; font: 600 13px Inter, sans-serif; cursor: pointer; flex: none; }
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <p class="eyebrow">Hamdaz · Home hero</p>
+    <h1>What could replace the AI chip?</h1>
+    <p>Eight ideas for the first thing visitors see. Each preview is a quick live sketch, not the finished 3D. All of them keep the navy, cyan and pink, and each one can break into particles that flow down into the "Who we are" network, as the chip does now.</p>
+    <div class="legend"><span>Pick one with "Choose this", then tell me the number</span><span>★ = my recommendation</span></div>
+  </header>
+
+  <section class="grid" id="grid"></section>
+
+  <div class="skip">
+    <p><strong>Not listed because other pages already use them:</strong> people network (Who We Are), stacked glass platforms (What We Do), ribbons of light (How We Do), night Earth with the Abu Dhabi–India arc (Contact). Reusing one of them on Home would repeat that page's story.</p>
+  </div>
+</main>
+
+<div class="bar" id="bar" role="status" aria-live="polite"><p id="barText"></p><button type="button" id="copy">Copy</button></div>
+
+<script>
+/* ---------------------------------------------------------------- the options */
+const OPTIONS = [
+  { id: 'orbit', title: 'Orbit core', star: true,
+    text: 'A glowing AI core with four tilted orbits around it, one per service: Generative AI, Cloud, Data and Security. A bright satellite runs along each orbit carrying its label.',
+    scroll: 'The camera rises from a side view to above, so the orbits open out into rings.',
+    why: 'Shows the four service areas at a glance, and the chip\'s current labels move over as they are.',
+    build: 'New 3D element, simple shapes' },
+  { id: 'neural', title: 'Neural sphere',
+    text: 'A slowly turning sphere of neurons joined by fine lines, with pulses of light firing between them. Four neurons are labelled with the services.',
+    scroll: 'The camera moves into the sphere. Its neurons become the particles that form the people network below.',
+    why: 'Reads as "AI" straight away. It also sets up the network below, because the brain turns into people.',
+    build: 'New 3D element, close to the existing network code' },
+  { id: 'morph', title: 'Shape-shifting particles',
+    text: 'One cloud of particles keeps reshaping itself: "AI", then a cloud, a chart and a shield, in step with the highlights ticker.',
+    scroll: 'The particles hold the last shape, then pour down into the network.',
+    why: 'Shows the whole range of services in one element, and it is made of particles from the start.',
+    build: 'New, uses the existing particle system' },
+  { id: 'logo', title: 'Logo in particles',
+    text: 'The Hamdaz logo mark built from thousands of points of light. It turns gently, comes apart and pulls back together.',
+    scroll: 'The logo breaks apart, and the pieces stream down into the network.',
+    why: 'The strongest brand moment. The preview uses a stand-in mark; the real build would use the logo.',
+    build: 'New, small; samples logo.svg' },
+  { id: 'terrain', title: 'Data landscape',
+    text: 'A rolling landscape of points moving like a slow sea of data, with columns of light rising where each service sits.',
+    scroll: 'The camera glides forward over the landscape and comes down toward the light.',
+    why: 'Calm and cinematic, and the headline stays easy to read.',
+    build: 'New 3D element, light to run' },
+  { id: 'tunnel', title: 'Data tunnel',
+    text: 'Streams of light rush past as if flying through a fibre-optic tunnel. Gates labelled with the services pass by.',
+    scroll: 'Scrolling moves you forward through the tunnel, and the last gate opens onto the page.',
+    why: 'Fits "Delivering the Digital Future", with a strong sense of speed and forward motion.',
+    build: 'New, simple' },
+  { id: 'city', title: 'Smart city',
+    text: 'A city of glowing towers seen from above at an angle, with data rising through the buildings and arcs linking the rooftops.',
+    scroll: 'The camera tilts from street level up to a view of the whole city.',
+    why: 'Fits Abu Dhabi and ties the work to real places and businesses.',
+    build: 'New 3D element, most detailed' },
+  { id: 'scan', title: 'Scan horizon', built: true,
+    text: 'Dark meets light at a glowing blue edge, with an orb on the horizon. AI elements (chip, brain, eye, data, cloud, lock, agent) are tracked in boxes with live readouts.',
+    scroll: 'The particles stream down from the orb.',
+    why: 'Already built. Switching to it is a one-line change in src/pages/home.mjs.',
+    build: 'Already in the code' },
+];
+
+/* ---------------------------------------------------------------- helpers */
+const TAU = Math.PI * 2;
+const CY = [48, 193, 248], PK = [251, 73, 148], VI = [107, 80, 246], WH = [238, 246, 251];
+const rgba = (c, a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const ease = (t) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const rotY = (p, a) => { const c = Math.cos(a), s = Math.sin(a); return [p[0] * c + p[2] * s, p[1], -p[0] * s + p[2] * c]; };
+const rotX = (p, a) => { const c = Math.cos(a), s = Math.sin(a); return [p[0], p[1] * c - p[2] * s, p[1] * s + p[2] * c]; };
+// perspective: camera on +z at `dist`, looking at the origin
+function proj(p, v) { const k = v.f / (v.dist - p[2]); return [v.cx + p[0] * k, v.cy - p[1] * k, k / (v.f / v.dist)]; }
+function glow(ctx, x, y, r, c, a) {
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0, rgba(c, a)); g.addColorStop(1, rgba(c, 0));
+  ctx.fillStyle = g; ctx.fillRect(x - r, y - r, r * 2, r * 2);
+}
+function dot(ctx, x, y, r, c, a) { ctx.fillStyle = rgba(c, a); ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); }
+function label(ctx, x, y, title, sub, a, H, side = 1) {
+  if (a <= 0.01) return;
+  const s = H / 400, lx = x + side * 26 * s, ly = y - 18 * s;
+  ctx.globalAlpha = a;
+  ctx.strokeStyle = 'rgba(238,246,251,.45)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(lx, ly); ctx.lineTo(lx + side * 14 * s, ly); ctx.stroke();
+  ctx.textAlign = side > 0 ? 'left' : 'right';
+  ctx.fillStyle = '#fff'; ctx.font = `600 ${Math.round(11 * s)}px Inter, sans-serif`;
+  ctx.fillText(title, lx + side * 18 * s, ly + 4 * s);
+  if (sub) { ctx.fillStyle = 'rgba(159,176,194,1)'; ctx.font = `500 ${Math.round(8.5 * s)}px "JetBrains Mono", monospace`; ctx.fillText(sub, lx + side * 18 * s, ly + 16 * s); }
+  ctx.globalAlpha = 1; ctx.textAlign = 'left';
+}
+// sample points from a shape drawn on a small offscreen canvas, mapped to -1..1
+function sampleShape(draw, n, seed, size = 220) {
+  const c = document.createElement('canvas'); c.width = c.height = size;
+  const x = c.getContext('2d'); x.fillStyle = '#fff'; x.strokeStyle = '#fff'; draw(x, size);
+  const d = x.getImageData(0, 0, size, size).data, pool = [];
+  for (let j = 0; j < size; j += 2) for (let i = 0; i < size; i += 2) if (d[(j * size + i) * 4 + 3] > 128) pool.push([i / size * 2 - 1, -(j / size * 2 - 1)]);
+  const r = rng(seed), out = [];
+  for (let k = 0; k < n; k++) { const p = pool[Math.floor(r() * pool.length)] || [0, 0]; out.push([p[0] + (r() - .5) * .012, p[1] + (r() - .5) * .012, (r() - .5) * .18]); }
+  return out;
+}
+const SERVICES = [['Generative AI', 'Custom GPT · Bots'], ['Cloud', 'Azure · AWS · GCP'], ['Data & Analytics', 'Predictive insight'], ['Security', 'Information security']];
+
+/* ---------------------------------------------------------------- the sketches */
+const SCENES = {
+  orbit: {
+    init() {
+      const r = rng(3);
+      this.rings = [
+        { r: .62, tilt: 1.25, yaw: .2, sp: .55, c: CY },
+        { r: .86, tilt: 1.42, yaw: -.7, sp: -.4, c: VI },
+        { r: 1.1, tilt: 1.1, yaw: 1.2, sp: .3, c: CY },
+        { r: 1.34, tilt: 1.5, yaw: 2.3, sp: -.22, c: PK },
+      ];
+      this.dust = Array.from({ length: 260 }, () => { const a = r() * TAU, b = Math.acos(2 * r() - 1), d = .4 + r() * 1.4; return [d * Math.sin(b) * Math.cos(a), d * Math.cos(b), d * Math.sin(b) * Math.sin(a), r()]; });
+    },
+    draw(ctx, W, H, t) {
+      const v = { cx: W * .6, cy: H * .46, f: H * .95, dist: 4 }, spin = t * .06;
+      const place = (p, ring) => rotY(rotX(p, ring.tilt), ring.yaw + spin);
+      for (const d of this.dust) { const p = proj(rotY(d, spin * 1.4), v); dot(ctx, p[0], p[1], .7 * p[2], WH, .12 + .2 * d[3]); }
+      const back = [], front = [];
+      this.rings.forEach((ring, ri) => {
+        for (let i = 0; i < 120; i++) {
+          const a0 = i / 120 * TAU, a1 = (i + 1) / 120 * TAU;
+          const p0 = place([ring.r * Math.cos(a0), 0, ring.r * Math.sin(a0)], ring), p1 = place([ring.r * Math.cos(a1), 0, ring.r * Math.sin(a1)], ring);
+          (p0[2] < 0 ? back : front).push([proj(p0, v), proj(p1, v), ring.c, p0[2]]);
+        }
+        const a = t * ring.sp + ri * 1.7, sp = place([ring.r * Math.cos(a), 0, ring.r * Math.sin(a)], ring);
+        (sp[2] < 0 ? back : front).push(['sat', proj(sp, v), ring.c, sp[2], ri]);
+      });
+      const drawList = (list) => list.forEach((s) => {
+        if (s[0] === 'sat') {
+          const [, p, c, z, ri] = s, a = z < 0 ? .45 : 1;
+          glow(ctx, p[0], p[1], 16 * p[2], c, .55 * a); dot(ctx, p[0], p[1], 2.6 * p[2], WH, a);
+          label(ctx, p[0], p[1], SERVICES[ri][0], SERVICES[ri][1], z < -.2 ? .25 : .95, H, p[0] > v.cx ? 1 : -1);
+        } else {
+          ctx.strokeStyle = rgba(s[2], s[3] < 0 ? .16 : .55); ctx.lineWidth = s[3] < 0 ? .8 : 1.3;
+          ctx.beginPath(); ctx.moveTo(s[0][0], s[0][1]); ctx.lineTo(s[1][0], s[1][1]); ctx.stroke();
+        }
+      });
+      drawList(back);
+      const pulse = 1 + .08 * Math.sin(t * 2.2);
+      glow(ctx, v.cx, v.cy, H * .32 * pulse, CY, .22);
+      glow(ctx, v.cx, v.cy, H * .13 * pulse, CY, .7);
+      glow(ctx, v.cx, v.cy, H * .05, WH, 1);
+      drawList(front);
+    },
+  },
+
+  neural: {
+    init() {
+      const r = rng(11), N = 240, pts = [];
+      for (let i = 0; i < N; i++) { const y = 1 - (i + .5) / N * 2, rad = Math.sqrt(1 - y * y), a = i * 2.39996, R = 1 + (r() - .5) * .22; pts.push([Math.cos(a) * rad * R, y * R, Math.sin(a) * rad * R]); }
+      for (let i = 0; i < 40; i++) { const a = r() * TAU, b = Math.acos(2 * r() - 1), R = .35 + r() * .4; pts.push([R * Math.sin(b) * Math.cos(a), R * Math.cos(b), R * Math.sin(b) * Math.sin(a)]); }
+      const edges = new Set();
+      pts.forEach((p, i) => {
+        pts.map((q, j) => [j, (p[0] - q[0]) ** 2 + (p[1] - q[1]) ** 2 + (p[2] - q[2]) ** 2]).filter(([j]) => j !== i).sort((a, b) => a[1] - b[1]).slice(0, 3)
+          .forEach(([j]) => edges.add(i < j ? i + ',' + j : j + ',' + i));
+      });
+      this.pts = pts; this.edges = [...edges].map((e) => e.split(',').map(Number));
+      this.pulses = Array.from({ length: 34 }, () => ({ e: Math.floor(r() * this.edges.length), off: r(), sp: .5 + r() * .8, c: r() < .3 ? PK : CY }));
+      this.tags = [12, 70, 130, 196];
+    },
+    draw(ctx, W, H, t) {
+      const v = { cx: W * .6, cy: H * .47, f: H * .82, dist: 4 }, P = this.pts.map((p) => rotX(rotY(p, t * .16), .3)), S = P.map((p) => proj(p, v));
+      glow(ctx, v.cx, v.cy, H * .45, VI, .12);
+      ctx.lineWidth = 1;
+      for (const [a, b] of this.edges) { const z = (P[a][2] + P[b][2]) / 2; ctx.strokeStyle = rgba(CY, .05 + .22 * clamp((z + 1) / 2)); ctx.beginPath(); ctx.moveTo(S[a][0], S[a][1]); ctx.lineTo(S[b][0], S[b][1]); ctx.stroke(); }
+      S.forEach((s, i) => { const z = clamp((P[i][2] + 1) / 2); dot(ctx, s[0], s[1], (.8 + 1.4 * z) * s[2], z > .6 ? WH : CY, .3 + .6 * z); });
+      for (const p of this.pulses) {
+        const [a, b] = this.edges[p.e], k = (t * p.sp + p.off) % 1, x = S[a][0] + (S[b][0] - S[a][0]) * k, y = S[a][1] + (S[b][1] - S[a][1]) * k;
+        const z = clamp((P[a][2] + 1) / 2); glow(ctx, x, y, 9 * S[a][2], p.c, .5 * z + .1); dot(ctx, x, y, 1.4, WH, .5 + .5 * z);
+        if (k > .97) p.e = Math.floor(((p.e * 7919 + 13) % this.edges.length));
+      }
+      this.tags.forEach((i, k) => { const z = P[i][2]; glow(ctx, S[i][0], S[i][1], 14, k % 2 ? PK : CY, clamp(z * 1.2) * .7); label(ctx, S[i][0], S[i][1], SERVICES[k][0], SERVICES[k][1], clamp((z - .05) * 2.2), H, S[i][0] > v.cx ? 1 : -1); });
+    },
+  },
+
+  morph: {
+    init() {
+      const N = 1100;
+      const ai = (x, s) => { x.font = `900 ${s * .62}px Archivo, "Arial Black", sans-serif`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('AI', s / 2, s / 2 + s * .03); };
+      const cloud = (x, s) => { x.beginPath(); [[.32, .58, .17], [.5, .45, .23], [.68, .56, .17], [.45, .62, .15], [.58, .63, .15]].forEach(([a, b, r]) => { x.moveTo(a * s + r * s, b * s); x.arc(a * s, b * s, r * s, 0, TAU); }); x.fill(); x.fillRect(s * .3, s * .58, s * .4, s * .17); };
+      const chart = (x, s) => { [.32, .5, .42, .7].forEach((h, i) => x.fillRect(s * (.18 + i * .17), s * (.85 - h), s * .11, s * h)); };
+      const shield = (x, s) => { x.beginPath(); x.moveTo(s * .5, s * .1); x.lineTo(s * .82, s * .22); x.quadraticCurveTo(s * .82, s * .72, s * .5, s * .92); x.quadraticCurveTo(s * .18, s * .72, s * .18, s * .22); x.closePath(); x.fill(); x.globalCompositeOperation = 'destination-out'; x.lineWidth = s * .05; x.beginPath(); x.moveTo(s * .37, s * .5); x.lineTo(s * .47, s * .61); x.lineTo(s * .65, s * .4); x.stroke(); };
+      this.shapes = [ai, cloud, chart, shield].map((f, i) => sampleShape(f, N, 21 + i));
+      const r = rng(5); this.col = Array.from({ length: N }, () => r() < .18 ? PK : r() < .12 ? VI : CY); this.ph = Array.from({ length: N }, () => r() * TAU);
+    },
+    draw(ctx, W, H, t) {
+      const v = { cx: W * .62, cy: H * .45, f: H * 1.45, dist: 4 }, per = 3.4, k = Math.floor(t / per), f = (t % per) / per;
+      const A = this.shapes[k % 4], B = this.shapes[(k + 1) % 4], m = ease(clamp((f - .62) / .38)), sw = Math.sin(m * Math.PI);
+      glow(ctx, v.cx, v.cy, H * .4, CY, .1);
+      for (let i = 0; i < A.length; i++) {
+        const ph = this.ph[i], p = [A[i][0] + (B[i][0] - A[i][0]) * m + sw * .35 * Math.cos(ph + t), A[i][1] + (B[i][1] - A[i][1]) * m + sw * .35 * Math.sin(ph * 1.3 + t), A[i][2] + sw * .5 * Math.sin(ph)];
+        const q = proj(rotY([p[0] + .006 * Math.sin(t * 2 + ph), p[1], p[2]], Math.sin(t * .5) * .35), v);
+        dot(ctx, q[0], q[1], 1.15 * q[2], this.col[i], .85);
+      }
+      const name = SERVICES[(m > .5 ? k + 1 : k) % 4];
+      ctx.fillStyle = 'rgba(159,176,194,1)'; ctx.font = `500 ${Math.round(H * .024)}px "JetBrains Mono", monospace`; ctx.textAlign = 'center';
+      ctx.fillText(`0${((m > .5 ? k + 1 : k) % 4) + 1} / 04 · ${name[0].toUpperCase()}`, v.cx, H * .9); ctx.textAlign = 'left';
+    },
+  },
+
+  logo: {
+    init() {
+      // stand-in mark: an "H" with a slanted bar, to be swapped for assets/img/logo.svg in the real build
+      const mark = (x, s) => { const u = s / 10; x.beginPath(); x.roundRect(u * 1.6, u * 1.4, u * 1.9, u * 7.2, u * .5); x.roundRect(u * 6.5, u * 1.4, u * 1.9, u * 7.2, u * .5); x.fill(); x.beginPath(); x.moveTo(u * 3.3, u * 5.6); x.lineTo(u * 6.7, u * 3.6); x.lineTo(u * 6.7, u * 5.2); x.lineTo(u * 3.3, u * 7.2); x.closePath(); x.fill(); };
+      const r = rng(8); this.pts = sampleShape(mark, 1300, 4);
+      this.scatter = this.pts.map(() => { const a = r() * TAU, b = Math.acos(2 * r() - 1), d = 1.2 + r() * 1.4; return [d * Math.sin(b) * Math.cos(a), d * Math.cos(b), d * Math.sin(b) * Math.sin(a)]; });
+      this.col = this.pts.map((p) => (p[0] > -.33 && p[0] < .35 ? (r() < .7 ? PK : CY) : (r() < .9 ? CY : WH)));
+      this.ph = this.pts.map(() => r() * TAU);
+    },
+    draw(ctx, W, H, t) {
+      const v = { cx: W * .62, cy: H * .45, f: H * 1.25, dist: 4 }, per = 9, f = (t % per) / per;
+      const m = f < .18 ? ease(f / .18) : f > .82 ? 1 - ease((f - .82) / .18) : 1;
+      glow(ctx, v.cx, v.cy, H * .42 * (.6 + .4 * m), CY, .16 * m + .04);
+      const rot = Math.sin(t * .45) * .55;
+      this.pts.forEach((p, i) => {
+        const s = this.scatter[i], ph = this.ph[i];
+        const q = rotY([s[0] + (p[0] - s[0]) * m + .01 * Math.sin(t * 1.7 + ph), s[1] + (p[1] - s[1]) * m + .01 * Math.cos(t * 1.3 + ph), s[2] + (p[2] - s[2]) * m], rot);
+        const pp = proj(q, v); dot(ctx, pp[0], pp[1], 1.1 * pp[2], this.col[i], .4 + .5 * m);
+      });
+    },
+  },
+
+  terrain: {
+    init() { this.pillars = [[-1.6, -2.2], [-.3, -3.6], [.9, -1.2], [2.6, -4.2]]; },
+    draw(ctx, W, H, t) {
+      const v = { cx: W * .58, cy: H * .36, f: H * .9, dist: 2.4 };
+      const hgt = (x, z) => .2 * Math.sin(x * 1.3 + t * .7) * Math.cos(z * .9 - t * .45) + .12 * Math.sin(x * .5 + z * .7 + t * .3);
+      glow(ctx, v.cx, v.cy, H * .55, VI, .16); glow(ctx, v.cx, v.cy, H * .2, CY, .2);
+      const camY = .62, drift = (t * .35) % .2;
+      for (let j = 0; j < 40; j++) {
+        const z = -7 + j * .2 + drift;
+        for (let i = 0; i < 72; i++) {
+          const x = -3.6 + i * .1, y = hgt(x, z - t * .35), p = proj([x, y - camY, z], v);
+          if (p[2] <= 0) continue; const near = clamp((z + 7) / 8);
+          dot(ctx, p[0], p[1], .5 + 1.4 * near * p[2] * .5, mix(CY, PK, clamp(y * 2.4 + .3)), .12 + .7 * near);
+        }
+      }
+      this.pillars.forEach(([x, z], k) => {
+        const b = proj([x, hgt(x, z - t * .35) - camY, z], v), top = proj([x, 1.3 - camY, z], v);
+        const g = ctx.createLinearGradient(0, b[1], 0, top[1]); g.addColorStop(0, rgba(k % 2 ? PK : CY, .8)); g.addColorStop(1, rgba(k % 2 ? PK : CY, 0));
+        ctx.strokeStyle = g; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(b[0], b[1]); ctx.lineTo(top[0], top[1]); ctx.stroke();
+        glow(ctx, b[0], b[1], 14, k % 2 ? PK : CY, .7);
+        const u = (t * .4 + k * .27) % 1; dot(ctx, b[0], b[1] + (top[1] - b[1]) * u, 1.8, WH, 1 - u);
+        label(ctx, b[0], b[1] + (top[1] - b[1]) * (.4 + k * .15), SERVICES[k][0], '', .9, H, x > 0 ? 1 : -1);
+      });
+    },
+  },
+
+  tunnel: {
+    init() {
+      const r = rng(17);
+      this.p = Array.from({ length: 520 }, () => ({ a: r() * TAU, r: .55 + r() * .9, z0: r() * 14, sp: .9 + r() * 1.4, c: r() < .62 ? CY : r() < .5 ? VI : PK }));
+    },
+    draw(ctx, W, H, t) {
+      const v = { cx: W * .6, cy: H * .46, f: H * .55, dist: 2 };
+      glow(ctx, v.cx, v.cy, H * .35, VI, .25); glow(ctx, v.cx, v.cy, H * .08, WH, .9);
+      ctx.lineCap = 'round';
+      for (const q of this.p) {
+        const z = ((q.z0 + t * q.sp * 2.2) % 14) - 12.2, a = q.a + t * .08;
+        const p0 = proj([q.r * Math.cos(a), q.r * Math.sin(a), z - .45 * q.sp], v), p1 = proj([q.r * Math.cos(a), q.r * Math.sin(a), z], v);
+        const near = clamp((z + 12) / 13);
+        ctx.strokeStyle = rgba(q.c, .1 + .8 * near); ctx.lineWidth = .4 + 2.2 * near * near;
+        ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]); ctx.stroke();
+      }
+      for (let k = 0; k < 4; k++) {
+        const z = ((t * 1.6 + k * 3.5) % 14) - 12.2, near = clamp((z + 12) / 13), c = proj([0, 0, z], v), R = proj([1.45, 0, z], v)[0] - c[0];
+        ctx.strokeStyle = rgba(k % 2 ? PK : CY, .65 * near * (1 - clamp((z - 1) / .8))); ctx.lineWidth = 1 + 2 * near;
+        ctx.beginPath(); ctx.arc(c[0], c[1], R, 0, TAU); ctx.stroke();
+        const ang = -.6 + k * 1.57, lx = c[0] + R * Math.cos(ang), ly = c[1] + R * Math.sin(ang);
+        ctx.globalAlpha = clamp((near - .55) * 3) * (1 - clamp((z - .8) / .8)); ctx.fillStyle = '#fff'; ctx.font = `600 ${Math.round(9 + 14 * near)}px "JetBrains Mono", monospace`;
+        ctx.fillText(SERVICES[k][0].toUpperCase(), lx + 8, ly); ctx.globalAlpha = 1;
+      }
+    },
+  },
+
+  city: {
+    init() {
+      const r = rng(29); this.b = [];
+      for (let i = -5; i <= 4; i++) for (let j = -5; j <= 4; j++) {
+        const d = Math.hypot(i + .5, j + .5), h = r() < .1 ? 0 : (.6 + r() * 2.2) * (1.6 - d / 6) + (d < 2 && r() < .5 ? 3 : 0);
+        if (h > .2) this.b.push({ i, j, h, s: .55 + r() * .2, pk: r() < .12 });
+      }
+      this.b.sort((a, b) => (a.i + a.j) - (b.i + b.j));
+      const tall = [...this.b].sort((a, b) => b.h - a.h).slice(0, 8); this.arcs = tall.slice(0, 7).map((a, k) => [a, tall[k + 1]]);
+      this.risers = this.b.filter(() => r() < .18);
+    },
+    draw(ctx, W, H, t) {
+      const u = H * .043, cx = W * .62, cy = H * .52;
+      const P = (a, b, h) => [cx + (a - b) * u * .866, cy + (a + b) * u * .5 - h * u];
+      glow(ctx, cx, cy - H * .1, H * .55, VI, .14);
+      ctx.strokeStyle = 'rgba(48,193,248,.08)'; ctx.lineWidth = 1;
+      for (let k = -6; k <= 6; k++) { let a = P(k, -6, 0), b = P(k, 6, 0); ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke(); a = P(-6, k, 0); b = P(6, k, 0); ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke(); }
+      const poly = (pts, fill, stroke) => { ctx.beginPath(); pts.forEach((p, k) => k ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); ctx.strokeStyle = stroke; ctx.stroke(); };
+      for (const b of this.b) {
+        const { i, j, s } = b, h = b.h, wave = clamp(Math.sin((i + j) * .55 - t * 1.6) * 1.4 - .4), c = b.pk ? PK : CY;
+        poly([P(i, j + s, 0), P(i + s, j + s, 0), P(i + s, j + s, h), P(i, j + s, h)], '#0a1f33', rgba(c, .25 + .3 * wave));
+        poly([P(i + s, j, 0), P(i + s, j + s, 0), P(i + s, j + s, h), P(i + s, j, h)], '#0d2840', rgba(c, .25 + .3 * wave));
+        poly([P(i, j, h), P(i + s, j, h), P(i + s, j + s, h), P(i, j + s, h)], rgba(c, .1 + .35 * wave), rgba(c, .5 + .5 * wave));
+      }
+      this.risers.forEach((b, k) => { const f = (t * .5 + k * .37) % 1, p = P(b.i + b.s, b.j + b.s, b.h * f); dot(ctx, p[0], p[1], 1.6, WH, .9 * (1 - f)); });
+      this.arcs.forEach(([a, b], k) => {
+        const p0 = P(a.i + a.s / 2, a.j + a.s / 2, a.h), p1 = P(b.i + b.s / 2, b.j + b.s / 2, b.h), m = [(p0[0] + p1[0]) / 2, Math.min(p0[1], p1[1]) - H * .12];
+        ctx.strokeStyle = rgba(k % 2 ? PK : CY, .45); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.quadraticCurveTo(m[0], m[1], p1[0], p1[1]); ctx.stroke();
+        const f = (t * .35 + k * .19) % 1, x = (1 - f) ** 2 * p0[0] + 2 * (1 - f) * f * m[0] + f * f * p1[0], y = (1 - f) ** 2 * p0[1] + 2 * (1 - f) * f * m[1] + f * f * p1[1];
+        glow(ctx, x, y, 10, k % 2 ? PK : CY, .8); dot(ctx, x, y, 1.6, WH, 1);
+      });
+    },
+  },
+
+  scan: {
+    init() {
+      this.boxes = [['ai_core.chip', .2, .27, 1], ['neural.map', .4, .2, 1], ['data.store', .32, .47, 1], ['vision.eye', .53, .34, 1], ['cloud.node', .79, .42, 0], ['secure.layer', .89, .61, 0], ['agent.model', .8, .74, 0]];
+    },
+    draw(ctx, W, H, t) {
+      const ox = W * .685, oy = H * .5, R = W * .93, pcx = ox - R;
+      ctx.fillStyle = '#f3f5f9'; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = '#03060c'; ctx.beginPath(); ctx.arc(pcx, oy, R, 0, TAU); ctx.fill();
+      ctx.save(); ctx.filter = `blur(${Math.round(H * .03)}px)`; ctx.strokeStyle = 'rgba(31,69,255,.6)'; ctx.lineWidth = H * .08; ctx.beginPath(); ctx.arc(pcx, oy, R + 4, 0, TAU); ctx.stroke(); ctx.restore();
+      const pulse = 1 + .06 * Math.sin(t * 2);
+      glow(ctx, ox, oy, H * .3 * pulse, [47, 86, 255], .55); glow(ctx, ox, oy, H * .1, [230, 236, 255], 1); glow(ctx, ox, oy, H * .035, [255, 255, 255], 1);
+      const s = H / 400;
+      this.boxes.forEach(([name, bx, by, dark], k) => {
+        const x = bx * W + Math.sin(t * .6 + k) * 4 * s, y = by * H + Math.cos(t * .5 + k * 2) * 3 * s, w = 46 * s, c = dark ? 'rgba(238,246,251,.8)' : 'rgba(6,20,35,.8)';
+        ctx.strokeStyle = c; ctx.lineWidth = 1; ctx.strokeRect(x - w / 2, y - w / 2, w, w);
+        ctx.beginPath(); ctx.arc(x, y, 9 * s, 0, TAU); ctx.stroke();
+        ctx.fillStyle = c; ctx.font = `500 ${Math.round(7.5 * s)}px "JetBrains Mono", monospace`;
+        ctx.fillText(name, x - w / 2, y - w / 2 - 5 * s);
+        ctx.fillText(`${(.9 + .09 * Math.sin(t * 1.3 + k)).toFixed(2)}`, x - w / 2, y + w / 2 + 11 * s);
+      });
+    },
+  },
+};
+
+/* ---------------------------------------------------------------- cards, selection, render loop */
+const grid = document.getElementById('grid'), bar = document.getElementById('bar'), barText = document.getElementById('barText');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let picked = null;
+
+OPTIONS.forEach((o, n) => {
+  const card = document.createElement('article');
+  card.className = 'card'; card.dataset.id = o.id;
+  card.innerHTML = `
+    <div class="shot">
+      <canvas></canvas>
+      <div class="hl"><i>+ Hamdaz Technologies</i><b>Delivering the<br>Digital Future</b></div>
+      <span class="num">${String(n + 1).padStart(2, '0')}</span>
+      ${o.star ? '<span class="badge">★ Recommended</span>' : o.built ? '<span class="badge badge--built">Already built</span>' : ''}
+    </div>
+    <div class="body">
+      <h2><b>${n + 1}</b>${o.title}</h2>
+      <p>${o.text}</p>
+      <dl>
+        <dt>On scroll</dt><dd>${o.scroll}</dd>
+        <dt>Why</dt><dd>${o.why}</dd>
+        <dt>Build</dt><dd>${o.build}</dd>
+      </dl>
+      <button class="pick" type="button">Choose this</button>
+    </div>`;
+  grid.appendChild(card);
+  card.querySelector('.pick').addEventListener('click', () => {
+    picked = picked === o.id ? null : o.id;
+    document.querySelectorAll('.card').forEach((c) => c.classList.toggle('is-picked', c.dataset.id === picked));
+    document.querySelectorAll('.pick').forEach((b) => (b.textContent = b.closest('.card').dataset.id === picked ? 'Chosen ✓' : 'Choose this'));
+    barText.textContent = picked ? `Option ${n + 1}: ${o.title}` : '';
+    bar.classList.toggle('is-on', !!picked);
+  });
+  const scene = Object.create(SCENES[o.id]); scene.init();
+  o.canvas = card.querySelector('canvas'); o.scene = scene; o.visible = false;
+});
+
+document.getElementById('copy').addEventListener('click', async (e) => {
+  const text = `Use hero ${barText.textContent}`;
+  try { await navigator.clipboard.writeText(text); e.target.textContent = 'Copied'; } catch { e.target.textContent = 'Copy failed'; }
+  setTimeout(() => (e.target.textContent = 'Copy'), 1400);
+});
+
+const io = new IntersectionObserver((entries) => entries.forEach((en) => { const o = OPTIONS.find((x) => x.canvas === en.target); if (o) o.visible = en.isIntersecting; }), { rootMargin: '100px' });
+OPTIONS.forEach((o) => io.observe(o.canvas));
+
+function render(o, t) {
+  const c = o.canvas, dpr = Math.min(devicePixelRatio || 1, 2), W = c.clientWidth, H = c.clientHeight;
+  if (!W || !H) return;
+  if (c.width !== Math.round(W * dpr) || c.height !== Math.round(H * dpr)) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); }
+  const ctx = c.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.fillStyle = '#061423'; ctx.fillRect(0, 0, W, H);
+  o.scene.draw(ctx, W, H, t);
+  const v = ctx.createRadialGradient(W * .5, H * .5, H * .3, W * .5, H * .5, W * .75); v.addColorStop(0, 'rgba(3,10,18,0)'); v.addColorStop(1, 'rgba(3,10,18,.55)');
+  ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+  const l = ctx.createLinearGradient(0, 0, W * .5, 0); l.addColorStop(0, 'rgba(6,20,35,.55)'); l.addColorStop(1, 'rgba(6,20,35,0)');
+  ctx.fillStyle = l; ctx.fillRect(0, 0, W * .5, H);
+}
+
+const t0 = performance.now();
+function loop(now) { const t = (now - t0) / 1000; OPTIONS.forEach((o) => o.visible && render(o, t)); requestAnimationFrame(loop); }
+document.fonts.ready.then(() => {
+  OPTIONS.forEach((o) => { if (o.id === 'morph') o.scene.init(); }); // re-sample "AI" once the display font is in
+  if (reduce) { OPTIONS.forEach((o) => render(o, 4)); addEventListener('resize', () => OPTIONS.forEach((o) => render(o, 4))); }
+  else requestAnimationFrame(loop);
+});
+</script>
+</body>
+</html>

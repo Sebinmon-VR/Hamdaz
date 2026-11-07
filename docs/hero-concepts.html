@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hero Concepts – Hamdaz</title>
+<style>
+  /* Hamdaz home hero: concept images to choose from. Each card shows the full-size image if it has been
+     saved next to this page (concepts/set-a-xray.png and so on), otherwise the small preview. */
+  :root { --bg: #061423; --panel: #0b1d31; --line: rgba(255,255,255,0.12); --fg: #eef4fa; --fg2: #9fb0c2; --cyan: #30c1f8; --pink: #eb4b96; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--fg); font: 15px/1.55 Inter, system-ui, sans-serif; padding: 48px 24px 80px; }
+  main { max-width: 1180px; margin: 0 auto; display: grid; gap: 40px; }
+  header { display: grid; gap: 10px; }
+  .eyebrow { font: 500 11.5px/1 "JetBrains Mono", ui-monospace, monospace; letter-spacing: 0.1em; text-transform: uppercase; color: var(--pink); }
+  h1 { font-size: clamp(28px, 4vw, 44px); line-height: 1.1; letter-spacing: -0.02em; }
+  header p { color: var(--fg2); max-width: 62ch; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+  .shot { position: relative; background: #000; aspect-ratio: 1680 / 944; }
+  .shot img { width: 100%; height: 100%; object-fit: contain; display: block; image-rendering: auto; }
+  .grid-tags { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); pointer-events: none; }
+  .grid-tags span { align-self: start; justify-self: start; margin: 8px; padding: 2px 7px; border-radius: 99px; background: rgba(6,20,35,0.75); font: 500 11px/1.4 "JetBrains Mono", monospace; color: var(--fg); }
+  .body { display: grid; gap: 10px; padding: 22px 24px 24px; }
+  .body h2 { font-size: 20px; letter-spacing: -0.01em; }
+  .body h2 b { color: var(--cyan); font-weight: 600; margin-right: 8px; }
+  .body p { color: var(--fg2); }
+  .tiles { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tiles span { padding: 4px 10px; border-radius: 99px; border: 1px solid var(--line); font-size: 12.5px; color: var(--fg2); }
+  .tiles span.pick { border-color: var(--cyan); color: var(--fg); }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 18px; border-radius: 99px; background: var(--fg); color: var(--bg); font-weight: 600; font-size: 14px; text-decoration: none; }
+  .btn:hover { background: var(--cyan); }
+  .note { font-size: 13px; color: var(--fg2); }
+  .note code { font: 12px "JetBrains Mono", monospace; color: var(--fg); }
+  @media (max-width: 640px) { .grid-tags span { margin: 3px; font-size: 9px; padding: 1px 5px; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="eyebrow">Hamdaz · Home hero</p>
+    <h1>Concepts for the hero artwork</h1>
+    <p>Three directions, made from your references. Sets A and B are grids of eight tiles (top row 1–4, bottom row 5–8). Tell me a set and tile, for example "Set B, tile 6", and it will be built as the home page hero.</p>
+  </header>
+
+  <article class="card">
+    <div class="shot">
+      <img src="concepts/set-a-xray.png" onerror="this.onerror=null;this.src='concepts/set-a-xray-preview.png'" alt="Set A: eight x-ray subjects with scan annotations">
+      <div class="grid-tags" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+    </div>
+    <div class="body">
+      <h2><b>A</b>X-ray scan</h2>
+      <p>Translucent, glowing x-ray subjects on black, each with scan labels and coordinate boxes.</p>
+      <div class="tiles"><span>1 Peony</span><span>2 Butterfly</span><span>3 Flower spray</span><span>4 Feather</span><span>5 Leaf</span><span>6 Star-shaped bloom</span><span>7 Crystal pyramid</span><span>8 Jellyfish</span></div>
+      <div class="actions"><a class="btn" href="https://www.canva.com/M/MAHaIskzaRE" target="_blank" rel="noopener">Open full size in Canva ↗</a></div>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="shot">
+      <img src="concepts/set-b-light.png" onerror="this.onerror=null;this.src='concepts/set-b-light-preview.png'" alt="Set B: eight iridescent light structures with node annotations">
+      <div class="grid-tags" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+    </div>
+    <div class="body">
+      <h2><b>B</b>Iridescent light structures</h2>
+      <p>Glowing rainbow-light forms with node and annotation overlays. Tile 6, the glowing brain, is the most AI-specific.</p>
+      <div class="tiles"><span>1 Tree</span><span>2 Star burst</span><span>3 Spiral galaxy</span><span>4 Crystal star</span><span>5 Spiral form</span><span class="pick">6 Glowing brain</span><span>7 Light burst</span><span>8 Branching form</span></div>
+      <div class="actions"><a class="btn" href="https://www.canva.com/M/MAHaIuroR9E" target="_blank" rel="noopener">Open full size in Canva ↗</a></div>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="shot">
+      <img src="concepts/set-c-horizon.png" onerror="this.onerror=null;this.src='concepts/set-c-horizon-preview.png'" alt="Set C: a black and white scene meeting at a glowing blue horizon, with tracked data boxes">
+    </div>
+    <div class="body">
+      <h2><b>C</b>The scan horizon</h2>
+      <p>One wide scene: black on the left meeting white on the right at a glowing blue orb, with data boxes and small silhouettes tracked across it. Already shaped for a wide hero.</p>
+      <div class="actions"><a class="btn" href="https://www.canva.com/M/MAHaIox4B84" target="_blank" rel="noopener">Open full size in Canva ↗</a></div>
+    </div>
+  </article>
+
+  <p class="note">The images here are small previews (that is all Canva gives back). To see them full size on this page, download each one from Canva and save it in <code>docs/concepts/</code> as <code>set-a-xray.png</code>, <code>set-b-light.png</code> and <code>set-c-horizon.png</code>, then reload.</p>
+</main>
+</body>
+</html>

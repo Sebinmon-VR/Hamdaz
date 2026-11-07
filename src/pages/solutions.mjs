@@ -1,9 +1,10 @@
 import { products, industries } from '../data.mjs';
 import { pageHero, content, head, btn, tlink, tone, pad2, productImg, gptSection, contactSection } from '../components.mjs';
+import { ldScript, orgNode, officeNodes, breadcrumbNode } from '../blocks.mjs';
 
 const firstSentence = (t) => t.split(/(?<=[.!])\s+/)[0];
 
-const hero = pageHero({ crumb: 'How We Do', eyebrow: products.eyebrow, title: 'How We Do', text: products.intro, scene: 'neural' });
+const hero = pageHero({ crumb: 'How We Do', eyebrow: products.eyebrow, title: 'How We Do', text: products.intro, hero: 'waves' });
 
 const list = `<section class="sec">
   <div class="wrap">
@@ -30,9 +31,9 @@ export default {
   file: 'solutions.html',
   path: 'solutions.html',
   active: 'solutions',
-  scene: true,
-  title: 'Products',
-  description:
-    'Hamdaz AI products for the Oil and Gas Industry, Small and Medium Enterprises, Schools and Educational Institutions, Online Education and Sports, plus custom ChatGPT solutions for your business.',
+  earth: true,
+  fullTitle: 'AI Products for Industry & Custom ChatGPT | Hamdaz',
+  jsonld: ldScript(orgNode(), breadcrumbNode([['How We Do', 'solutions.html']])),
+  description: 'Hamdaz AI products for oil and gas, SMEs, schools, online education and sports, plus custom ChatGPT assistants trained on your own business data.',
   body: [hero, content(list, gptSection({ idx: '02', full: true }), contactSection({ idx: '03' }))].join('\n'),
 };

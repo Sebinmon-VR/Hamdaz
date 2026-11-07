@@ -1,52 +1,41 @@
-import { site, services, defaultServiceCta, waLink } from '../data.mjs';
+import { site, services, categories, serviceBySlug, areaUrl } from '../data.mjs';
 import { icon } from '../icons.mjs';
-import { pageHero, content, head, btn, pad2, svcImg, techStrip, contactSection } from '../components.mjs';
+import { pageHero, content, head, tlink, pad2, svcCard, techStrip, contactSection } from '../components.mjs';
+import { ldScript, orgNode, breadcrumbNode } from '../blocks.mjs';
 
-const hero = pageHero({ crumb: 'What We Do', eyebrow: 'Services', title: 'What We Do', text: site.description, scene: 'blocks' });
+const hero = pageHero({ crumb: 'What We Do', eyebrow: 'Services', title: 'What We Do', text: 'AI, cloud, cybersecurity, MCC-certified ELV and security systems, audio visual, networking and software development, delivered across the UAE from Abu Dhabi.', hero: 'layers' });
 
-const list = `<section class="sec">
+// One section per category (data.mjs categories), with quick links to each at the top. Each card opens the
+// service's own page (service/<slug>/); the row keeps the old anchor (services.html#<slug>), which main.js
+// forwards to that page.
+let n = 0;
+const row = (s) => `
+      <li class="svc-row" id="${s.slug}">
+        ${svcCard(s, n++)}
+      </li>`;
+
+const intro = `<section class="sec cat-intro">
   <div class="wrap">
-    ${head({ idx: '01', label: 'Services', meta: `${services.length} services`, title: 'Our managed services', text: 'Select a service to see everything it includes.' })}
-    <ol class="index index--full" data-preview>${services
-      .map(
-        (s, i) => `
-      <li class="svc-row" id="${s.slug}" data-img="${svcImg(s)}">
-        <button class="ix" type="button" data-svc-open aria-haspopup="dialog" data-img="${svcImg(s)}"><span class="ix-num">${pad2(i + 1)}</span><span class="ix-title">${s.title}</span><span class="ix-text">${s.summary}</span><span class="ix-go" aria-hidden="true">${icon('arrow-up-right')}</span></button>
-        <div class="svc-detail" hidden>
-          <p class="modal-intro">${s.intro}</p>
-          <ol class="modal-list">${s.items.map(([t, d], k) => `<li><span class="ml-num">${pad2(k + 1)}</span><div><strong>${t}</strong><p>${d}</p></div></li>`).join('')}</ol>
-          <p class="modal-cta">${s.cta || defaultServiceCta}</p>
-        </div>
-      </li>`,
-      )
-      .join('')}
-    </ol>
+    ${head({ idx: '01', label: 'Services', meta: `${services.length} services · ${categories.length} areas`, title: 'Everything we do, in one place', text: 'Pick an area to jump to it. Hover a service to see what it includes, or open it for the full page.' })}
+    <nav class="cat-nav" aria-label="Service areas"><ul>${categories.map((c) => `<li><a href="#${c.id}">${icon(c.icon)}<span>${c.title}</span><b>${pad2(c.services.length)}</b></a></li>`).join('')}</ul></nav>
   </div>
 </section>`;
 
-const modal = `<dialog class="modal" data-modal aria-labelledby="modal-title">
-  <div class="modal-panel" data-lenis-prevent>
-    <button class="modal-close" type="button" data-modal-close aria-label="Close">${icon('x')}</button>
-    <div class="modal-media"><img alt="" data-modal-img width="1000" height="667"></div>
-    <div class="modal-body">
-      <p class="modal-num"><span data-modal-num></span> / ${services.length}</p>
-      <h2 class="modal-title" id="modal-title" data-modal-title></h2>
-      <div data-modal-body></div>
-      <div class="modal-actions">
-        ${btn('Contact Now', 'contact.html', { attrs: 'data-modal-contact' })}
-        ${btn('WhatsApp', waLink('Hello Hamdaz'), { variant: 'ghost', ic: 'whatsapp', ext: true, attrs: 'data-modal-wa' })}
-      </div>
-    </div>
+const list = categories.map((c, ci) => `<section class="sec cat-sec" id="${c.id}">
+  <div class="wrap">
+    ${head({ idx: pad2(ci + 2), label: c.title, meta: `${c.services.length} services`, title: c.title, text: c.text, action: tlink(`About ${c.title}`, areaUrl(c.id)) })}
+    <ol class="svc-grid">${c.services.map((slug) => row(serviceBySlug[slug])).join('')}
+    </ol>
   </div>
-</dialog>`;
+</section>`).join('\n');
 
 export default {
   file: 'services.html',
   path: 'services.html',
   active: 'services',
-  scene: true,
-  title: 'Services',
-  description:
-    'Hamdaz managed services: Generative AI, Data Analytics, Business Process Automation, Data Center, Cloud Services & Migration, Azure, AWS, GCP, OCI, Information Security and more.',
-  body: [hero, content(list, techStrip(), contactSection({ idx: '02' })), modal].join('\n'),
+  earth: true,
+  fullTitle: 'IT, AI, Cybersecurity, ELV & AV Services in Abu Dhabi | Hamdaz',
+  description: `${services.length} services across AI, cloud, cybersecurity, MCC-certified CCTV and ELV, audio visual, networking, software development and IT staffing, from Abu Dhabi.`,
+  jsonld: ldScript(orgNode(), breadcrumbNode([['What We Do', 'services.html']])),
+  body: [hero, content(intro, list, techStrip(), contactSection({ idx: pad2(categories.length + 2) }))].join('\n'),
 };

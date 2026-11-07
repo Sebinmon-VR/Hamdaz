@@ -1,12 +1,12 @@
-import { site, contact, helpCta, gpt, technologies, services, serviceBySlug, featuredServices, products, industries, whoWeAre, needs, waLink } from './data.mjs';
+import { site, contact, heroNodes, helpCta, gpt, technologies, services, serviceBySlug, featuredServices, products, industries, whoWeAre, needs, waLink, clients, partners, svcUrl } from './data.mjs';
 import { icon } from './icons.mjs';
 import { clock } from './layout.mjs';
 
 const [uae, india] = contact.offices;
 export const sentences = (t) => t.split(/(?<=\.)\s+/);
 export const pad2 = (n) => String(n).padStart(2, '0');
-export const svcImg = (s) => `assets/img/svc/${s.slug}.jpg`;
-export const productImg = (p) => `assets/img/products/${p.slug}.jpg`;
+export const svcImg = (s) => `assets/img/svc/${s.slug}.webp`;
+export const productImg = (p) => `assets/img/products/${p.slug}.webp`;
 // The India office is labelled "India", so its small label shows the state instead
 export const officeLabel = (o) => (o.city.toUpperCase() === o.region ? o.coords : o.region);
 
@@ -23,20 +23,22 @@ export const tlink = (label, href, attrs = '') => `<a class="tlink" href="${href
 export const tone = (src, alt = '', w = 1000, h = 667) => `<span class="tone"><img src="${src}" alt="${alt}" loading="lazy" decoding="async" width="${w}" height="${h}"></span>`;
 const go = `<span class="ix-go" aria-hidden="true">${icon('arrow-up-right')}</span>`;
 
-/* ---------- First section of every page (kept as is: dark 3D Earth) ---------- */
-export function earth(mode) {
-  return `<div class="earth earth--${mode}" data-earth="${mode}">
+/* ---------- First section: dark 3D AI chip on a circuit board (assets/js/earth.js) ---------- */
+// hero: which element this page shows (assets/js/heroes/framings.js tells the story)
+export function earth(mode, hero = 'chip') {
+  return `<div class="earth earth--${mode}" data-earth="${mode}" data-element="${hero}">
     <canvas aria-hidden="true"></canvas>
-    <div class="earth-label" data-earth-label="uae"><i></i><span>${uae.city}</span><span class="dim">${uae.coords}</span>${clock(uae)}</div>
-    <div class="earth-label" data-earth-label="india"><i></i><span>${india.city}</span><span class="dim">${india.coords}</span>${clock(india)}</div>
+    ${hero === 'bloom' || hero === 'scan' ? '' : hero === 'globe'
+      ? [uae, india].map((o) => `<div class="earth-label" data-earth-label="${o.id}"><span>${o.city}</span><span class="dim">${o.coords}</span>${clock(o)}</div>`).join('\n    ')
+      : heroNodes.map((n) => `<div class="earth-label"${n.side === 'left' ? ' data-side="left"' : ''} data-earth-label="${n.id}" aria-hidden="true"><span>${n.title}</span><span class="dim">${n.text}</span><span class="tag">${n.tag}</span></div>`).join('\n    ')}
   </div>`;
 }
 
-// scene: 'network' | 'blocks' | 'neural' gives the page its own 3D animation (assets/js/scenes.js);
-// without one, the page shows the 3D Earth.
-export function pageHero({ crumb, eyebrow, title, text, scene }) {
+// Each page's own 3D element: scene: 'network' (assets/js/scenes.js), or hero: 'layers' | 'waves' |
+// 'globe' | 'beacon' | 'spark' | 'chip' (assets/js/earth.js, heroes/).
+export function pageHero({ crumb, eyebrow, title, text, scene, hero = 'chip' }) {
   return `<section class="page-hero" data-dark>
-  ${scene ? `<div class="earth earth--scene" data-scene="${scene}"><canvas aria-hidden="true"></canvas></div>` : earth('page')}
+  ${scene ? `<div class="earth earth--scene" data-scene="${scene}"><canvas aria-hidden="true"></canvas></div>` : earth('page', hero)}
   <div class="page-hero-shade" aria-hidden="true"></div>
   <div class="page-hero-inner">
     <p class="mono crumbs"><a href="index.html">Home</a> <span aria-hidden="true">/</span> ${crumb}</p>
@@ -67,47 +69,81 @@ export function head({ idx, label, meta = '', title, text = '', action = '' }) {
 }
 
 /* ---------- Facts row ---------- */
+// what stands behind the work: partner brands, round-the-clock support and the security-systems certification
 export const facts = (extra = '') => `<div class="facts">
-      <div class="fact" data-reveal><span class="fact-label">Managed services</span><span class="fact-num" data-count="${services.length}">${services.length}</span></div>
-      <div class="fact" data-reveal><span class="fact-label">AI products for industry</span><span class="fact-num" data-count="${industries.length}">${industries.length}</span></div>
-      <div class="fact" data-reveal><span class="fact-label">Countries · UAE &amp; India</span><span class="fact-num" data-count="2">2</span></div>
+      <div class="fact" data-reveal><span class="fact-label">Technology brands we deliver</span><span class="fact-num">100+</span></div>
+      <div class="fact" data-reveal><span class="fact-label">Support · NOC &amp; SOC</span><span class="fact-num">24/7</span></div>
+      <div class="fact" data-reveal><span class="fact-label">Certified for security systems · Abu Dhabi</span><span class="fact-num">MCC</span></div>
       ${extra}
     </div>`;
+export const certLine = `<p class="fact-certs">ISO 9001 · 14001 · 45001 <span>·</span> ICV certified <span>·</span> Registered ADNOC supplier</p>`;
 
 /* ---------- Home 01: who we are ---------- */
-export function intro() {
+// art: the home page shows the people network (assets/js/stage.js) beside the text
+export function intro({ art = false } = {}) {
   const s = sentences(whoWeAre.text);
+  const body = `${head({ idx: '01', label: whoWeAre.eyebrow, meta: `${uae.city} — India`, title: 'Excellence in managed software services', text: s[2] })}
+    ${facts(`<div class="fact fact--text" data-reveal>${certLine}<p>We craft intelligent solutions that propel your business forward.</p>${tlink('More about Hamdaz', 'about.html')}</div>`)}`;
   return `<section class="sec intro">
   <div class="wrap">
-    ${head({ idx: '01', label: whoWeAre.eyebrow, meta: `${uae.city} — India`, title: 'Excellence in managed software services', text: s[2] })}
-    ${facts(`<div class="fact fact--text" data-reveal><p>We craft intelligent solutions that propel your business forward.</p>${tlink('More about Hamdaz', 'about.html')}</div>`)}
+    ${art ? `<div class="intro-grid"><div class="intro-text">${body}</div><div class="intro-art" data-art aria-hidden="true"></div></div>` : body}
   </div>
 </section>`;
 }
 
-/* ---------- Services index: hairline rows with a hover image preview ---------- */
-const ixRow = (s, i) => `<span class="ix-num">${pad2(i + 1)}</span><span class="ix-title">${s.title}</span><span class="ix-text">${s.summary}</span>${go}`;
+/* ---------- Managed services, as cards (What We Do) ---------- */
+// a service as a card: its image, title, summary and main areas; hovering it lists everything included.
+// It links to the service's own page (service/<slug>/).
+export const svcCard = (s, i) => {
+  const areas = s.items.map(([name]) => name).filter((n) => !/^latest technolog/i.test(n));
+  return `<a class="svc-card" href="${svcUrl(s.slug)}" data-reveal>
+        <span class="svc-media">${tone(svcImg(s))}<span class="svc-num">${pad2(i + 1)}</span>
+          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list">${s.items.map(([name]) => `<span>${name}</span>`).join('')}</span></span>
+        </span>
+        <span class="svc-body">
+          <span class="svc-title">${s.title}</span>
+          <span class="svc-text">${s.summary}</span>
+          <span class="svc-tags">${areas.slice(0, 3).map((n) => `<span class="svc-tag">${n}</span>`).join('')}</span>
+          <span class="svc-foot"><span>Explore service</span>${go}</span>
+        </span>
+      </a>`;
+};
 
-export function servicesIndex() {
+/* ---------- Home: our managed services, as a list with a detail panel ---------- */
+// The main services as a compact list; the panel beside it shows the one you point at (image, summary,
+// what it includes), switched by main.js. On phones each row shows its summary instead.
+export function servicesIndex({ idx = '02' } = {}) {
   const featured = featuredServices.map((slug) => serviceBySlug[slug]);
-  const rest = services.filter((s) => !featuredServices.includes(s.slug));
-  const restNames = rest.slice(0, 6).map((s) => s.title.split(/\s[(–]/)[0]).join(', ');
+  const rest = services.length - featured.length;
   return `<section class="sec svc-sec">
   <div class="wrap">
-    ${head({ idx: '02', label: 'What we do', meta: `${services.length} services`, title: 'Our managed services', text: sentences(site.description)[0], action: btn('View all services', 'services.html', { magnetic: true }) })}
-    <ol class="index index--compact" data-preview>
-      ${featured.map((s, i) => `<li><a class="ix" href="services.html#${s.slug}" data-img="${svcImg(s)}">${ixRow(s, i)}</a></li>`).join('\n      ')}
-      <li><a class="ix ix--more" href="services.html"><span class="ix-num">+${rest.length}</span><span class="ix-title">More services</span><span class="ix-text">${restNames} and more.</span>${go}</a></li>
-    </ol>
+    ${head({ idx, label: 'What we do', meta: `${services.length} services`, title: 'Our managed services', text: sentences(site.description)[0], action: btn('View all services', 'services.html', { magnetic: true }) })}
+    <div class="svx" data-svx>
+      <ol class="svx-list">
+        ${featured.map((s, i) => `<li><a class="svx-row${i ? '' : ' is-on'}" href="${svcUrl(s.slug)}" data-svx-row="${i}"><span class="svx-num">${pad2(i + 1)}</span><span class="svx-name"><span class="svx-title">${s.title}</span><span class="svx-text">${s.summary}</span></span><span class="svx-go" aria-hidden="true">${icon('arrow-right')}</span></a></li>`).join('\n        ')}
+        <li><a class="svx-row svx-row--more" href="services.html"><span class="svx-num">+${rest}</span><span class="svx-name"><span class="svx-title">More services</span></span><span class="svx-go" aria-hidden="true">${icon('arrow-right')}</span></a></li>
+      </ol>
+      <div class="svx-panels" aria-hidden="true">
+        ${featured.map((s, i) => `<div class="svx-panel${i ? '' : ' is-on'}" data-svx-panel="${i}">
+          <div class="svx-media">${tone(svcImg(s))}</div>
+          <div class="svx-body">
+            <p class="svx-p-title">${s.title}</p>
+            <p class="svx-p-text">${s.summary}</p>
+            <p class="svx-p-label">What's included</p>
+            <ul class="svx-p-list">${s.items.map(([name]) => `<li>${name}</li>`).join('')}</ul>
+          </div>
+        </div>`).join('\n        ')}
+      </div>
+    </div>
   </div>
 </section>`;
 }
 
 /* ---------- AI products grid ---------- */
-export function productsGrid() {
+export function productsGrid({ idx = '03' } = {}) {
   return `<section class="sec prod-sec">
   <div class="wrap">
-    ${head({ idx: '03', label: products.eyebrow, meta: `${industries.length} industries`, title: 'AI products for every industry', text: sentences(products.intro)[0] })}
+    ${head({ idx, label: products.eyebrow, meta: `${industries.length} industries`, title: 'AI products for every industry', text: sentences(products.intro)[0] })}
     <div class="prod-grid">
       ${industries
         .map(
@@ -205,7 +241,7 @@ export function serviceFinder({ idx = '04' } = {}) {
           <ul class="np-list">${n.services
             .map((slug) => {
               const s = serviceBySlug[slug];
-              return `<li><a href="services.html#${slug}"><span class="np-title">${s.title}</span><span class="np-text">${s.summary}</span>${go}</a></li>`;
+              return `<li><a href="${svcUrl(slug)}"><span class="np-title">${s.title}</span><span class="np-text">${s.summary}</span>${go}</a></li>`;
             })
             .join('')}</ul>
           <div class="np-actions">
@@ -236,6 +272,25 @@ export function techStrip() {
   <div class="tech-head"><p>Technologies we work with</p><p class="tech-meta">AI · Cloud · ERP · Mobile · IoT</p><button class="mq-toggle" type="button" aria-pressed="false" data-marquee-toggle><span class="mq-toggle-icon" aria-hidden="true"></span><span data-marquee-toggle-label>Pause</span></button></div>
   <p class="sr-only">${technologies.join(', ')}</p>
   <div class="mq" data-marquee="1" aria-hidden="true"><div class="mq-track">${ul}${ul}</div></div>
+</section>`;
+}
+
+/* ---------- Clients and technology partners: moving rows of names ---------- */
+export function clientsPartners({ idx = '04' } = {}) {
+  const groups = Object.entries(partners);
+  const total = groups.reduce((n, [, list]) => n + list.length, 0);
+  const row = (list, cls) => { const ul = `<ul>${list.map((n) => `<li>${n}</li>`).join('')}</ul>`; return `<div class="mq-track">${ul}${ul}</div>`; };
+  return `<section class="sec cp-sec" id="clients" aria-labelledby="cp-title">
+  <div class="wrap">
+    ${head({ idx, label: 'Clients & partners', meta: `${clients.length} featured clients · ${total}+ partners`, title: 'Trusted across the UAE', text: 'Government, energy, education and enterprise clients, backed by the industry\u2019s leading technology brands.' }).replace('<h2 class="sh-title"', '<h2 class="sh-title" id="cp-title"')}
+  </div>
+  <div class="cp-rows">
+    <div class="cp-head"><p>Selected clients</p><button class="mq-toggle" type="button" aria-pressed="false" data-marquee-toggle><span class="mq-toggle-icon" aria-hidden="true"></span><span data-marquee-toggle-label>Pause</span></button></div>
+    <div class="mq mq--clients" data-marquee="1" aria-hidden="true">${row(clients)}</div>
+    ${groups.map(([label, list], i) => `<div class="cp-head"><p>${label}</p></div>
+    <div class="mq mq--partners" data-marquee="${i % 2 ? 1 : -1}" aria-hidden="true">${row(list)}</div>`).join('\n    ')}
+    <p class="sr-only">Clients: ${clients.join(', ')}. Partners: ${groups.map(([, l]) => l.join(', ')).join(', ')}.</p>
+  </div>
 </section>`;
 }
 
