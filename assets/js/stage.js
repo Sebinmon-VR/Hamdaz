@@ -170,7 +170,7 @@ async function init(host) {
   const heroA = document.querySelector('[data-hero-a]');
   const rail = [...document.querySelectorAll('[data-rail]')];
   const playBtn = document.querySelector('[data-hero-play]');
-  const HOLD = [5.5, 4.8, 4.8, 4.8, 4.8, 4.8];
+  const HOLD = [4.2, 3.6, 3.6, 3.6, 3.6, 3.6];
   const film = { f: 0, from: 0, to: 0, k: 1, dur: 1.6, hold: 0, paused: false, held: false, on: -1, heroA: -1 };
   const easeFilm = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
   const filmGo = (n) => {
@@ -180,7 +180,7 @@ async function init(host) {
     if (film.to - to > L / 2) to += L;
     if (to === film.to && film.k >= 1) return;
     film.from = film.f; film.to = to; film.k = 0; film.hold = 0;
-    film.dur = Math.min(2.2, 1.4 + Math.abs(to - film.f) * 0.2);
+    film.dur = Math.min(1.8, 1.15 + Math.abs(to - film.f) * 0.15);
   };
   rail.forEach((b) => b.addEventListener('click', () => filmGo(Number(b.dataset.rail))));
   if (playBtn) playBtn.addEventListener('click', () => {
