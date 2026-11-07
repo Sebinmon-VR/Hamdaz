@@ -163,12 +163,14 @@ async function init(host) {
   // the glass hero's service panels, one per frame (src/pages/home.mjs)
   const framePanels = [...document.querySelectorAll('[data-frame-panel]')].map((el) => ({ el, n: Number(el.dataset.framePanel), key: '', on: null }));
   // The glass hero plays its frames on its own, like a short film: each one holds for a few seconds, then
-  // glides to the next, and it loops. Hovering the details or the rail holds the frame; the rail jumps to
-  // any frame, and its button pauses the film (WCAG 2.2.2). One scroll leaves the hero for the content.
+  // glides to the next, and it loops. The rail jumps to
+  // any frame, and its button pauses the film (WCAG 2.2.2). Only pointing at the rail holds the frame (and
+  // keyboard focus in the details or the rail), so the film never looks stuck while the pointer rests on
+  // the page. One scroll leaves the hero for the content.
   const heroA = document.querySelector('[data-hero-a]');
   const rail = [...document.querySelectorAll('[data-rail]')];
   const playBtn = document.querySelector('[data-hero-play]');
-  const HOLD = [7, 5.5, 5.5, 5.5, 5.5, 5.5];
+  const HOLD = [5.5, 4.8, 4.8, 4.8, 4.8, 4.8];
   const film = { f: 0, from: 0, to: 0, k: 1, dur: 1.6, hold: 0, paused: false, held: false, on: -1, heroA: -1 };
   const easeFilm = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
   const filmGo = (n) => {
@@ -187,10 +189,14 @@ async function init(host) {
     playBtn.setAttribute('aria-label', film.paused ? 'Play the hero' : 'Pause the hero');
     playBtn.classList.toggle('is-paused', film.paused);
   });
-  const holdOn = (el) => { if (!el) return; el.addEventListener('pointerenter', () => (film.held = true)); el.addEventListener('pointerleave', () => (film.held = false)); el.addEventListener('focusin', () => (film.held = true)); el.addEventListener('focusout', () => (film.held = false)); };
-  framePanels.forEach((fp) => holdOn(fp.el));
-  holdOn(document.querySelector('.hero-rail'));
-  holdOn(heroA);
+  const holdOn = (el, hover) => {
+    if (!el) return;
+    if (hover) { el.addEventListener('pointerenter', () => (film.held = true)); el.addEventListener('pointerleave', () => (film.held = false)); }
+    el.addEventListener('focusin', (e) => { if (e.target.matches(':focus-visible')) film.held = true; });
+    el.addEventListener('focusout', () => (film.held = false));
+  };
+  framePanels.forEach((fp) => holdOn(fp.el, false));
+  holdOn(document.querySelector('.hero-rail'), true);
 
   // particles (light layer)
   const seeds = new Float32Array(PARTICLES * 3);

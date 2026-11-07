@@ -48,6 +48,7 @@ const hero = `<section class="hero${HERO === 'scan' || HERO === 'glass' ? ` hero
           <a class="pill" href="contact.html" data-magnetic>Contact Now ${icon('arrow-up-right')}</a>
           <a class="pill pill--ghost" href="services.html" data-magnetic>What We Do</a>
         </div>
+        ${HERO === 'glass' ? `<ul class="hero-trust mono" data-intro aria-label="Credentials"><li><span>Trusted by</span> <strong>ADNOC</strong></li><li>MCC certified</li><li>ISO 9001 · 14001 · 45001</li></ul>` : ''}
       </div>
     </div>
 
