@@ -738,6 +738,7 @@ export const partnerLogos = {
   'HPE Aruba': ['hpearuba.svg', 4.14], Dell: ['dell.svg', 1.0], 'Schneider Electric': ['schneiderelectric.svg', 1.03, true], Vertiv: ['vertiv.svg', 3.76],
   'Bose Professional': ['bose.svg', 7.4], Sennheiser: ['sennheiser.svg', 1.32, true], Samsung: ['samsung.svg', 5.9], LG: ['lg.svg', 2.21],
   Hikvision: ['hikvision.svg', 6.95], Axis: ['axis.svg', 2.68], 'Hanwha Vision': ['hanwhavision.svg', 1.27],
+  Crestron: ['crestron.png', 8.83], Yealink: ['yealink.png', 4.74], Milestone: ['milestone.png', 1.15], Kramer: ['kramer.png', 3.27],
 };
 export const partners = {
   'IT, cloud & cybersecurity': ['Microsoft', 'Cisco', 'Fortinet', 'Palo Alto Networks', 'Check Point', 'CrowdStrike', 'Netskope', 'Proofpoint', 'Qualys', 'Rubrik', 'Veeam', 'Nutanix', 'Pure Storage', 'Halcyon', 'Secureworks', 'HPE Aruba', 'Dell', 'Schneider Electric', 'Vertiv'],
