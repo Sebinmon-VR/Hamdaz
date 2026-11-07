@@ -59,8 +59,7 @@ address { font-style: normal; }
 .skip { position: fixed; left: 16px; top: -60px; z-index: 400; padding: 10px 16px; border-radius: 999px; background: var(--fg); color: var(--bg); font-weight: 600; }
 .skip:focus { top: 16px; }
 
-html.has-cursor, html.has-cursor a, html.has-cursor button { cursor: none; }
-html.has-cursor input, html.has-cursor textarea { cursor: text; }
+/* the normal mouse pointer stays; the custom circle (main.js) only adds a highlight where it helps */
 
 /* ---------- Type ---------- */
 .display {
@@ -178,7 +177,7 @@ html.from-nav .curtain-accent, html.from-nav .curtain-main, html.from-nav .curta
 .cursor { position: fixed; inset: 0 auto auto 0; z-index: 350; pointer-events: none; display: none; }
 html.has-cursor .cursor { display: block; }
 .cursor-dot, .cursor-ring { position: fixed; top: 0; left: 0; border-radius: 50%; pointer-events: none; }
-.cursor-dot { width: 6px; height: 6px; margin: -3px 0 0 -3px; background: #fff; transition: background-color 0.3s; }
+.cursor-dot { display: none; }
 /* the circle only shows where it helps: over links and buttons, as a label ("Drag" on the marquees),
    and as a lens over the hero's glass object; elsewhere only the dot follows the pointer */
 .cursor-ring {
@@ -885,8 +884,8 @@ html.reduce .np:not([hidden]) { animation: none; }
 .mq { display: flex; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
 /* the rows can be dragged, swiped or scrolled sideways (main.js); up and down still scroll the page */
 .mq.is-js { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
-html:not(.has-cursor) .mq.is-js { cursor: grab; }
-html:not(.has-cursor) .mq.is-dragging { cursor: grabbing; }
+.mq.is-js { cursor: grab; }
+.mq.is-dragging { cursor: grabbing; }
 .mq-track { display: flex; flex: none; animation: marquee 50s linear infinite; }
 .mq.is-js .mq-track { animation: none; will-change: transform; }
 .mq ul { display: flex; flex: none; align-items: center; }
