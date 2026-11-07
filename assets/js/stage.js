@@ -189,6 +189,39 @@ async function init(host) {
     playBtn.setAttribute('aria-label', film.paused ? 'Play the hero' : 'Pause the hero');
     playBtn.classList.toggle('is-paused', film.paused);
   });
+  // gallery controls: previous / next buttons, a sideways drag or swipe on the hero, a sideways trackpad
+  // scroll, and the left / right arrow keys while the hero is in view (an upward or downward scroll still
+  // leaves for the content)
+  const heroSec = document.querySelector('[data-hero]');
+  const heroInView = () => { const r = heroSec.getBoundingClientRect(); return r.bottom > innerHeight * 0.5 && r.top < innerHeight * 0.5; };
+  const filmStep = (dir) => { const L = el3d?.frames || 6; const cur = film.on < 0 ? 0 : film.on; filmGo((cur + dir + L) % L); };
+  document.querySelectorAll('[data-hero-step]').forEach((b) => b.addEventListener('click', () => filmStep(Number(b.dataset.heroStep))));
+  if (heroSec && kind === 'glass') {
+    let down = null;
+    heroSec.addEventListener('pointerdown', (e) => { if (e.button === 0 && !e.target.closest('a, button')) down = { x: e.clientX, y: e.clientY }; });
+    window.addEventListener('pointerup', (e) => {
+      if (!down) return;
+      const dx = e.clientX - down.x, dy = e.clientY - down.y;
+      down = null;
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.4) filmStep(dx < 0 ? 1 : -1);
+    });
+    let wheelUntil = 0;
+    heroSec.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaX) < 25 || Math.abs(e.deltaX) < Math.abs(e.deltaY) * 1.5) return;
+      e.preventDefault();
+      const now = performance.now();
+      if (now < wheelUntil) { wheelUntil = now + 250; return; }
+      wheelUntil = now + 700;
+      filmStep(e.deltaX > 0 ? 1 : -1);
+    }, { passive: false });
+    window.addEventListener('keydown', (e) => {
+      if ((e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') || e.target.closest('input, textarea, select, [contenteditable]') || !heroInView()) return;
+      filmStep(e.key === 'ArrowRight' ? 1 : -1);
+    });
+  }
+  const heroFrames = document.querySelector('.hero-frames');
+  const heroRail = document.querySelector('.hero-rail');
+  let lastExit = -1;
   const holdOn = (el, hover) => {
     if (!el) return;
     if (hover) { el.addEventListener('pointerenter', () => (film.held = true)); el.addEventListener('pointerleave', () => (film.held = false)); }
@@ -248,7 +281,8 @@ async function init(host) {
   };
 
   const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
-  if (matchMedia('(hover: hover) and (pointer: fine)').matches && !reduceMotion) {
+  // (pointer effects follow the visitor's own mouse, so they run with reduced motion too)
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
     window.addEventListener('pointermove', (ev) => {
       pointer.tx = (ev.clientX / innerWidth) * 2 - 1;
       pointer.ty = -((ev.clientY / innerHeight) * 2 - 1);
@@ -286,8 +320,8 @@ async function init(host) {
     if (!reduceMotion) time += dt;
     intro = reduceMotion ? 1 : Math.min(1, intro + dt * 0.45);
     const e = ease(intro);
-    pointer.x += (pointer.tx - pointer.x) * (1 - Math.exp(-dt * 3));
-    pointer.y += (pointer.ty - pointer.y) * (1 - Math.exp(-dt * 3));
+    pointer.x += (pointer.tx - pointer.x) * (1 - Math.exp(-dt * 7));
+    pointer.y += (pointer.ty - pointer.y) * (1 - Math.exp(-dt * 7));
     U.uTime.value = reduceMotion ? 2.4 : time;
     U.uIntro.value = e;
     const t = reduceMotion ? 2.4 : time;
@@ -335,11 +369,26 @@ async function init(host) {
       const onFrame = (((Math.round(film.to) % L) + L) % L);
       if (onFrame !== film.on) { film.on = onFrame; rail.forEach((b, i) => { b.classList.toggle('is-on', i === onFrame); if (i === onFrame) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); }); }
       if (rail[onFrame]) rail[onFrame].style.setProperty('--prog', (film.k < 1 ? 0 : Math.min(1, film.hold / HOLD[onFrame])).toFixed(3));
-      el3d.update({ f: film.f, t, dt, outK, frozen: k > 0.001, pointer, aspect, halfH: HALF_H, camera });
+      // leaving the hero: as the page scrolls away the words drift up and fade, and the object rises and grows
+      // as it breaks up into the particles
+      const exit = clamp01(-hr.top / (H * 0.7));
+      el3d.update({ f: film.f, t, dt, outK, frozen: k > 0.001, pointer, aspect, halfH: HALF_H, camera, exit });
       // the headline belongs to the first frame
       if (heroA) {
         const d0 = Math.min(el3d.frame, L - el3d.frame), a = 1 - smooth(0.18, 0.5, d0);
-        if (Math.abs(a - film.heroA) > 0.002) { film.heroA = a; heroA.style.opacity = a.toFixed(3); heroA.style.visibility = a < 0.01 ? 'hidden' : ''; heroA.style.transform = `translate3d(0, ${((1 - a) * -40).toFixed(1)}px, 0)`; }
+        const key = a * 10 + exit;
+        if (Math.abs(key - film.heroA) > 0.002) {
+          film.heroA = key;
+          const o = a * (1 - smooth(0, 0.7, exit));
+          heroA.style.opacity = o.toFixed(3);
+          heroA.style.visibility = o < 0.01 ? 'hidden' : '';
+          heroA.style.transform = `translate3d(0, ${((1 - a) * -40 - exit * 140).toFixed(1)}px, 0)`;
+        }
+      }
+      if (Math.abs(exit - lastExit) > 0.001) {
+        lastExit = exit;
+        if (heroFrames) { heroFrames.style.opacity = (1 - smooth(0, 0.7, exit)).toFixed(3); heroFrames.style.transform = `translate3d(0, ${(-exit * 120).toFixed(1)}px, 0)`; }
+        if (heroRail) heroRail.style.opacity = (1 - smooth(0, 0.4, exit)).toFixed(3);
       }
       host.classList.toggle('is-hover', el3d.hover > 0.5);
       // each service panel shows around its own frame and glides with the scroll (style.css .hero-frame)

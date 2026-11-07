@@ -21,14 +21,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="assets/css/style.css?v=mw63mr1q">
+<link rel="stylesheet" href="assets/css/style.css?v=mw63uakw">
 <script>(function(d){var r=d.documentElement;r.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches){r.classList.add('reduce')}else{r.classList.add('anim');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('anim')},4000)}try{if(sessionStorage.getItem('hz-nav')){r.classList.add('from-nav');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('from-nav')},3000)}}catch(e){}})(document)</script>
 <link rel="modulepreload" href="assets/vendor/three.module.min.js">
 <script src="assets/vendor/gsap.min.js" defer></script>
 <script src="assets/vendor/ScrollTrigger.min.js" defer></script>
 <script src="assets/vendor/lenis.min.js" defer></script>
-<script src="assets/js/main.js?v=mw63mr1q" defer></script>
-<script type="module" src="assets/js/stage.js?v=mw63mr1q"></script>
+<script src="assets/js/main.js?v=mw63uakw" defer></script>
+<script type="module" src="assets/js/stage.js?v=mw63uakw"></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Hamdaz Technologies","url":"https://hamdaz.com","logo":"https://hamdaz.com/assets/img/logo.png","email":"hello@hamdaz.com","sameAs":["https://www.linkedin.com/company/hamdaz-technologies/"],"description":"Hamdaz redefine excellence in Managed Software Services. With a focus on innovation and efficiency, we offer a comprehensive suite of solutions tailored to meet the diverse needs of businesses across various industries.","address":[{"@type":"PostalAddress","streetAddress":"Office 22, 2nd Floor, Millenium Tower, Hamdan Street","addressLocality":"Abu Dhabi","addressRegion":"Abu Dhabi","postalCode":"5758","addressCountry":"AE"},{"@type":"PostalAddress","streetAddress":"1st Floor, Raha Lavender, Near East Hill Junction","addressLocality":"Kozhikode","addressRegion":"Kerala","postalCode":"673005","addressCountry":"IN"}],"contactPoint":[{"@type":"ContactPoint","telephone":"+97123090211","contactType":"sales","areaServed":"AE"},{"@type":"ContactPoint","telephone":"+97126265780","contactType":"sales","areaServed":"AE"},{"@type":"ContactPoint","telephone":"+919207773300","contactType":"sales","areaServed":"IN"}]}</script>
 </head>
 <body id="top" class="page-home">
@@ -141,7 +141,11 @@
 <button type="button" class="hero-rail-item" data-rail="3"><span class="mono">03</span><b>Data</b><i aria-hidden="true"></i></button>
 <button type="button" class="hero-rail-item" data-rail="4"><span class="mono">04</span><b>Infrastructure</b><i aria-hidden="true"></i></button>
 <button type="button" class="hero-rail-item" data-rail="5"><span class="mono">05</span><b>Security</b><i aria-hidden="true"></i></button>
-      <button type="button" class="hero-rail-play" data-hero-play aria-pressed="false" aria-label="Pause the hero"><i aria-hidden="true"></i></button>
+      <div class="hero-rail-ctrl">
+        <button type="button" class="hero-rail-step hero-rail-step--prev" data-hero-step="-1" aria-label="Previous frame"><svg class="i i-arrow-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg></button>
+        <button type="button" class="hero-rail-play" data-hero-play aria-pressed="false" aria-label="Pause the hero"><i aria-hidden="true"></i></button>
+        <button type="button" class="hero-rail-step" data-hero-step="1" aria-label="Next frame"><svg class="i i-arrow-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg></button>
+      </div>
     </nav>
 
     <p class="hero-scroll mono" data-intro aria-hidden="true">Scroll to explore <span>↓</span></p>

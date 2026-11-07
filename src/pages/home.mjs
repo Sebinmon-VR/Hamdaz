@@ -21,7 +21,11 @@ const FRAME_SERVICES = [
 // where you are in the frames, and a way to jump to any of them (main.js heroFrames)
 const frameRail = () => `<nav class="hero-rail" aria-label="Hero sections" data-intro>
       ${[['00', 'Intro'], ...FRAME_SERVICES.map(([area], i) => [String(i + 1).padStart(2, '0'), area])].map(([n, label], i) => `<button type="button" class="hero-rail-item${i === 0 ? ' is-on' : ''}" data-rail="${i}"${i === 0 ? ' aria-current="step"' : ''}><span class="mono">${n}</span><b>${label}</b><i aria-hidden="true"></i></button>`).join('\n')}
-      <button type="button" class="hero-rail-play" data-hero-play aria-pressed="false" aria-label="Pause the hero"><i aria-hidden="true"></i></button>
+      <div class="hero-rail-ctrl">
+        <button type="button" class="hero-rail-step hero-rail-step--prev" data-hero-step="-1" aria-label="Previous frame">${icon('arrow-right')}</button>
+        <button type="button" class="hero-rail-play" data-hero-play aria-pressed="false" aria-label="Pause the hero"><i aria-hidden="true"></i></button>
+        <button type="button" class="hero-rail-step" data-hero-step="1" aria-label="Next frame">${icon('arrow-right')}</button>
+      </div>
     </nav>`;
 const framePanels = () => `<div class="hero-frames">
       ${FRAME_SERVICES.map(([area, slug], i) => {

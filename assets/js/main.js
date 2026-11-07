@@ -153,36 +153,31 @@
   }
 
   /* ---------------------------------------------------------------- Cursor + magnetic */
-  if (fine && !reduce) {
+  // Pointer effects only move when the visitor moves the mouse, so they run for everyone (also with
+  // reduced motion asked for, which Windows sets whenever its animation effects are off).
+  if (fine) {
     doc.classList.add('has-cursor');
     const cursor = $('.cursor');
     const dot = $('.cursor-dot');
     const ring = $('.cursor-ring');
     const label = $('[data-cursor-label]');
-    let mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my;
+    // the dot and the ring sit exactly on the pointer, with no lag
     window.addEventListener('pointermove', (e) => {
-      mx = e.clientX;
-      my = e.clientY;
-      dot.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
+      const t = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+      dot.style.transform = t;
+      ring.style.transform = t;
     }, { passive: true });
-    const follow = () => {
-      rx += (mx - rx) * 0.16;
-      ry += (my - ry) * 0.16;
-      ring.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
-      requestAnimationFrame(follow);
-    };
-    follow();
     document.addEventListener('pointerover', (e) => {
       const l = e.target.closest('[data-cursor]');
       const h = e.target.closest('a, button, label, [data-magnetic]');
       cursor.classList.toggle('is-label', !!l);
       cursor.classList.toggle('is-hover', !l && !!h);
-      cursor.classList.toggle('on-light', !!e.target.closest('[data-theme="light"], .modal') && !e.target.closest('.content [data-dark]'));
+      cursor.classList.toggle('on-light', !!e.target.closest('[data-theme="light"], .modal, .mega-grid') && !e.target.closest('.content [data-dark]'));
       label.textContent = l ? l.dataset.cursor : '';
     });
     document.addEventListener('pointerleave', () => cursor.classList.remove('is-hover', 'is-label'));
   }
-  if (fine && animate) {
+  if (fine && ok) {
     $$('[data-magnetic]').forEach((el) => {
       const xTo = gsap.quickTo(el, 'x', { duration: 0.6, ease: 'power3' });
       const yTo = gsap.quickTo(el, 'y', { duration: 0.6, ease: 'power3' });

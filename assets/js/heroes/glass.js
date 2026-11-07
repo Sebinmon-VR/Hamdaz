@@ -268,7 +268,7 @@ export async function build({ root, scene, renderer, reduceMotion }) {
     points: (n) => (current ? samplePoints(current, root, n) : new Float32Array(n * 3)),
     // f: where the story is in frames (stage.js plays it on its own; it keeps counting up and wraps round),
     // time, the scroll stream (frozen once the object starts breaking up), pointer, screen
-    update({ f: fIn, t, dt, outK, frozen, pointer, aspect, halfH }) {
+    update({ f: fIn, t, dt, outK, frozen, pointer, aspect, halfH, exit = 0 }) {
       const narrow = aspect < 0.9;
       const L = FRAMES.length, fl = Math.floor(fIn), u = fIn - fl, i = ((fl % L) + L) % L;
       const f = i + u;
@@ -294,12 +294,13 @@ export async function build({ root, scene, renderer, reduceMotion }) {
       const over = !narrow && Math.hypot(lx, ly) < 1.05 && vis > 0.9 ? 1 : 0;
       hover += (over - hover) * (1 - Math.exp(-dt * (over ? 5 : 2.5)));
       const hx = Math.max(-1, Math.min(1, lx)) * hover, hy = Math.max(-1, Math.min(1, ly)) * hover;
-      root.position.set(cx + hx * s * 0.12, cy + hy * s * 0.12 + Math.sin(t * 0.8) * 0.02, hover * 0.25);
+      // it also drifts a little after the cursor anywhere on the screen, so the scene answers the mouse
+      root.position.set(cx + (pointer.x * 0.16 + hx * 0.12) * s, cy + (pointer.y * 0.12 + hy * 0.12) * s + Math.sin(t * 0.8) * 0.02 + exit * halfH * 0.45, hover * 0.25 + exit * 0.6);
       const e = vis * vis * (3 - 2 * vis);
-      root.scale.setScalar(s * Math.max(0.001, e) * (0.8 + 0.2 * outK) * (1 + 0.07 * hover));
+      root.scale.setScalar(s * Math.max(0.001, e) * (0.8 + 0.2 * outK) * (1 + 0.07 * hover) * (1 + 0.3 * exit));
       root.rotation.set(
-        0.14 - pointer.y * 0.12 - hy * 0.45 + Math.sin(t * 0.4) * 0.05 + turn * 0.35,
-        -0.3 + Math.sin(f * Math.PI) * 0.35 + Math.sin(t * 0.3) * 0.18 + pointer.x * 0.25 + hx * 0.55 + turn * 2.2,
+        0.14 - pointer.y * 0.3 - hy * 0.45 + Math.sin(t * 0.4) * 0.05 + turn * 0.35,
+        -0.3 + Math.sin(f * Math.PI) * 0.35 + Math.sin(t * 0.3) * 0.18 + pointer.x * 0.5 + hx * 0.55 + turn * 2.2,
         Math.sin(t * 0.3) * 0.05 - turn * 0.2,
       );
       glass.envMapIntensity = 1.1 + 0.7 * hover;
@@ -317,9 +318,9 @@ export async function build({ root, scene, renderer, reduceMotion }) {
       U.uTintA.value = BG[A.bg].tint; U.uTintB.value = BG[B.bg].tint;
       U.uMix.value = A.bg === B.bg ? 0 : smooth(0.1, 0.9, u);
       U.uTime.value = t;
-      const d = 6 - BG_Z, h = 2 * d * Math.tan((15 * Math.PI) / 180), w = h * aspect, zoom = 1.12 + 0.03 * Math.sin(t * 0.08);
+      const d = 6 - BG_Z, h = 2 * d * Math.tan((15 * Math.PI) / 180), w = h * aspect, zoom = 1.12 + 0.03 * Math.sin(t * 0.08) + exit * 0.18;
       bg.plane.scale.set(w * zoom, h * zoom, 1);
-      bg.plane.position.set(-pointer.x * 0.12, -pointer.y * 0.06, BG_Z);
+      bg.plane.position.set(-pointer.x * 0.3, -pointer.y * 0.16, BG_Z);
       U.aP.value = w / h;
     },
     // the photo layer: shown while the hero is on screen, darkened to the page navy as the sheet covers it

@@ -194,7 +194,8 @@ async function init(host) {
     visible && !document.hidden ? play() : pause();
   }).observe(host);
   document.addEventListener('visibilitychange', () => (document.hidden ? pause() : visible && play()));
-  if (matchMedia('(hover: hover) and (pointer: fine)').matches && !reduceMotion) {
+  // (pointer effects follow the visitor's own mouse, so they run with reduced motion too)
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
     window.addEventListener('pointermove', (ev) => {
       pointer.tx = (ev.clientX / window.innerWidth) * 2 - 1;
       pointer.ty = -((ev.clientY / window.innerHeight) * 2 - 1);

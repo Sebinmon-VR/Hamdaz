@@ -230,30 +230,31 @@ html.has-cursor .cursor { display: block; }
 .megamenu.is-open { opacity: 1; visibility: visible; transform: none; transition: opacity 0.25s var(--ease), transform 0.35s var(--ease), visibility 0s; }
 .mega-in {
   display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 22px; max-width: 1180px; margin: 0 auto; padding: 20px 20px 20px 24px;
-  border-radius: 18px; border: 1px solid rgba(238, 246, 251, 0.1); background: rgba(6, 20, 35, 0.95);
-  backdrop-filter: blur(22px) saturate(1.3); -webkit-backdrop-filter: blur(22px) saturate(1.3); box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.7);
-  max-height: calc(100vh - var(--header-h) - 32px); overflow: auto; color: var(--fg);
+  border-radius: 18px; border: 1px solid rgba(11, 27, 43, 0.08); background: #f7f8fa;
+  box-shadow: 0 30px 80px -24px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.08);
+  max-height: calc(100vh - var(--header-h) - 32px); overflow: auto; color: #0b1b2b;
 }
-/* the areas flow into four columns, so short and long lists pack together */
+/* the areas flow into four columns, so short and long lists pack together (a light panel, easy to read
+   over the dark hero and the light pages alike) */
 .mega-grid { columns: 4 190px; column-gap: 22px; }
 .mega-col { break-inside: avoid; margin-bottom: 16px; }
-.mega-cat { display: flex; align-items: center; gap: 8px; padding-bottom: 7px; margin-bottom: 4px; border-bottom: 1px solid rgba(238, 246, 251, 0.08); font-weight: 600; font-size: 13px; color: var(--fg); transition: color 0.3s; }
-.mega-cat .i { width: 24px; height: 24px; padding: 5px; border-radius: 7px; background: rgba(48, 193, 248, 0.12); color: var(--accent); flex: none; }
-.mega-cat:hover, .mega-cat:focus-visible { color: var(--accent); }
+.mega-cat { display: flex; align-items: center; gap: 8px; padding-bottom: 7px; margin-bottom: 4px; border-bottom: 1px solid rgba(11, 27, 43, 0.1); font-weight: 600; font-size: 13px; color: #0b1b2b; transition: color 0.3s; }
+.mega-cat .i { width: 24px; height: 24px; padding: 5px; border-radius: 7px; background: #e3f4fc; color: #0479a8; flex: none; }
+.mega-cat:hover, .mega-cat:focus-visible { color: #0479a8; }
 .mega-col ul { list-style: none; margin: 0; padding: 0; }
-.mega-col li a { display: block; padding: 3px 0; font-size: 12.5px; line-height: 1.4; color: var(--fg-2); transition: color 0.25s, transform 0.3s var(--ease); }
-.mega-col li a:hover, .mega-col li a:focus-visible { color: var(--fg); transform: translateX(3px); }
-.mega-side { display: grid; align-content: start; gap: 11px; padding: 18px; border-radius: 14px; background: rgba(238, 246, 251, 0.05); border: 1px solid rgba(238, 246, 251, 0.08); }
+.mega-col li a { display: block; padding: 3px 0; font-size: 12.5px; line-height: 1.4; color: #4a5663; transition: color 0.25s, transform 0.3s var(--ease); }
+.mega-col li a:hover, .mega-col li a:focus-visible { color: #0b1b2b; transform: translateX(3px); }
+.mega-side { display: grid; align-content: start; gap: 11px; padding: 18px; border-radius: 14px; background: #0b1b2b; color: #fff; }
 .mega-side .mono { color: var(--pink); font-size: 10.5px; }
 .mega-side-title { font-family: var(--display); font-weight: 600; font-stretch: 112%; font-size: 17px; line-height: 1.2; }
-.mega-side .pill { justify-self: start; height: 38px; padding: 0 16px; font-size: 13px; }
-.mega-all { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--fg-2); }
-.mega-all:hover { color: var(--fg); }
+.mega-side .pill { justify-self: start; height: 38px; padding: 0 16px; font-size: 13px; background: #fff; color: #0b1b2b; }
+.mega-all { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(255, 255, 255, 0.72); }
+.mega-all:hover { color: #fff; }
 .mega-all .i, .mega-contact .i { width: 14px; height: 14px; }
-.mega-certs { list-style: none; margin: 4px 0 0; padding: 11px 0 0; border-top: 1px solid rgba(238, 246, 251, 0.1); display: grid; gap: 5px; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.03em; color: var(--fg-2); }
+.mega-certs { list-style: none; margin: 4px 0 0; padding: 11px 0 0; border-top: 1px solid rgba(255, 255, 255, 0.14); display: grid; gap: 5px; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.03em; color: rgba(255, 255, 255, 0.72); }
 .mega-certs li::before { content: ""; display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); margin-right: 7px; vertical-align: 2px; }
 .mega-contact { display: grid; gap: 5px; font-size: 12.5px; }
-.mega-contact a { display: inline-flex; align-items: center; gap: 7px; color: var(--fg); }
+.mega-contact a { display: inline-flex; align-items: center; gap: 7px; color: #fff; }
 @media (max-width: 1100px) { .megamenu { display: none; } .nav-caret { display: none; } }
 .header-end .pill { height: 48px; }
 .header-end .pill[aria-current="page"] { box-shadow: 0 0 0 3px rgba(48, 193, 248, 0.35); }
@@ -404,6 +405,16 @@ html.hero-scan-top .header:not(.is-scrolled):not(.is-light) .header-end .pill { 
 .hero-rail-item.is-on i { width: 28px; margin-left: 0; }
 .hero-rail-item.is-on i::after { opacity: 1; }
 .hero-rail-item:focus-visible, .hero-rail-play:focus-visible { outline: 1px solid var(--accent); outline-offset: 4px; }
+/* gallery controls: previous, play / pause, next */
+.hero-rail-ctrl { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
+.hero-rail-ctrl .hero-rail-play { margin: 0; }
+.hero-rail-step { width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(238, 246, 251, 0.3); background: none; color: var(--fg); display: grid; place-items: center; cursor: pointer; transition: border-color 0.3s, background-color 0.3s, transform 0.3s var(--ease); }
+.hero-rail-step .i { width: 14px; height: 14px; }
+.hero-rail-step--prev .i { transform: rotate(180deg); }
+.hero-rail-step:hover { border-color: var(--fg); background: rgba(238, 246, 251, 0.1); transform: scale(1.08); }
+.hero-rail-step:focus-visible { outline: 1px solid var(--accent); outline-offset: 4px; }
+/* the hero takes sideways drags and swipes (frames) and leaves up and down scrolling to the page */
+.hero--glass .hero-stage { touch-action: pan-y; }
 .hero-rail-play { width: 30px; height: 30px; margin-top: 10px; border-radius: 50%; border: 1px solid rgba(238, 246, 251, 0.3); background: none; color: var(--fg); display: grid; place-items: center; cursor: pointer; transition: border-color 0.3s, background-color 0.3s; }
 .hero-rail-play:hover { border-color: var(--fg); background: rgba(238, 246, 251, 0.08); }
 .hero-rail-play i { width: 8px; height: 10px; border-left: 2px solid currentColor; border-right: 2px solid currentColor; }
@@ -427,7 +438,9 @@ html.hero-scan-top .header:not(.is-scrolled):not(.is-light) .header-end .pill { 
   border: 1px solid rgba(238, 246, 251, 0.16); background: rgba(6, 20, 35, 0.35); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   opacity: calc(var(--v) * 1.5 - var(--i) * 0.14);
   transform: translate3d(0, calc((1 - var(--v)) * (12px + var(--i) * 8px)), 0);
+  transition: border-color 0.3s, background-color 0.3s, color 0.3s, box-shadow 0.3s;
 }
+.hf-tags li:hover { border-color: var(--accent); background: rgba(48, 193, 248, 0.14); box-shadow: 0 0 0 4px rgba(48, 193, 248, 0.08); }
 .hf-go { display: inline-flex; align-items: center; gap: 8px; margin-top: 6px; color: var(--fg); font-weight: 500; font-size: 14.5px; border-bottom: 1px solid var(--line-2); padding-bottom: 4px; transition: border-color 0.3s, gap 0.3s var(--ease); }
 .hf-go:hover { border-color: var(--accent); gap: 12px; }
 .hf-go .i { width: 16px; height: 16px; }
