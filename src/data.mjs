@@ -101,7 +101,8 @@ export const about = {
 };
 
 // ---------------------------------------------------------------------------
-// The 20 services, in the order of the original "What We Do" page.
+// The services: the original 20 from the "What We Do" page (in its order), then the AV, ELV, cybersecurity,
+// networking and staffing services from the 2026 company profiles.
 // `slug` matches the old URL (/service/<slug>/) so redirects keep working.
 // ---------------------------------------------------------------------------
 export const services = [
@@ -367,6 +368,220 @@ export const services = [
       ['Latest Technologies', 'Implementing Power over Ethernet (PoE) for efficient device connectivity.'],
     ],
   },
+  // ---- Audio Visual (from the Hamdaz AV company profile, 2026) ----
+  {
+    slug: 'meeting-rooms-video-conferencing',
+    title: 'Meeting Rooms & Video Conferencing',
+    summary: 'Huddle spaces to executive boardrooms, with certified Microsoft Teams, Zoom, Webex and Google Meet room systems.',
+    intro: 'We design, supply, install and program collaboration rooms on your platform, so every room works on day one and keeps working:',
+    items: [
+      ['Meeting & Boardrooms', 'Huddle spaces to executive boardrooms, designed to room standards.'],
+      ['Video Conferencing Rooms', 'Certified Microsoft Teams, Zoom, Cisco Webex and Google Meet room systems.'],
+      ['Wireless Presentation', 'BYOD and BYOM so any laptop can share and join in seconds.'],
+      ['Control Programming', 'Crestron, Extron, AMX and Q-SYS user interfaces built in-house.'],
+      ['Room Standards', 'Focus rooms to town halls, standardised so every space works the same way.'],
+    ],
+  },
+  {
+    slug: 'video-walls-digital-signage',
+    title: 'LED Video Walls & Digital Signage',
+    summary: 'Fine-pitch LED and LCD video walls, digital signage and command-centre displays, supplied, mounted and calibrated.',
+    intro: 'Commercial-grade screens for every space, from a lobby sign to a 24/7 operations wall:',
+    items: [
+      ['LED & LCD Video Walls', 'Fine-pitch LED, LCD walls and processing for any scale.'],
+      ['Digital Signage', 'Screens, players and content platforms managed centrally.'],
+      ['Command & Control Centres', 'Operator video walls, KVM and 24/7-rated displays.'],
+      ['Media Servers & Projection', 'Multi-display playback, edge blending and projection mapping.'],
+      ['Interactive Displays', 'Touch screens, interactive whiteboards and presentation systems.'],
+    ],
+  },
+  {
+    slug: 'pro-audio-pa-systems',
+    title: 'Pro Audio, PA & Background Music',
+    summary: 'Speech, music, paging and voice evacuation systems, tuned for every room, hall and venue.',
+    intro: 'Clear sound for meetings, learning and venues, designed, installed and tuned by our own engineers:',
+    items: [
+      ['Conference Audio', 'Ceiling microphones, DSP and conference systems for clear meetings.'],
+      ['PA & Voice Evacuation', 'Paging and voice alarm systems for buildings and campuses.'],
+      ['Background Music', 'Zoned BGM, sports screens and venue AV for hospitality and F&B.'],
+      ['Classrooms & Auditoriums', 'Lecture capture, voice lift, projection and hybrid learning.'],
+      ['Testing & Commissioning', 'Acoustic tuning, signal verification and SAT sign-off.'],
+    ],
+  },
+  {
+    slug: 'immersive-smart-spaces',
+    title: 'Immersive & Smart Spaces',
+    summary: 'AR, VR and mixed reality, holographic and interactive displays, stage lighting and building automation.',
+    intro: 'Experience technology that brings spaces to life, and one-touch control behind it:',
+    items: [
+      ['AR, VR & Mixed Reality', 'Headsets, training simulators and custom 3D content for immersive experiences.'],
+      ['Holographic & Interactive', 'Holographic displays, touch tables and gesture-driven interactive walls.'],
+      ['Stage & Architectural Lighting', 'Theatrical, event and architectural lighting with DMX control.'],
+      ['Home & Building Automation', 'One-touch control of AV, lighting, shades and climate.'],
+      ['Large Venues & Outdoor', 'Arenas, halls, event spaces and weather-rated AV.'],
+    ],
+  },
+  // ---- ELV & Security Systems (from the Hamdaz ELV company profile, 2026) ----
+  {
+    slug: 'cctv-video-surveillance',
+    title: 'CCTV & Video Surveillance',
+    summary: 'MCC-compliant CCTV, from coverage design to recording, analytics and control-room monitoring.',
+    intro: 'As an Abu Dhabi Monitoring & Control Centre (MCC) certified contractor, we design, install and hand over every CCTV system to MCC requirements:',
+    items: [
+      ['IP Surveillance', 'Fixed, PTZ, fisheye and multi-sensor cameras, indoor and outdoor rated.'],
+      ['Recording & Storage', 'NVR and server recording sized to the required retention period.'],
+      ['Video Analytics', 'Line crossing, intrusion, people counting, face and ANPR analytics.'],
+      ['Monitoring Rooms', 'VMS clients, operator desks and video walls for live control.'],
+      ['Analogue-to-IP Upgrades', 'Migrate legacy systems to compliant IP platforms in phases.'],
+    ],
+  },
+  {
+    slug: 'access-control-gate-barriers',
+    title: 'Access Control & Gate Barriers',
+    summary: 'Card, mobile and biometric access for people, and barriers, gates and bollards for vehicles.',
+    intro: 'Control who, and what, gets in, from the front door to the perimeter gate:',
+    items: [
+      ['Card, Mobile & Biometric Access', 'Secure credentials, fingerprint and face recognition with central user management.'],
+      ['Turnstiles & Speed Gates', 'Lobby and staff-entrance flow control.'],
+      ['Boom Barriers & Automatic Gates', 'Fast-cycle barriers and sliding or swing gates for car parks and compounds.'],
+      ['Road Blockers & Bollards', 'Hostile-vehicle mitigation for critical sites.'],
+      ['Visitor Management & Time Attendance', 'Pre-registration, badges, host notifications and attendance data linked to HR.'],
+    ],
+  },
+  {
+    slug: 'anpr-intercom-car-parks',
+    title: 'ANPR, Intercom & Car Parks',
+    summary: 'Number-plate recognition, long-range UHF, IP video intercom and parking management.',
+    intro: 'Hands-free vehicle entry and clear communication at every gate and door:',
+    items: [
+      ['ANPR Cameras & Software', 'Arabic and English plate reading with whitelist and blacklist control.'],
+      ['Long-range UHF Tags', 'Hands-free access for staff and fleet vehicles.'],
+      ['IP Video Intercom', 'SIP door stations and indoor monitors for villas, towers and offices.'],
+      ['Help Points & SOS Stations', 'Emergency call points for car parks, campuses and public areas.'],
+      ['Parking Management', 'Ticketing, guidance and occupancy counts.'],
+    ],
+  },
+  {
+    slug: 'data-centre-power-cooling',
+    title: 'Data Centre Build, Power & Cooling',
+    summary: 'Server rooms and data centres with racks, containment, UPS, precision cooling and monitoring.',
+    intro: 'Data centres that stay up, designed and built around your IT load:',
+    items: [
+      ['Server Rooms & Data Centres', 'Design and build of new server rooms and data centre upgrades.'],
+      ['Racks & Containment', 'Server and network racks with hot and cold aisle containment.'],
+      ['UPS & Power', 'UPS systems, PDUs, batteries and power distribution with backup.'],
+      ['Precision Cooling', 'In-row and room cooling sized to the IT load.'],
+      ['Monitoring & Fire Suppression', 'Temperature, leak, power and door sensors with alerts, and clean-agent suppression.'],
+    ],
+  },
+  // ---- Cybersecurity (from the Hamdaz Cybersecurity profile, 2026) ----
+  {
+    slug: 'managed-ai-secops',
+    title: 'Managed AI SecOps (24/7 SOC)',
+    summary: 'AI-native detection, decision and response around the clock, with human expertise in the loop.',
+    intro: 'Security operations at machine speed: a multilayered, 24/7 managed SOC and NOC:',
+    items: [
+      ['24/7 Managed Detection & Response', 'MXDR and EDR with real-time threat detection and rapid response.'],
+      ['Identity Threat Detection (ITDR)', 'Spotting and stopping attacks on identities and access.'],
+      ['Threat Intelligence', 'AI-native threat intelligence and IOC correlation, always on.'],
+      ['Managed NOC', '24/7 network operations, monitoring and management.'],
+      ['Anti-Ransomware 24/7', 'Ransomware detection and recovery for your crown-jewel systems.'],
+    ],
+  },
+  {
+    slug: 'cyber-assessment-audit',
+    title: 'Cybersecurity Assessment & Audit',
+    summary: 'Risk and gap analysis against ISO/IEC 27001 and NIST CSF 2.0, penetration testing and a board-ready roadmap.',
+    intro: 'An independent view of your security posture and a prioritised plan to improve it:',
+    items: [
+      ['Risk Assessment & Gap Analysis', 'Aligned to ISO/IEC 27001, NIST CSF 2.0, UAE IA, ADHICS and PCI DSS.'],
+      ['Penetration Testing', 'VAPT, DAST and SAST, including autonomous AI penetration testing.'],
+      ['Ransomware Readiness', 'Backup resilience and RPO / RTO testing.'],
+      ['Cloud Security Posture', 'Cloud configuration review and posture assessment.'],
+      ['Virtual Leadership', 'vCISO, vDPO and vAIO advisory, GRC and compliance readiness.'],
+    ],
+  },
+  {
+    slug: 'zero-trust-identity-data-security',
+    title: 'Zero Trust, Identity & Data Security',
+    summary: 'Zero Trust, SASE, identity, data loss prevention, email and web application security.',
+    intro: 'Solutions across the CIA triad, from the data centre to the end user:',
+    items: [
+      ['Zero Trust, SASE & SSE', 'Secure access for users and sites wherever they work.'],
+      ['IAM, PAM & MFA', 'Identity and privileged access management with multi-factor authentication.'],
+      ['DLP & DSPM', 'Discover, classify and protect sensitive data.'],
+      ['Email Security & Awareness', 'Email protection, DMARC and security awareness training.'],
+      ['WAAP & Next-Gen Firewalls', 'Web application and API protection, and managed perimeter security.'],
+    ],
+  },
+  {
+    slug: 'ransomware-resilience',
+    title: 'Ransomware Resilience & Recovery',
+    summary: 'Close the gap between endpoint controls and backups, with recovery assurance behind it.',
+    intro: 'Prevention is necessary but no longer sufficient. Resilience is what protects the business:',
+    items: [
+      ['Prevention Before Execution', 'Pre-execution engine and ransomware heuristics behind your endpoint controls.'],
+      ['Stop Encryption & Exfiltration', 'Behavioural modelling, backup protection and data exfiltration prevention.'],
+      ['Decryption & Recovery', 'Recover without paying a ransom, with expert responders on call.'],
+      ['Backup, HA & Disaster Recovery', 'Immutable backup, high availability and business continuity.'],
+      ['Incident Response & Forensics', 'Containment, threat eviction and digital forensics.'],
+    ],
+  },
+  // ---- Networking & Wi-Fi ----
+  {
+    slug: 'enterprise-networking-wifi',
+    title: 'Enterprise Networking & Wi-Fi',
+    summary: 'Wired and wireless networks that are fast, secure and monitored, from campus to branch.',
+    intro: 'The network backbone every system depends on, designed, built and supported:',
+    items: [
+      ['Wi-Fi Design & Surveys', 'Coverage planning, site surveys and high-density wireless.'],
+      ['Routing & Switching', 'Campus, data centre and branch networks, PoE included.'],
+      ['Network Security', 'Next-generation firewalls, NAC and secure SD-WAN.'],
+      ['Network Monitoring', '24/7 NOC monitoring and management.'],
+      ['Upgrades & Migration', 'Phased refresh of legacy networks with minimal downtime.'],
+    ],
+  },
+  // ---- Staffing & Outsourcing ----
+  {
+    slug: 'it-staffing-resident-engineers',
+    title: 'IT Staffing & Resident Engineers',
+    summary: 'Skilled IT, AV and security engineers placed on your site, for daily operations, projects and events.',
+    intro: 'The right people where you need them, backed by our engineering teams in Abu Dhabi and India:',
+    items: [
+      ['Resident Engineers', 'On-site IT, AV and security engineers for daily operations.'],
+      ['IT Operations Teams', 'Teams embedded on client sites, as we run today for energy and education organisations.'],
+      ['Project Staffing', 'Engineers and project managers for fixed-term rollouts.'],
+      ['Event Engineers', 'AV technicians for live events and conferences.'],
+      ['Offshore Delivery', 'Engineering and delivery teams in Kerala, India, working with your team.'],
+    ],
+  },
+  {
+    slug: 'it-outsourcing-managed-operations',
+    title: 'IT Outsourcing & Managed Operations',
+    summary: 'Hand us the day-to-day: service desk, 24/7 monitoring and support contracts, measured against SLAs.',
+    intro: 'Run IT as a service, with one accountable partner and clear reporting:',
+    items: [
+      ['Service Desk', 'User support with defined response times and escalation.'],
+      ['24/7 NOC Services', 'Round-the-clock monitoring and triage.'],
+      ['Management & Monitoring', 'Proactive device monitoring, alerts and remote fixes.'],
+      ['AMC & SLA Support', 'Preventive visits and guaranteed response times.'],
+      ['Monthly Service Reviews', 'KPI and SLA performance, open actions and change requests.'],
+    ],
+  },
+];
+
+// Service categories (the services page sections and the Services menu), in display order. Every service
+// belongs to exactly one category.
+export const categories = [
+  { id: 'ai-data', title: 'AI, Data & Automation', short: 'AI & Data', icon: 'sparkles', text: 'Generative AI, chatbots, analytics and automation that put your data to work.', services: ['generative-ai', 'bot-services', 'data-analytics-predictive-services', 'business-process-automation-and-digital-transformation-services', 'rpa-robotic-process-automation', 'digital-twin'] },
+  { id: 'cybersecurity', title: 'Cybersecurity', short: 'Cybersecurity', icon: 'shield-check', text: 'Beyond defence, there is resilience: assessment, solutions and 24/7 AI-driven security operations.', services: ['managed-ai-secops', 'cyber-assessment-audit', 'zero-trust-identity-data-security', 'ransomware-resilience', 'information-security-services'] },
+  { id: 'cloud-infrastructure', title: 'Cloud & Infrastructure', short: 'Cloud & Infra', icon: 'cloud-upload', text: 'Cloud migration and management on Azure, AWS, GCP and OCI, data centres and managed services.', services: ['cloud-services-migration', 'partner-services-msft-azure-aws-gcp-oci', 'data-center-infrastructure-services', 'managed-services', 'it-ot-services'] },
+  { id: 'elv-security', title: 'ELV & Security Systems', short: 'ELV & Security', icon: 'cctv', text: 'MCC-certified CCTV, access control, gate barriers, ANPR, intercom and data centre infrastructure.', services: ['cctv-video-surveillance', 'access-control-gate-barriers', 'anpr-intercom-car-parks', 'data-centre-power-cooling'] },
+  { id: 'audio-visual', title: 'Audio Visual', short: 'Audio Visual', icon: 'monitor-play', text: 'Design, supply, installation, programming and support of AV and collaboration systems across the UAE.', services: ['meeting-rooms-video-conferencing', 'video-walls-digital-signage', 'pro-audio-pa-systems', 'immersive-smart-spaces', 'av-setup-meeting-room-solutions'] },
+  { id: 'network-wifi', title: 'Networking & Wi-Fi', short: 'Networking & Wi-Fi', icon: 'wifi', text: 'Enterprise wired and wireless networks, structured cabling and fibre.', services: ['enterprise-networking-wifi', 'network-services-cabling-structured-cabling'] },
+  { id: 'apps-business', title: 'Apps & Business Systems', short: 'Apps & ERP', icon: 'smartphone', text: 'Mobile apps and the business platforms you run on: Zoho, SAP, Odoo and Salesforce.', services: ['mobile-app-development', 'zoho-sap-vodoo-crm-salesforce'] },
+  { id: 'industry', title: 'Industry Solutions', short: 'Industries', icon: 'building-2', text: 'Technology shaped for education, healthcare, retail and agriculture.', services: ['education-services', 'healthcare-services', 'retail-implementation-services', 'smart-farming'] },
+  { id: 'staffing', title: 'Staffing & Outsourcing', short: 'Staffing', icon: 'users', text: 'Resident engineers, project teams and outsourced IT operations.', services: ['it-staffing-resident-engineers', 'it-outsourcing-managed-operations'] },
 ];
 
 export const serviceBySlug = Object.fromEntries(services.map((s) => [s.slug, s]));
@@ -446,14 +661,29 @@ export const gpt = {
 export const technologies = ['Generative AI', 'OpenAI', 'Microsoft Azure', 'AWS', 'Google Cloud', 'Oracle Cloud', 'Kubernetes', 'Zoho', 'SAP', 'Odoo', 'Salesforce', 'Flutter', 'React Native', 'SCADA', 'IIoT', 'Blockchain'];
 
 // Home "find the right service" guide: a visitor's goal mapped to the services that fit it.
-// Every one of the 20 services appears under at least one goal.
+// Every service appears under at least one goal.
 export const needs = [
   { id: 'ai', label: 'Use AI in my business', services: ['generative-ai', 'bot-services', 'data-analytics-predictive-services'] },
   { id: 'automate', label: 'Automate manual work', services: ['business-process-automation-and-digital-transformation-services', 'rpa-robotic-process-automation', 'zoho-sap-vodoo-crm-salesforce'] },
   { id: 'cloud', label: 'Move to the cloud', services: ['cloud-services-migration', 'partner-services-msft-azure-aws-gcp-oci', 'data-center-infrastructure-services'] },
-  { id: 'secure', label: 'Secure my systems', services: ['information-security-services', 'managed-services', 'it-ot-services'] },
+  { id: 'secure', label: 'Secure my systems', services: ['managed-ai-secops', 'cyber-assessment-audit', 'zero-trust-identity-data-security', 'ransomware-resilience', 'information-security-services'] },
+  { id: 'building', label: 'Secure my building or site', services: ['cctv-video-surveillance', 'access-control-gate-barriers', 'anpr-intercom-car-parks', 'data-centre-power-cooling'] },
+  { id: 'rooms', label: 'Set up meeting rooms and AV', services: ['meeting-rooms-video-conferencing', 'video-walls-digital-signage', 'pro-audio-pa-systems', 'immersive-smart-spaces'] },
+  { id: 'people', label: 'Get engineers or outsource IT', services: ['it-staffing-resident-engineers', 'it-outsourcing-managed-operations', 'managed-services'] },
   { id: 'app', label: 'Build an app', services: ['mobile-app-development', 'bot-services', 'digital-twin'] },
-  { id: 'office', label: 'Set up office IT', services: ['network-services-cabling-structured-cabling', 'av-setup-meeting-room-solutions', 'managed-services', 'data-center-infrastructure-services'] },
+  { id: 'office', label: 'Set up office IT', services: ['enterprise-networking-wifi', 'network-services-cabling-structured-cabling', 'av-setup-meeting-room-solutions', 'managed-services', 'data-center-infrastructure-services'] },
   { id: 'industry', label: 'Get solutions for my industry', services: ['healthcare-services', 'education-services', 'retail-implementation-services', 'smart-farming'] },
   { id: 'data', label: 'Make sense of my data', services: ['data-analytics-predictive-services', 'digital-twin', 'it-ot-services'] },
 ];
+
+// Selected clients (from the 2026 ELV & Security company profile) and technology partners (from the AV,
+// ELV and Cybersecurity profiles), shown as moving rows on the home page. Names only, no logos: add logo
+// files to assets/img/logos/ to show marks instead.
+export const clients = [
+  'ADNOC', 'Mohamed Bin Zayed University', 'Tawazun Industrial Park', 'Liwa University', 'Fatima College of Health Sciences',
+  'American International School', 'Al Jazira Institute', 'Donaldson', 'Al Lul Transport & General Contracting',
+];
+export const partners = {
+  'IT, cloud & cybersecurity': ['Microsoft', 'Cisco', 'Fortinet', 'Palo Alto Networks', 'Check Point', 'CrowdStrike', 'Netskope', 'Proofpoint', 'Qualys', 'Rubrik', 'Veeam', 'Nutanix', 'Pure Storage', 'Halcyon', 'Secureworks', 'HPE Aruba', 'Dell', 'Schneider Electric', 'Vertiv'],
+  'AV, ELV & security systems': ['Extron', 'Crestron', 'Q-SYS', 'Kramer', 'Barco', 'Shure', 'Sennheiser', 'Biamp', 'Bose Professional', 'Yealink', 'Logitech', 'Samsung', 'LG', 'Hikvision', 'Axis', 'Hanwha Vision', 'Milestone', 'Genetec', 'HID', 'Suprema', 'FAAC'],
+};

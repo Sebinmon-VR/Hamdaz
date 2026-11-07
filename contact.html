@@ -21,31 +21,83 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="assets/css/style.css?v=mw62gchz">
+<link rel="stylesheet" href="assets/css/style.css?v=mw63fqon">
 <script>(function(d){var r=d.documentElement;r.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches){r.classList.add('reduce')}else{r.classList.add('anim');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('anim')},4000)}try{if(sessionStorage.getItem('hz-nav')){r.classList.add('from-nav');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('from-nav')},3000)}}catch(e){}})(document)</script>
 <link rel="modulepreload" href="assets/vendor/three.module.min.js">
 <script src="assets/vendor/gsap.min.js" defer></script>
 <script src="assets/vendor/ScrollTrigger.min.js" defer></script>
 <script src="assets/vendor/lenis.min.js" defer></script>
-<script src="assets/js/main.js?v=mw62gchz" defer></script>
-<script type="module" src="assets/js/earth.js?v=mw62gchz"></script>
+<script src="assets/js/main.js?v=mw63fqon" defer></script>
+<script type="module" src="assets/js/earth.js?v=mw63fqon"></script>
 </head>
 <body id="top" class="">
 <a class="skip" href="#main">Skip to content</a>
 <header class="header" data-header>
   <a class="brand" href="index.html" aria-label="Hamdaz Technologies, home"><img src="assets/img/logo.svg" width="176" height="136" alt=""><span>Technologies</span></a>
-  <nav class="nav" aria-label="Primary"><ul><li><a href="about.html">Who We Are</a></li><li><a href="services.html">What We Do</a></li><li><a href="solutions.html">How We Do</a></li></ul></nav>
+  <nav class="nav" aria-label="Primary"><ul><li><a href="about.html">Who We Are</a></li><li class="nav-mega"><a href="services.html">What We Do</a><button class="nav-caret" type="button" aria-expanded="false" aria-controls="mega" aria-label="Show all services" data-mega-btn><svg class="i i-chevron-down" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></button></li><li><a href="solutions.html">How We Do</a></li><li><a href="index.html#clients">Clients & Partners</a></li></ul></nav>
   <div class="header-end">
     <a class="pill" href="contact.html" aria-current="page" data-magnetic>Contact Now <svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn><span class="menu-btn-label">Menu</span><span class="menu-btn-lines"><i></i><i></i></span></button>
   </div>
 </header>
+<div class="megamenu" id="mega" data-mega>
+  <div class="mega-in">
+    <div class="mega-grid">
+      <div class="mega-col">
+        <a class="mega-cat" href="services.html#ai-data"><svg class="i i-sparkles" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" /><path d="M20 3v4" /><path d="M22 5h-4" /><path d="M4 17v2" /><path d="M5 18H3" /></svg><span>AI, Data & Automation</span></a>
+        <ul><li><a href="services.html#generative-ai">Generative AI</a></li><li><a href="services.html#bot-services">Chatbots & Bot Services</a></li><li><a href="services.html#data-analytics-predictive-services">Data Analytics & Prediction</a></li><li><a href="services.html#business-process-automation-and-digital-transformation-services">Process Automation & Transformation</a></li><li><a href="services.html#rpa-robotic-process-automation">Robotic Process Automation</a></li><li><a href="services.html#digital-twin">Digital Twin</a></li></ul>
+      </div>
+      <div class="mega-col">
+        <a class="mega-cat" href="services.html#cybersecurity"><svg class="i i-shield-check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></svg><span>Cybersecurity</span></a>
+        <ul><li><a href="services.html#managed-ai-secops">Managed AI SecOps (24/7)</a></li><li><a href="services.html#cyber-assessment-audit">Cybersecurity Assessment & Audit</a></li><li><a href="services.html#zero-trust-identity-data-security">Zero Trust, Identity & Data</a></li><li><a href="services.html#ransomware-resilience">Ransomware Resilience & Recovery</a></li><li><a href="services.html#information-security-services">Information Security</a></li></ul>
+      </div>
+      <div class="mega-col">
+        <a class="mega-cat" href="services.html#cloud-infrastructure"><svg class="i i-cloud-upload" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 13v8" /><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" /><path d="m8 17 4-4 4 4" /></svg><span>Cloud & Infrastructure</span></a>
+        <ul><li><a href="services.html#cloud-services-migration">Cloud Services & Migration</a></li><li><a href="services.html#partner-services-msft-azure-aws-gcp-oci">Azure, AWS, GCP & OCI Partner</a></li><li><a href="services.html#data-center-infrastructure-services">Data Center & Infrastructure</a></li><li><a href="services.html#managed-services">Managed IT Services</a></li><li><a href="services.html#it-ot-services">IT/OT Integration</a></li></ul>
+      </div>
+      <div class="mega-col">
+        <a class="mega-cat" href="services.html#elv-security"><svg class="i i-cctv" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M16.75 12h3.632a1 1 0 0 1 .894 1.447l-2.034 4.069a1 1 0 0 1-1.708.134l-2.124-2.97" /><path d="M17.106 9.053a1 1 0 0 1 .447 1.341l-3.106 6.211a1 1 0 0 1-1.342.447L3.61 12.3a2.92 2.92 0 0 1-1.3-3.91L3.69 5.6a2.92 2.92 0 0 1 3.92-1.3z" /><path d="M2 19h3.76a2 2 0 0 0 1.8-1.1L9 15" /><path d="M2 21v-4" /><path d="M7 9h.01" /></svg><span>ELV & Security Systems</span></a>
+        <ul><li><a href="services.html#cctv-video-surveillance">CCTV & Video Surveillance</a></li><li><a href="services.html#access-control-gate-barriers">Access Control & Gate Barriers</a></li><li><a href="services.html#anpr-intercom-car-parks">ANPR, Intercom & Car Parks</a></li><li><a href="services.html#data-centre-power-cooling">Data Centre Build, Power & Cooling</a></li></ul>
+      </div>
+      <div class="mega-col">
+        <a class="mega-cat" href="services.html#audio-visual"><svg class="i i-monitor-play" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 7.75a.75.75 0 0 1 1.142-.638l3.664 2.249a.75.75 0 0 1 0 1.278l-3.664 2.25a.75.75 0 0 1-1.142-.64z" /><path d="M12 17v4" /><path d="M8 21h8" /><rect x="2" y="3" width="20" height="14" rx="2" /></svg><span>Audio Visual</span></a>
+        <ul><li><a href="services.html#meeting-rooms-video-conferencing">Meeting Rooms & Video Conferencing</a></li><li><a href="services.html#video-walls-digital-signage">LED Video Walls & Digital Signage</a></li><li><a href="services.html#pro-audio-pa-systems">Pro Audio, PA & Background Music</a></li><li><a href="services.html#immersive-smart-spaces">Immersive & Smart Spaces</a></li><li><a href="services.html#av-setup-meeting-room-solutions">AV Setup & Meeting Rooms</a></li></ul>
+      </div>
+      <div class="mega-col">
+        <a class="mega-cat" href="services.html#network-wifi"><svg class="i i-wifi" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 20h.01" /><path d="M2 8.82a15 15 0 0 1 20 0" /><path d="M5 12.859a10 10 0 0 1 14 0" /><path d="M8.5 16.429a5 5 0 0 1 7 0" /></svg><span>Networking & Wi-Fi</span></a>
+        <ul><li><a href="services.html#enterprise-networking-wifi">Enterprise Networking & Wi-Fi</a></li><li><a href="services.html#network-services-cabling-structured-cabling">Structured Cabling</a></li></ul>
+      </div>
+      <div class="mega-col">
+        <a class="mega-cat" href="services.html#apps-business"><svg class="i i-smartphone" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><rect width="14" height="20" x="5" y="2" rx="2" ry="2" /><path d="M12 18h.01" /></svg><span>Apps & Business Systems</span></a>
+        <ul><li><a href="services.html#mobile-app-development">Mobile App Development</a></li><li><a href="services.html#zoho-sap-vodoo-crm-salesforce">Zoho, SAP, Odoo & Salesforce</a></li></ul>
+      </div>
+      <div class="mega-col">
+        <a class="mega-cat" href="services.html#industry"><svg class="i i-building-2" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" /><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" /><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2" /><path d="M10 6h4" /><path d="M10 10h4" /><path d="M10 14h4" /><path d="M10 18h4" /></svg><span>Industry Solutions</span></a>
+        <ul><li><a href="services.html#education-services">Education</a></li><li><a href="services.html#healthcare-services">Healthcare</a></li><li><a href="services.html#retail-implementation-services">Retail</a></li><li><a href="services.html#smart-farming">Smart Farming</a></li></ul>
+      </div>
+      <div class="mega-col">
+        <a class="mega-cat" href="services.html#staffing"><svg class="i i-users" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg><span>Staffing & Outsourcing</span></a>
+        <ul><li><a href="services.html#it-staffing-resident-engineers">IT Staffing & Resident Engineers</a></li><li><a href="services.html#it-outsourcing-managed-operations">IT Outsourcing & Operations</a></li></ul>
+      </div>
+    </div>
+    <aside class="mega-side">
+      <p class="mono">Not sure where to start?</p>
+      <p class="mega-side-title">Tell us your goal and see the services that fit.</p>
+      <a class="pill" href="index.html#find">Find the right service <svg class="i i-arrow-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg></a>
+      <a class="mega-all" href="services.html">All 35 services <svg class="i i-arrow-up-right" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></a>
+      <ul class="mega-certs" aria-label="Certifications">
+        <li>MCC certified · Abu Dhabi</li><li>ISO 9001 · 14001 · 45001</li><li>ICV certified · ADNOC supplier</li>
+      </ul>
+      <p class="mega-contact"><a href="tel:+97126265780"><svg class="i i-phone" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>+971 26265780</a><a href="mailto:hello@hamdaz.com"><svg class="i i-mail" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>hello@hamdaz.com</a></p>
+    </aside>
+  </div>
+</div>
 <div class="menu" id="menu" data-menu inert>
   <div class="menu-inner">
-    <nav aria-label="Menu"><ol class="menu-links"><li><a href="index.html"><span class="menu-num">01</span>Home</a></li><li><a href="about.html"><span class="menu-num">02</span>Who We Are</a></li><li><a href="services.html"><span class="menu-num">03</span>What We Do</a></li><li><a href="solutions.html"><span class="menu-num">04</span>How We Do</a></li><li><a href="contact.html" aria-current="page"><span class="menu-num">05</span>Contact Us</a></li></ol></nav>
+    <nav aria-label="Menu"><ol class="menu-links"><li><a href="index.html"><span class="menu-num">01</span>Home</a></li><li><a href="about.html"><span class="menu-num">02</span>Who We Are</a></li><li><a href="services.html"><span class="menu-num">03</span>What We Do</a></li><li><a href="solutions.html"><span class="menu-num">04</span>How We Do</a></li><li><a href="index.html#clients"><span class="menu-num">05</span>Clients & Partners</a></li><li><a href="contact.html" aria-current="page"><span class="menu-num">06</span>Contact Us</a></li></ol></nav>
     <div class="menu-side">
       <p class="mono">What We Do</p>
-      <ul class="menu-services"><li><a href="services.html#generative-ai">Generative AI</a></li><li><a href="services.html#data-analytics-predictive-services">Data Analytics & Predictive Services</a></li><li><a href="services.html#business-process-automation-and-digital-transformation-services">Business Process Automation and Digital Transformation Services</a></li><li><a href="services.html#data-center-infrastructure-services">Data Center/Infrastructure Services</a></li><li><a href="services.html#cloud-services-migration">Cloud Services & Migration</a></li><li><a href="services.html#partner-services-msft-azure-aws-gcp-oci">Partner Services – MSFT Azure, AWS, GCP, OCI</a></li><li><a href="services.html#digital-twin">Digital Twin</a></li><li><a href="services.html#rpa-robotic-process-automation">RPA (Robotic Process Automation)</a></li><li><a href="services.html#mobile-app-development">Mobile App Development</a></li><li><a href="services.html#education-services">Education Services</a></li><li><a href="services.html">More &gt;&gt;</a></li></ul>
+      <ul class="menu-services"><li><a href="services.html#ai-data">AI, Data & Automation</a></li><li><a href="services.html#cybersecurity">Cybersecurity</a></li><li><a href="services.html#cloud-infrastructure">Cloud & Infrastructure</a></li><li><a href="services.html#elv-security">ELV & Security Systems</a></li><li><a href="services.html#audio-visual">Audio Visual</a></li><li><a href="services.html#network-wifi">Networking & Wi-Fi</a></li><li><a href="services.html#apps-business">Apps & Business Systems</a></li><li><a href="services.html#industry">Industry Solutions</a></li><li><a href="services.html#staffing">Staffing & Outsourcing</a></li><li><a href="services.html">All 35 services &gt;&gt;</a></li></ul>
       <p class="mono">How We Do</p>
       <ul class="menu-services"><li><a href="solutions.html#oil-and-gas-industry">Oil and Gas Industry</a></li><li><a href="solutions.html#small-and-medium-enterprises-smes">Small and Medium Enterprises (SMEs)</a></li><li><a href="solutions.html#schools-and-educational-institutions">Schools and Educational Institutions</a></li><li><a href="solutions.html#online-education">Online Education</a></li><li><a href="solutions.html#sports">Sports</a></li></ul>
     </div>
@@ -158,11 +210,11 @@
       </div>
       <nav class="footer-col" aria-label="Footer">
         <h2>Company</h2>
-        <ul><li><a href="index.html">Home</a></li><li><a href="about.html">Who We Are</a></li><li><a href="services.html">What We Do</a></li><li><a href="solutions.html">How We Do</a></li><li><a href="contact.html">Contact Us</a></li></ul>
+        <ul><li><a href="index.html">Home</a></li><li><a href="about.html">Who We Are</a></li><li><a href="services.html">What We Do</a></li><li><a href="solutions.html">How We Do</a></li><li><a href="index.html#clients">Clients & Partners</a></li><li><a href="contact.html">Contact Us</a></li></ul>
       </nav>
       <div class="footer-col">
         <h2>Services</h2>
-        <ul><li><a href="services.html#generative-ai">Generative AI</a></li><li><a href="services.html#data-analytics-predictive-services">Data Analytics & Predictive Services</a></li><li><a href="services.html#business-process-automation-and-digital-transformation-services">Business Process Automation and Digital Transformation Services</a></li><li><a href="services.html#data-center-infrastructure-services">Data Center/Infrastructure Services</a></li><li><a href="services.html#cloud-services-migration">Cloud Services & Migration</a></li><li><a href="services.html#partner-services-msft-azure-aws-gcp-oci">Partner Services – MSFT Azure, AWS, GCP, OCI</a></li><li><a href="services.html">More &gt;&gt;</a></li></ul>
+        <ul><li><a href="services.html#ai-data">AI, Data & Automation</a></li><li><a href="services.html#cybersecurity">Cybersecurity</a></li><li><a href="services.html#cloud-infrastructure">Cloud & Infrastructure</a></li><li><a href="services.html#elv-security">ELV & Security Systems</a></li><li><a href="services.html#audio-visual">Audio Visual</a></li><li><a href="services.html#network-wifi">Networking & Wi-Fi</a></li><li><a href="services.html#apps-business">Apps & Business Systems</a></li><li><a href="services.html#industry">Industry Solutions</a></li><li><a href="services.html#staffing">Staffing & Outsourcing</a></li><li><a href="services.html">All services &gt;&gt;</a></li></ul>
       </div>
       <div class="footer-col footer-offices">
         <h2>Offices</h2>

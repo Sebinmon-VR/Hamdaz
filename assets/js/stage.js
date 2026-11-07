@@ -162,6 +162,35 @@ async function init(host) {
   host.querySelectorAll('[data-earth-label]').forEach((el) => { el.style.opacity = '0'; });
   // the glass hero's service panels, one per frame (src/pages/home.mjs)
   const framePanels = [...document.querySelectorAll('[data-frame-panel]')].map((el) => ({ el, n: Number(el.dataset.framePanel), key: '', on: null }));
+  // The glass hero plays its frames on its own, like a short film: each one holds for a few seconds, then
+  // glides to the next, and it loops. Hovering the details or the rail holds the frame; the rail jumps to
+  // any frame, and its button pauses the film (WCAG 2.2.2). One scroll leaves the hero for the content.
+  const heroA = document.querySelector('[data-hero-a]');
+  const rail = [...document.querySelectorAll('[data-rail]')];
+  const playBtn = document.querySelector('[data-hero-play]');
+  const HOLD = [7, 5.5, 5.5, 5.5, 5.5, 5.5];
+  const film = { f: 0, from: 0, to: 0, k: 1, dur: 1.6, hold: 0, paused: false, held: false, on: -1, heroA: -1 };
+  const easeFilm = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  const filmGo = (n) => {
+    const L = el3d?.frames || 6;
+    let to = film.to - (((film.to % L) + L) % L) + n;
+    if (to - film.to > L / 2) to -= L;
+    if (film.to - to > L / 2) to += L;
+    if (to === film.to && film.k >= 1) return;
+    film.from = film.f; film.to = to; film.k = 0; film.hold = 0;
+    film.dur = Math.min(2.2, 1.4 + Math.abs(to - film.f) * 0.2);
+  };
+  rail.forEach((b) => b.addEventListener('click', () => filmGo(Number(b.dataset.rail))));
+  if (playBtn) playBtn.addEventListener('click', () => {
+    film.paused = !film.paused;
+    playBtn.setAttribute('aria-pressed', String(film.paused));
+    playBtn.setAttribute('aria-label', film.paused ? 'Play the hero' : 'Pause the hero');
+    playBtn.classList.toggle('is-paused', film.paused);
+  });
+  const holdOn = (el) => { if (!el) return; el.addEventListener('pointerenter', () => (film.held = true)); el.addEventListener('pointerleave', () => (film.held = false)); el.addEventListener('focusin', () => (film.held = true)); el.addEventListener('focusout', () => (film.held = false)); };
+  framePanels.forEach((fp) => holdOn(fp.el));
+  holdOn(document.querySelector('.hero-rail'));
+  holdOn(heroA);
 
   // particles (light layer)
   const seeds = new Float32Array(PARTICLES * 3);
@@ -267,7 +296,8 @@ async function init(host) {
     // two thirds of the screen), so the hero's element is still in sight as it breaks up
     const ar = art ? art.getBoundingClientRect() : null;
     const st = sheets[0] ? sheets[0].getBoundingClientRect().top : H;
-    k1 = follow(k1, ar && light ? clamp01((H * 0.97 - st) / (H * 0.62)) : 0, dt);
+    // (the glass hero is one screen, so its stream follows how far the page has scrolled)
+    k1 = follow(k1, ar && light ? (kind === 'glass' ? clamp01(-hr.top / (H * 0.62)) : clamp01((H * 0.97 - st) / (H * 0.62))) : 0, dt);
     const k = k1;
     const outK = 1 - smooth(0.02, 0.42, k);
     const inK = smooth(0.62, 1, k);
@@ -288,11 +318,29 @@ async function init(host) {
       heroRoot.visible = false;
     } else if (kind === 'glass') {
       // the glass object places itself along the hero story and changes as it goes
-      el3d.update({ p: heroProg, t, dt, outK, frozen: k > 0, pointer, aspect, halfH: HALF_H, camera });
+      // the film: glide when asked to, otherwise hold the frame and move on when its time is up (not while
+      // held, paused, off screen or breaking up into particles)
+      const L = el3d.frames;
+      if (film.k < 1) { film.k = Math.min(1, film.k + dt / film.dur); film.f = film.from + (film.to - film.from) * easeFilm(film.k); }
+      else if (!film.paused && !film.held && k < 0.001 && hr.bottom > H * 0.5) {
+        film.hold += dt;
+        if (film.hold >= HOLD[((film.to % L) + L) % L]) filmGo((((film.to % L) + L) % L + 1) % L);
+      }
+      const onFrame = (((Math.round(film.to) % L) + L) % L);
+      if (onFrame !== film.on) { film.on = onFrame; rail.forEach((b, i) => { b.classList.toggle('is-on', i === onFrame); if (i === onFrame) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); }); }
+      if (rail[onFrame]) rail[onFrame].style.setProperty('--prog', (film.k < 1 ? 0 : Math.min(1, film.hold / HOLD[onFrame])).toFixed(3));
+      el3d.update({ f: film.f, t, dt, outK, frozen: k > 0.001, pointer, aspect, halfH: HALF_H, camera });
+      // the headline belongs to the first frame
+      if (heroA) {
+        const d0 = Math.min(el3d.frame, L - el3d.frame), a = 1 - smooth(0.18, 0.5, d0);
+        if (Math.abs(a - film.heroA) > 0.002) { film.heroA = a; heroA.style.opacity = a.toFixed(3); heroA.style.visibility = a < 0.01 ? 'hidden' : ''; heroA.style.transform = `translate3d(0, ${((1 - a) * -40).toFixed(1)}px, 0)`; }
+      }
       host.classList.toggle('is-hover', el3d.hover > 0.5);
       // each service panel shows around its own frame and glides with the scroll (style.css .hero-frame)
       for (const fp of framePanels) {
-        const d = el3d.frame - fp.n;
+        let d = el3d.frame - fp.n;
+        if (d > L / 2) d -= L;
+        if (d < -L / 2) d += L;
         const v = 1 - smooth(0.24, 0.5, Math.abs(d));
         const key = `${v.toFixed(3)}|${d.toFixed(3)}`;
         if (key === fp.key) continue;

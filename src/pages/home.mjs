@@ -1,6 +1,6 @@
 import { site, contact, heroSlides, services, industries } from '../data.mjs';
 import { icon } from '../icons.mjs';
-import { earth, content, intro, servicesIndex, productsGrid, serviceFinder, techStrip, contactSection } from '../components.mjs';
+import { earth, content, intro, servicesIndex, productsGrid, serviceFinder, techStrip, contactSection, clientsPartners } from '../components.mjs';
 
 // The hero's artwork: 'glass' (frames of glass tech objects over dissolving photos, heroes/glass.js),
 // 'scan' (the scan horizon, assets/js/scan.js) or 'chip' (the AI chip, heroes/chip.js).
@@ -16,11 +16,12 @@ const FRAME_SERVICES = [
   ['Cloud', 'cloud-services-migration'],
   ['Data', 'data-analytics-predictive-services'],
   ['Infrastructure', 'data-center-infrastructure-services'],
-  ['Security', 'information-security-services'],
+  ['Security', 'managed-ai-secops'],
 ];
 // where you are in the frames, and a way to jump to any of them (main.js heroFrames)
 const frameRail = () => `<nav class="hero-rail" aria-label="Hero sections" data-intro>
       ${[['00', 'Intro'], ...FRAME_SERVICES.map(([area], i) => [String(i + 1).padStart(2, '0'), area])].map(([n, label], i) => `<button type="button" class="hero-rail-item${i === 0 ? ' is-on' : ''}" data-rail="${i}"${i === 0 ? ' aria-current="step"' : ''}><span class="mono">${n}</span><b>${label}</b><i aria-hidden="true"></i></button>`).join('\n')}
+      <button type="button" class="hero-rail-play" data-hero-play aria-pressed="false" aria-label="Pause the hero"><i aria-hidden="true"></i></button>
     </nav>`;
 const framePanels = () => `<div class="hero-frames">
       ${FRAME_SERVICES.map(([area, slug], i) => {
@@ -29,7 +30,7 @@ const framePanels = () => `<div class="hero-frames">
         <p class="mono hf-idx"><span>${String(i + 1).padStart(2, '0')}</span> / ${String(FRAME_SERVICES.length).padStart(2, '0')} · ${area}</p>
         <h2 class="hf-title">${s.title.replace("/", "/<wbr>")}</h2>
         <p class="hf-text">${s.summary}</p>
-        <ul class="hf-list">${s.items.slice(0, 4).map(([t, d], k) => `<li style="--i:${k}"><span class="hf-n mono">${String(k + 1).padStart(2, '0')}</span><strong>${t}</strong><span class="hf-d">${d}</span></li>`).join('')}</ul>
+        <ul class="hf-tags" aria-label="Includes">${s.items.filter(([t]) => t !== 'Latest Technologies').slice(0, 4).map(([t], k) => `<li style="--i:${k}">${t}</li>`).join('')}</ul>
         <a class="hf-go" href="services.html#${slug}">Explore ${area === 'AI' ? 'AI services' : area} ${icon('arrow-right')}</a>
       </article>`;
       }).join('\n      ')}
@@ -111,5 +112,5 @@ export default {
   stage: true,
   bodyClass: 'page-home',
   jsonld,
-  body: [stage, hero, content(intro({ art: true }), servicesIndex(), productsGrid(), serviceFinder({ idx: '04' }), techStrip()), galaxy, content(contactSection({ idx: '05' }))].join('\n'),
+  body: [stage, hero, content(intro({ art: true }), clientsPartners({ idx: '02' }), servicesIndex({ idx: '03' }), productsGrid({ idx: '04' }), serviceFinder({ idx: '05' }), techStrip()), galaxy, content(contactSection({ idx: '06' }))].join('\n'),
 };

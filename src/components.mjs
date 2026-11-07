@@ -1,4 +1,4 @@
-import { site, contact, heroNodes, helpCta, gpt, technologies, services, serviceBySlug, featuredServices, products, industries, whoWeAre, needs, waLink } from './data.mjs';
+import { site, contact, heroNodes, helpCta, gpt, technologies, services, serviceBySlug, featuredServices, products, industries, whoWeAre, needs, waLink, clients, partners } from './data.mjs';
 import { icon } from './icons.mjs';
 import { clock } from './layout.mjs';
 
@@ -272,6 +272,25 @@ export function techStrip() {
   <div class="tech-head"><p>Technologies we work with</p><p class="tech-meta">AI · Cloud · ERP · Mobile · IoT</p><button class="mq-toggle" type="button" aria-pressed="false" data-marquee-toggle><span class="mq-toggle-icon" aria-hidden="true"></span><span data-marquee-toggle-label>Pause</span></button></div>
   <p class="sr-only">${technologies.join(', ')}</p>
   <div class="mq" data-marquee="1" aria-hidden="true"><div class="mq-track">${ul}${ul}</div></div>
+</section>`;
+}
+
+/* ---------- Clients and technology partners: moving rows of names ---------- */
+export function clientsPartners({ idx = '04' } = {}) {
+  const groups = Object.entries(partners);
+  const total = groups.reduce((n, [, list]) => n + list.length, 0);
+  const row = (list, cls) => { const ul = `<ul>${list.map((n) => `<li>${n}</li>`).join('')}</ul>`; return `<div class="mq-track">${ul}${ul}</div>`; };
+  return `<section class="sec cp-sec" id="clients" aria-labelledby="cp-title">
+  <div class="wrap">
+    ${head({ idx, label: 'Clients & partners', meta: `${clients.length} featured clients · ${total}+ partners`, title: 'Trusted across the UAE', text: 'Government, energy, education and enterprise clients, backed by the industry\u2019s leading technology brands.' }).replace('<h2 class="sh-title"', '<h2 class="sh-title" id="cp-title"')}
+  </div>
+  <div class="cp-rows">
+    <div class="cp-head"><p>Selected clients</p><button class="mq-toggle" type="button" aria-pressed="false" data-marquee-toggle><span class="mq-toggle-icon" aria-hidden="true"></span><span data-marquee-toggle-label>Pause</span></button></div>
+    <div class="mq mq--clients" data-marquee="1" aria-hidden="true">${row(clients)}</div>
+    ${groups.map(([label, list], i) => `<div class="cp-head"><p>${label}</p></div>
+    <div class="mq mq--partners" data-marquee="${i % 2 ? 1 : -1}" aria-hidden="true">${row(list)}</div>`).join('\n    ')}
+    <p class="sr-only">Clients: ${clients.join(', ')}. Partners: ${groups.map(([, l]) => l.join(', ')).join(', ')}.</p>
+  </div>
 </section>`;
 }
 

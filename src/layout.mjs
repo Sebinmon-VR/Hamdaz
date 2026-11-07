@@ -1,4 +1,4 @@
-import { site, contact, services, industries, waLink } from './data.mjs';
+import { site, contact, services, categories, serviceBySlug, industries, waLink } from './data.mjs';
 import { icon } from './icons.mjs';
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
@@ -9,15 +9,66 @@ export const NAV = [
   { href: 'about.html', label: 'Who We Are', key: 'about' },
   { href: 'services.html', label: 'What We Do', key: 'services' },
   { href: 'solutions.html', label: 'How We Do', key: 'solutions' },
+  { href: 'index.html#clients', label: 'Clients & Partners', key: 'clients' },
   { href: 'contact.html', label: 'Contact Us', key: 'contact' },
 ];
+
+// shorter names for the menus, where a service's full title is long
+const SHORT = {
+  'data-analytics-predictive-services': 'Data Analytics & Prediction',
+  'business-process-automation-and-digital-transformation-services': 'Process Automation & Transformation',
+  'rpa-robotic-process-automation': 'Robotic Process Automation',
+  'data-center-infrastructure-services': 'Data Center & Infrastructure',
+  'partner-services-msft-azure-aws-gcp-oci': 'Azure, AWS, GCP & OCI Partner',
+  'zoho-sap-vodoo-crm-salesforce': 'Zoho, SAP, Odoo & Salesforce',
+  'network-services-cabling-structured-cabling': 'Structured Cabling',
+  'av-setup-meeting-room-solutions': 'AV Setup & Meeting Rooms',
+  'information-security-services': 'Information Security',
+  'bot-services': 'Chatbots & Bot Services',
+  'managed-services': 'Managed IT Services',
+  'it-ot-services': 'IT/OT Integration',
+  'managed-ai-secops': 'Managed AI SecOps (24/7)',
+  'zero-trust-identity-data-security': 'Zero Trust, Identity & Data',
+  'it-outsourcing-managed-operations': 'IT Outsourcing & Operations',
+  'retail-implementation-services': 'Retail',
+  'education-services': 'Education',
+  'healthcare-services': 'Healthcare',
+};
+export const shortName = (slug) => SHORT[slug] || serviceBySlug[slug].title.replace(/ Services$/, '');
+
+// The "What We Do" mega menu: every service area with its services, and a way in when you are not sure
+function mega() {
+  const office = contact.offices[0];
+  return `<div class="megamenu" id="mega" data-mega>
+  <div class="mega-in">
+    <div class="mega-grid">
+      ${categories.map((c) => `<div class="mega-col">
+        <a class="mega-cat" href="services.html#${c.id}">${icon(c.icon)}<span>${c.title}</span></a>
+        <ul>${c.services.map((slug) => `<li><a href="services.html#${slug}">${shortName(slug)}</a></li>`).join('')}</ul>
+      </div>`).join('\n      ')}
+    </div>
+    <aside class="mega-side">
+      <p class="mono">Not sure where to start?</p>
+      <p class="mega-side-title">Tell us your goal and see the services that fit.</p>
+      <a class="pill" href="index.html#find">Find the right service ${icon('arrow-right')}</a>
+      <a class="mega-all" href="services.html">All ${services.length} services ${icon('arrow-up-right')}</a>
+      <ul class="mega-certs" aria-label="Certifications">
+        <li>MCC certified · Abu Dhabi</li><li>ISO 9001 · 14001 · 45001</li><li>ICV certified · ADNOC supplier</li>
+      </ul>
+      <p class="mega-contact"><a href="tel:${office.phones[office.phones.length - 1].tel}">${icon('phone')}${office.phones[office.phones.length - 1].label}</a><a href="mailto:${contact.email}">${icon('mail')}${contact.email}</a></p>
+    </aside>
+  </div>
+</div>`;
+}
 
 export const clock = (o) => `<span class="clock" data-clock="${o.tz}" data-clock-label="${o.tzLabel}">--:-- ${o.tzLabel}</span>`;
 
 function header(active) {
   // the bar links to the sections; Contact is the button beside it (the logo goes home)
   const links = NAV.filter((n) => n.key !== 'home' && n.key !== 'contact')
-    .map((n) => `<li><a href="${n.href}"${active === n.key ? ' aria-current="page"' : ''}>${n.label}</a></li>`)
+    .map((n) => (n.key === 'services'
+      ? `<li class="nav-mega"><a href="${n.href}"${active === n.key ? ' aria-current="page"' : ''}>${n.label}</a><button class="nav-caret" type="button" aria-expanded="false" aria-controls="mega" aria-label="Show all services" data-mega-btn>${icon('chevron-down')}</button></li>`
+      : `<li><a href="${n.href}"${active === n.key ? ' aria-current="page"' : ''}>${n.label}</a></li>`))
     .join('');
   return `<a class="skip" href="#main">Skip to content</a>
 <header class="header" data-header>
@@ -28,6 +79,7 @@ function header(active) {
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn><span class="menu-btn-label">Menu</span><span class="menu-btn-lines"><i></i><i></i></span></button>
   </div>
 </header>
+${mega()}
 <div class="menu" id="menu" data-menu inert>
   <div class="menu-inner">
     <nav aria-label="Menu"><ol class="menu-links">${NAV.map(
@@ -35,7 +87,7 @@ function header(active) {
     ).join('')}</ol></nav>
     <div class="menu-side">
       <p class="mono">What We Do</p>
-      <ul class="menu-services">${services.slice(0, 10).map((s) => `<li><a href="services.html#${s.slug}">${s.title}</a></li>`).join('')}<li><a href="services.html">More &gt;&gt;</a></li></ul>
+      <ul class="menu-services">${categories.map((c) => `<li><a href="services.html#${c.id}">${c.title}</a></li>`).join('')}<li><a href="services.html">All ${services.length} services &gt;&gt;</a></li></ul>
       <p class="mono">How We Do</p>
       <ul class="menu-services">${industries.map((i) => `<li><a href="solutions.html#${i.slug}">${i.title}</a></li>`).join('')}</ul>
     </div>
@@ -66,7 +118,7 @@ function footer() {
       </nav>
       <div class="footer-col">
         <h2>Services</h2>
-        <ul>${services.slice(0, 6).map((s) => `<li><a href="services.html#${s.slug}">${s.title}</a></li>`).join('')}<li><a href="services.html">More &gt;&gt;</a></li></ul>
+        <ul>${categories.map((c) => `<li><a href="services.html#${c.id}">${c.title}</a></li>`).join('')}<li><a href="services.html">All services &gt;&gt;</a></li></ul>
       </div>
       <div class="footer-col footer-offices">
         <h2>Offices</h2>

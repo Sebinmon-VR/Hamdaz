@@ -249,7 +249,6 @@ export async function build({ root, scene, renderer, reduceMotion }) {
   root.add(halo);
 
   // where the object sits in each frame (x and y as shares of half the screen, its scale)
-  const N = FRAMES.length - 1;
   const at = (i, narrow) => (narrow ? [0, 0.34, 0.72] : FRAMES[i].pos);
   let hover = 0, current = null, showing = null;
   const show = (key) => {
@@ -263,17 +262,18 @@ export async function build({ root, scene, renderer, reduceMotion }) {
     labels: 0,
     lit: null,
     onSwap: null,
-    frame: 0, // where the story is, in frames (0 .. N), for the page's own panels
+    frames: FRAMES.length,
+    frame: 0, // where the story is, in frames (0 .. frames, wrapping), for the page's own panels
     showing: () => showing,
     points: (n) => (current ? samplePoints(current, root, n) : new Float32Array(n * 3)),
-    // hero progress, time, the scroll stream (frozen once the object starts breaking up), pointer, screen
-    update({ p, t, dt, outK, frozen, pointer, aspect, halfH }) {
+    // f: where the story is in frames (stage.js plays it on its own; it keeps counting up and wraps round),
+    // time, the scroll stream (frozen once the object starts breaking up), pointer, screen
+    update({ f: fIn, t, dt, outK, frozen, pointer, aspect, halfH }) {
       const narrow = aspect < 0.9;
-      // where we are between two frames; everything below is driven by this, so it plays exactly with the
-      // scroll's own glide, and backwards when scrolling up
-      const f = clamp01(p) * N, i = Math.min(N - 1, Math.floor(f)), u = f - i;
+      const L = FRAMES.length, fl = Math.floor(fIn), u = fIn - fl, i = ((fl % L) + L) % L;
+      const f = i + u;
       api.frame = f;
-      const A = FRAMES[i], B = FRAMES[i + 1];
+      const A = FRAMES[i], B = FRAMES[(i + 1) % L];
       // the object: the one leaving turns away and shrinks through the first half of the glide, the next one
       // turns in and grows through the second half (frames that keep their object just glide)
       const same = A.obj === B.obj;
@@ -281,7 +281,7 @@ export async function build({ root, scene, renderer, reduceMotion }) {
       if (!frozen) show(same || u < 0.5 ? A.obj : B.obj);
       const vis = same ? 1 : leaving ? 1 - smooth(0.12, 0.5, u) : smooth(0.5, 0.88, u);
       const turn = same ? 0 : leaving ? smooth(0.12, 0.5, u) : -(1 - smooth(0.5, 0.88, u));
-      const pa = at(i, narrow), pb = at(i + 1, narrow), k = smooth(0, 1, u);
+      const pa = at(i, narrow), pb = at((i + 1) % L, narrow), k = smooth(0, 1, u);
       const sx = pa[0] + (pb[0] - pa[0]) * k, sy = pa[1] + (pb[1] - pa[1]) * k, sc = pa[2] + (pb[2] - pa[2]) * k;
       const halfW = halfH * aspect;
       const s = sc * halfH * 0.52 * (1 + 0.015 * Math.sin(t * 1.1));
@@ -317,9 +317,9 @@ export async function build({ root, scene, renderer, reduceMotion }) {
       U.uTintA.value = BG[A.bg].tint; U.uTintB.value = BG[B.bg].tint;
       U.uMix.value = A.bg === B.bg ? 0 : smooth(0.1, 0.9, u);
       U.uTime.value = t;
-      const d = 6 - BG_Z, h = 2 * d * Math.tan((15 * Math.PI) / 180), w = h * aspect, zoom = 1.1 + p * 0.12;
+      const d = 6 - BG_Z, h = 2 * d * Math.tan((15 * Math.PI) / 180), w = h * aspect, zoom = 1.12 + 0.03 * Math.sin(t * 0.08);
       bg.plane.scale.set(w * zoom, h * zoom, 1);
-      bg.plane.position.set(-pointer.x * 0.12, -p * 0.3, BG_Z);
+      bg.plane.position.set(-pointer.x * 0.12, -pointer.y * 0.06, BG_Z);
       U.aP.value = w / h;
     },
     // the photo layer: shown while the hero is on screen, darkened to the page navy as the sheet covers it

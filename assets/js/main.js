@@ -120,6 +120,38 @@
   menuBtn?.addEventListener('click', () => setMenu(!menuOpen));
   document.addEventListener('keydown', (e) => e.key === 'Escape' && menuOpen && (setMenu(false), menuBtn.focus()));
 
+  /* ---------------------------------------------------------------- Mega menu (What We Do) */
+  // Opens on hover (with a short grace period so the pointer can travel into it) and with the caret
+  // button; closes on Escape, a click outside, focus leaving it, or scrolling away.
+  const mega = $('[data-mega]');
+  const megaBtn = $('[data-mega-btn]');
+  const megaItem = $('.nav-mega');
+  if (mega && megaBtn && megaItem) {
+    let megaT = 0;
+    const isOpen = () => mega.classList.contains('is-open');
+    const setMega = (on) => {
+      clearTimeout(megaT);
+      if (on === isOpen()) return;
+      mega.classList.toggle('is-open', on);
+      mega.inert = !on;
+      megaBtn.setAttribute('aria-expanded', String(on));
+      if (on) header.classList.remove('is-hidden');
+    };
+    mega.inert = true;
+    if (fine) {
+      [megaItem, mega].forEach((el) => {
+        el.addEventListener('pointerenter', () => { clearTimeout(megaT); megaT = setTimeout(() => setMega(true), 90); });
+        el.addEventListener('pointerleave', () => { clearTimeout(megaT); megaT = setTimeout(() => setMega(false), 220); });
+      });
+    }
+    megaBtn.addEventListener('click', () => setMega(!isOpen()));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isOpen()) { setMega(false); megaBtn.focus(); } });
+    document.addEventListener('click', (e) => { if (isOpen() && !mega.contains(e.target) && !megaItem.contains(e.target)) setMega(false); });
+    mega.addEventListener('focusout', (e) => { if (e.relatedTarget && !mega.contains(e.relatedTarget) && !megaItem.contains(e.relatedTarget)) setMega(false); });
+    mega.addEventListener('click', (e) => { if (e.target.closest('a')) setMega(false); });
+    window.addEventListener('scroll', () => { if (isOpen() && !mega.matches(':hover')) setMega(false); }, { passive: true });
+  }
+
   /* ---------------------------------------------------------------- Cursor + magnetic */
   if (fine && !reduce) {
     doc.classList.add('has-cursor');
@@ -419,12 +451,9 @@
     const b = $('[data-hero-b]');
     const glassHero = hero.classList.contains('hero--glass');
     if (glassHero) {
-      // the glass hero plays as frames: the headline leaves through the first glide, and each service
-      // area's details come in with its own frame (stage.js)
-      gsap.timeline({ scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom bottom', scrub: 0.4 } })
-        .to([a, $('.hero-scroll')].filter(Boolean), { autoAlpha: 0, y: -90, duration: 0.11, ease: 'power1.in' }, 0.015)
-        .to({}, { duration: 0.875 });
-      if (lenis) heroFrames(hero);
+      // the glass hero plays its frames on its own (stage.js) and fits one screen, so the content is one
+      // scroll away; the hint glides there too
+      $('.hero-scroll')?.addEventListener('click', () => scrollToEl($('.content'), 0));
     } else {
       gsap.timeline({ scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom bottom', scrub: 0.6 } })
         .to([a, $('[data-ticker]'), $('.hero-scroll')], { autoAlpha: 0, y: -80, duration: 0.35, ease: 'none' }, 0.02)
@@ -433,76 +462,6 @@
     }
   }
 
-  /* ---------------------------------------------------------------- Home hero frames (the glass hero) */
-  // The hero scrolls at the visitor's own speed (the smooth scroll), passing through its frames: the
-  // headline, then AI, Cloud, Data, Infrastructure and Security with their details (heroes/glass.js FRAMES).
-  // Only when the visitor stops between two frames does the page settle softly onto one: the next frame
-  // in the direction they were going once they are a little past the last one, otherwise back. Any new
-  // scroll takes over at once, so the settle never holds anyone back.
-  function heroFrames(heroEl) {
-    const FRAMES = [0, 0.2, 0.4, 0.6, 0.8, 1];
-    const settleEase = (t) => 1 - Math.pow(1 - t, 3);
-    let timer = 0;
-    let settling = false;
-    let dir = 1;
-    const stops = () => {
-      const top = heroEl.getBoundingClientRect().top + window.scrollY;
-      const range = heroEl.offsetHeight - innerHeight;
-      return FRAMES.map((f) => top + f * range);
-    };
-    const settle = () => {
-      timer = 0;
-      if (settling) return;
-      if (Math.abs(lenis.velocity) > 0.08) { timer = setTimeout(settle, 90); return; }
-      const s = stops(), y = window.scrollY;
-      if (y <= s[0] + 1 || y >= s[s.length - 1] - 1) return; // above the hero, or past its last frame: free
-      let i = 0;
-      while (i < s.length - 2 && y > s[i + 1]) i++;
-      const step = s[i + 1] - s[i], u = (y - s[i]) / step;
-      // a little past a frame in the scroll's direction carries on to the next; otherwise it eases back
-      const to = dir > 0 ? (u > 0.12 ? s[i + 1] : s[i]) : (u < 0.88 ? s[i] : s[i + 1]);
-      const dist = Math.abs(to - y);
-      if (dist < 2) return;
-      settling = true;
-      lenis.scrollTo(to, {
-        duration: 0.55 + (dist / step) * 0.6,
-        easing: settleEase,
-        onComplete: () => { settling = false; },
-      });
-    };
-    // the frame rail: which frame you are on, and a way to jump to any of them
-    const rail = $$('[data-rail]');
-    let railOn = -1;
-    const markRail = () => {
-      if (!rail.length) return;
-      const s = stops(), step = s[1] - s[0];
-      const i = Math.max(0, Math.min(s.length - 1, Math.round((window.scrollY - s[0]) / step)));
-      if (i === railOn) return;
-      railOn = i;
-      rail.forEach((btn, k) => { btn.classList.toggle('is-on', k === i); if (k === i) btn.setAttribute('aria-current', 'step'); else btn.removeAttribute('aria-current'); });
-    };
-    rail.forEach((btn) => btn.addEventListener('click', () => {
-      const s = stops(), to = s[Number(btn.dataset.rail)], step = s[1] - s[0];
-      clearTimeout(timer);
-      settling = true;
-      lenis.scrollTo(to, { duration: Math.min(2, 0.9 + (Math.abs(to - window.scrollY) / step) * 0.22), easing: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2), onComplete: () => { settling = false; } });
-    }));
-    markRail();
-    lenis.on('scroll', (l) => {
-      markRail();
-      if (l.direction) dir = l.direction;
-      if (settling) return;
-      clearTimeout(timer);
-      timer = setTimeout(settle, 140);
-    });
-    // any new scroll input takes over from a settle straight away
-    const takeOver = () => { if (settling) { settling = false; } clearTimeout(timer); };
-    window.addEventListener('wheel', takeOver, { passive: true });
-    window.addEventListener('touchstart', takeOver, { passive: true });
-    window.addEventListener('keydown', takeOver);
-    // the "Scroll to explore" hint takes you to the next frame
-    $('.hero-scroll')?.addEventListener('click', () => { const s = stops(); const next = s.find((v) => v > window.scrollY + 2); if (next !== undefined) lenis.scrollTo(next, { duration: 1.1, easing: settleEase }); });
-  }
   // the scan horizon hero: while the header sits over its light side, the header's button turns dark
   if ($('.hero--scan')) {
     const heroEl = $('.hero--scan');
