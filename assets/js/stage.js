@@ -3,6 +3,7 @@
 //   'scan'  the scan horizon artwork (scan.js, SVG in the hero); the particles pour out of its orb
 //   'chip'  the AI chip on its circuit board (heroes/chip.js), with its labels
 //   'bloom' the x-ray flower (heroes/bloom.js), annotated like an AI scan on a 2D layer
+//   'glass' a glass tech object over two dissolving photos (heroes/glass.js); the particles leave the object
 // Two layers share one camera: the dark stage behind the page draws the hero's 3D element and the galaxy in
 // the dark section before Contact; a transparent layer above the page draws the particles and the people
 // network beside "Who we are" on the white sheet.
@@ -17,6 +18,7 @@ import { heroFramings } from './heroes/framings.js';
 import { elementPoints } from './heroes/points.js';
 import { build as buildBloom } from './heroes/bloom.js';
 import { build as buildChip } from './heroes/chip.js';
+import { build as buildGlass } from './heroes/glass.js';
 import { drawScan, orbOnScreen } from './scan.js';
 import { build as buildInknet } from './heroes/inknet.js';
 import { build as buildGalaxy, galaxyPoints } from './heroes/galaxy.js';
@@ -147,6 +149,7 @@ async function init(host) {
   try {
     if (kind === 'chip') el3d = await buildChip({ root: heroRoot, scene: darkScene, camera, renderer: dark, U, host, mode: 'hero', reduceMotion });
     else if (kind === 'bloom') el3d = buildBloom({ root: heroRoot, U, reduceMotion });
+    else if (kind === 'glass') el3d = await buildGlass({ root: heroRoot, scene: darkScene, renderer: dark, reduceMotion });
     net = light ? await buildInknet({ root: netRoot, U, reduceMotion }) : null;
     if (galaxySec) galaxy = await buildGalaxy({ root: galRoot, U, reduceMotion });
   } catch (e) {
@@ -155,8 +158,10 @@ async function init(host) {
   }
   const framing = kind === 'bloom' ? 'bloom' : 'chip';
   let F = heroFramings(framing, 1.6);
-  const labels = Object.entries(el3d?.anchors || {}).map(([id, a]) => ({ ...a, el: host.querySelector(`[data-earth-label="${id}"]`) })).filter((l) => l.el);
+  const labels = Object.entries(el3d?.anchors || {}).map(([id, a]) => ({ ...a, id, el: host.querySelector(`[data-earth-label="${id}"]`) })).filter((l) => l.el);
   host.querySelectorAll('[data-earth-label]').forEach((el) => { el.style.opacity = '0'; });
+  // the glass hero's service panels, one per frame (src/pages/home.mjs)
+  const framePanels = [...document.querySelectorAll('[data-frame-panel]')].map((el) => ({ el, n: Number(el.dataset.framePanel), key: '', on: null }));
 
   // particles (light layer)
   const seeds = new Float32Array(PARTICLES * 3);
@@ -165,7 +170,7 @@ async function init(host) {
   pg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(PARTICLES * 3), 3));
   // every stream starts on the shape of the element it leaves, so that element breaks up into them
   const ball = () => { const out = new Float32Array(PARTICLES * 3); const v = new THREE.Vector3(); for (let i = 0; i < PARTICLES; i++) v.randomDirection().multiplyScalar(Math.cbrt(Math.random())).toArray(out, i * 3); return out; };
-  const source = kind === 'bloom' ? el3d.points(PARTICLES) : kind === 'chip' ? elementPoints('chip', PARTICLES) : ball(); // the scan: a ball of light at its orb
+  const source = kind === 'bloom' || kind === 'glass' ? el3d.points(PARTICLES) : kind === 'chip' ? elementPoints('chip', PARTICLES) : ball(); // the scan: a ball of light at its orb
   pg.setAttribute('aA', new THREE.BufferAttribute(source, 3));
   pg.setAttribute('aB', new THREE.BufferAttribute(elementPoints('network', PARTICLES), 3));
   pg.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 3));
@@ -174,6 +179,7 @@ async function init(host) {
   const particles = new THREE.Points(pg, new THREE.ShaderMaterial({ uniforms: PU, vertexShader: particleVertex, fragmentShader: particleFragment, transparent: true, depthWrite: false }));
   particles.frustumCulled = false;
   lightScene.add(particles);
+  if (kind === 'glass') el3d.onSwap = () => { if (k1 === 0) { pg.attributes.aA.array.set(el3d.points(PARTICLES)); pg.attributes.aA.needsUpdate = true; } };
   // the second stream: from the network down into the galaxy
   const pg2 = new THREE.BufferGeometry();
   pg2.setAttribute('position', new THREE.BufferAttribute(new Float32Array(PARTICLES * 3), 3));
@@ -280,6 +286,27 @@ async function init(host) {
       heroRoot.updateMatrixWorld();
       PU.uMA.value.copy(heroRoot.matrixWorld);
       heroRoot.visible = false;
+    } else if (kind === 'glass') {
+      // the glass object places itself along the hero story and changes as it goes
+      el3d.update({ p: heroProg, t, dt, outK, frozen: k > 0, pointer, aspect, halfH: HALF_H, camera });
+      host.classList.toggle('is-hover', el3d.hover > 0.5);
+      // each service panel shows around its own frame and glides with the scroll (style.css .hero-frame)
+      for (const fp of framePanels) {
+        const d = el3d.frame - fp.n;
+        const v = 1 - smooth(0.16, 0.48, Math.abs(d));
+        const key = `${v.toFixed(3)}|${d.toFixed(3)}`;
+        if (key === fp.key) continue;
+        fp.key = key;
+        fp.el.style.setProperty('--v', v.toFixed(3));
+        fp.el.style.setProperty('--d', Math.max(-0.5, Math.min(0.5, d)).toFixed(3));
+        const on = v > 0.01;
+        if (on !== fp.on) { fp.on = on; fp.el.classList.toggle('is-on', on); fp.el.setAttribute('aria-hidden', String(!on)); }
+      }
+      el3d.background(hr.bottom > 0, 0);
+      p.labels = el3d.labels;
+      heroRoot.visible = outK > 0.01 && hr.bottom > -H;
+      heroRoot.updateMatrixWorld();
+      PU.uMA.value.copy(heroRoot.matrixWorld); // the first stream pours out of the glass object
     } else {
       heroRoot.position.set(p.x, p.y - (1 - e) * 0.25, 0);
       heroRoot.rotation.set(p.rx - pointer.y * 0.05, p.ry + drift + pointer.x * 0.08, 0);
@@ -314,7 +341,7 @@ async function init(host) {
       if (side !== l.lastSide) { if (side === 'left') l.el.dataset.side = 'left'; else delete l.el.dataset.side; l.lastSide = side; }
       const transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
       if (transform !== l.lastTransform) l.el.style.transform = l.lastTransform = transform;
-      const opacity = showLabels.toFixed(2);
+      const opacity = (showLabels * (el3d?.lit && l.id !== el3d.lit ? 0.4 : 1)).toFixed(2);
       if (opacity !== l.lastOpacity) l.el.style.opacity = l.lastOpacity = opacity;
     }
 

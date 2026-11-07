@@ -325,6 +325,51 @@ html.has-cursor .cursor { display: block; }
 html.hero-scan-top .header:not(.is-scrolled):not(.is-light) .header-end .pill { background: #061423; color: #fff; }
 @media (max-width: 760px) { .hero--scan .hero-actions .pill { background: #fff; color: #061423; } .hero--scan .hero-actions .pill--ghost { color: #fff; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4); } }
 
+/* the glass hero (stage.js, heroes/glass.js): a longer scroll so its five moments play out calmly, and shade
+   on the left and bottom so the words read over the photo */
+.hero.hero--glass { height: 560vh; }
+.hero--glass .hero-b { display: none; }
+/* each frame's service details, beside the object; stage.js sets --v (0 hidden .. 1 shown) and --d (where
+   the frame is: -0.5 arriving from below .. 0.5 leaving upwards) from the scroll, so they glide with it */
+.hero-frames { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.hero-frame {
+  --v: 0; --d: 0;
+  position: absolute; left: var(--pad); top: 50%; width: min(560px, 42vw); display: grid; gap: 18px;
+  opacity: var(--v); visibility: hidden; transform: translate3d(0, calc(-50% - var(--d) * 90px), 0); will-change: transform, opacity;
+}
+.hero-frame.is-on { visibility: visible; pointer-events: auto; }
+.hf-idx { color: var(--accent); display: flex; gap: 8px; }
+.hf-idx span { color: var(--fg); }
+.hf-title { font-family: var(--display); font-weight: 600; font-stretch: 112%; text-transform: uppercase; font-size: clamp(34px, 3.8vw, 62px); line-height: 0.96; letter-spacing: -0.02em; }
+.hf-text { color: var(--fg-2); max-width: 46ch; font-size: 16px; }
+.hf-list { list-style: none; margin: 4px 0 0; padding: 0; border-top: 1px solid var(--line-2); }
+.hf-list li {
+  display: grid; grid-template-columns: 34px 1fr; gap: 2px 10px; padding: 11px 0; border-bottom: 1px solid var(--line-2);
+  opacity: calc(var(--v) * 1.4 - var(--i) * 0.12);
+  transform: translate3d(0, calc((1 - var(--v)) * (16px + var(--i) * 12px)), 0);
+}
+.hf-list .hf-n { color: var(--accent); padding-top: 3px; }
+.hf-list strong { font-weight: 500; font-size: 15.5px; }
+.hf-list .hf-d { grid-column: 2; color: var(--fg-2); font-size: 13.5px; line-height: 1.45; }
+.hf-go { justify-self: start; display: inline-flex; align-items: center; gap: 8px; margin-top: 4px; color: var(--fg); font-weight: 500; font-size: 14.5px; border-bottom: 1px solid var(--line-2); padding-bottom: 4px; transition: border-color 0.3s, gap 0.3s var(--ease); }
+.hf-go:hover { border-color: var(--accent); gap: 12px; }
+.hf-go .i { width: 16px; height: 16px; }
+@media (max-width: 760px) {
+  .hero-frame { top: auto; bottom: clamp(20px, 5vh, 40px); right: var(--pad); width: auto; gap: 12px; transform: translate3d(0, calc(var(--d) * -60px), 0); }
+  .hf-title { font-size: clamp(28px, 8vw, 40px); }
+  .hf-text, .hf-list .hf-d { display: none; }
+  .hf-list li { padding: 8px 0; }
+}
+.hero--glass .hero-shade {
+  background:
+    linear-gradient(90deg, rgba(6, 20, 35, 0.62) 0%, rgba(6, 20, 35, 0.18) 42%, rgba(6, 20, 35, 0) 62%),
+    linear-gradient(0deg, rgba(6, 20, 35, 0.88) 0%, rgba(6, 20, 35, 0.4) 28%, rgba(6, 20, 35, 0) 55%),
+    linear-gradient(180deg, rgba(6, 20, 35, 0.6) 0%, rgba(6, 20, 35, 0) 20%);
+}
+@media (max-width: 760px) { .hero.hero--glass { height: 480vh; } }
+/* hovering the glass object: the cursor ring opens into a soft lens */
+html:has(.earth.is-hover) .cursor-ring { width: 92px; height: 92px; margin: -46px 0 0 -46px; border-color: rgba(255, 255, 255, 0.7); background: radial-gradient(circle, rgba(48, 193, 248, 0.16), rgba(48, 193, 248, 0) 70%); }
+html:has(.earth.is-hover) .cursor-dot { opacity: 0; }
 /* the AI-scan annotations over the hero's flower (stage.js, heroes/bloom.js) */
 .stage-hud { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .page-home .hero { z-index: 1; }

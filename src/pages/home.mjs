@@ -2,13 +2,36 @@ import { site, contact, heroSlides, services, industries } from '../data.mjs';
 import { icon } from '../icons.mjs';
 import { earth, content, intro, servicesIndex, productsGrid, serviceFinder, techStrip, contactSection } from '../components.mjs';
 
-// The hero's artwork: 'scan' (the scan horizon, assets/js/scan.js) or 'chip' (the AI chip, heroes/chip.js).
-// Switch back to the chip by setting this to 'chip'.
-const HERO = 'chip';
+// The hero's artwork: 'glass' (frames of glass tech objects over dissolving photos, heroes/glass.js),
+// 'scan' (the scan horizon, assets/js/scan.js) or 'chip' (the AI chip, heroes/chip.js).
+// The previous design (the chip) is kept on the local branch backup/chip-hero-2026-11-07.
+const HERO = 'glass';
 
 const [first, ...rest] = heroSlides;
 
-const hero = `<section class="hero${HERO === 'scan' ? ' hero--scan' : ''}" data-hero data-dark>
+// The glass hero's frames after the headline: one service area each, with its details beside the object
+// (heroes/glass.js FRAMES shows the matching object; stage.js fades each panel in as its frame arrives)
+const FRAME_SERVICES = [
+  ['AI', 'generative-ai'],
+  ['Cloud', 'cloud-services-migration'],
+  ['Data', 'data-analytics-predictive-services'],
+  ['Infrastructure', 'data-center-infrastructure-services'],
+  ['Security', 'information-security-services'],
+];
+const framePanels = () => `<div class="hero-frames">
+      ${FRAME_SERVICES.map(([area, slug], i) => {
+        const s = services.find((x) => x.slug === slug);
+        return `<article class="hero-frame" data-frame-panel="${i + 1}" aria-hidden="true">
+        <p class="mono hf-idx"><span>${String(i + 1).padStart(2, '0')}</span> / ${String(FRAME_SERVICES.length).padStart(2, '0')} · ${area}</p>
+        <h2 class="hf-title">${s.title.replace("/", "/<wbr>")}</h2>
+        <p class="hf-text">${s.summary}</p>
+        <ul class="hf-list">${s.items.slice(0, 4).map(([t, d], k) => `<li style="--i:${k}"><span class="hf-n mono">${String(k + 1).padStart(2, '0')}</span><strong>${t}</strong><span class="hf-d">${d}</span></li>`).join('')}</ul>
+        <a class="hf-go" href="services.html#${slug}">Explore ${area === 'AI' ? 'AI services' : area} ${icon('arrow-right')}</a>
+      </article>`;
+      }).join('\n      ')}
+    </div>`;
+
+const hero = `<section class="hero${HERO === 'scan' || HERO === 'glass' ? ` hero--${HERO}` : ''}" data-hero data-dark>
   <div class="hero-stage">
     ${HERO === 'scan' ? '<svg class="hero-scan" data-scan viewBox="0 0 1680 944" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>\n    ' : ''}<div class="hero-shade" aria-hidden="true"></div>
 
@@ -31,7 +54,7 @@ const hero = `<section class="hero${HERO === 'scan' ? ' hero--scan' : ''}" data-
 
     <p class="hero-scroll mono" data-intro aria-hidden="true">Scroll to explore <span>↓</span></p>
 
-    <div class="hero-b" data-hero-b>
+    ${HERO === 'glass' ? `${framePanels()}\n\n    ` : ''}<div class="hero-b" data-hero-b>
       <p class="mono eyebrow">(AI · Cloud · Data)</p>
       <h2 class="display display--md">Where Passion Meets Technology</h2>
       <p class="lead">${contact.heading}</p>

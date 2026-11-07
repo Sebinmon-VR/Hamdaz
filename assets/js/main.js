@@ -417,10 +417,88 @@
     });
     const a = $('[data-hero-a]');
     const b = $('[data-hero-b]');
-    gsap.timeline({ scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom bottom', scrub: 0.6 } })
-      .to([a, $('[data-ticker]'), $('.hero-scroll')], { autoAlpha: 0, y: -80, duration: 0.35, ease: 'none' }, 0.02)
-      .fromTo(b, { autoAlpha: 0, y: 70 }, { autoAlpha: 1, y: 0, duration: 0.3, ease: 'none' }, 0.55)
-      .to({}, { duration: 0.15 });
+    const glassHero = hero.classList.contains('hero--glass');
+    if (glassHero) {
+      // the glass hero plays as frames: the headline leaves through the first glide, and each service
+      // area's details come in with its own frame (stage.js)
+      gsap.timeline({ scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom bottom', scrub: 0.4 } })
+        .to([a, $('[data-ticker]'), $('.hero-scroll')], { autoAlpha: 0, y: -90, duration: 0.11, ease: 'power1.in' }, 0.015)
+        .to({}, { duration: 0.875 });
+      if (lenis) heroFrames(hero);
+    } else {
+      gsap.timeline({ scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom bottom', scrub: 0.6 } })
+        .to([a, $('[data-ticker]'), $('.hero-scroll')], { autoAlpha: 0, y: -80, duration: 0.35, ease: 'none' }, 0.02)
+        .fromTo(b, { autoAlpha: 0, y: 70 }, { autoAlpha: 1, y: 0, duration: 0.3, ease: 'none' }, 0.55)
+        .to({}, { duration: 0.15 });
+    }
+  }
+
+  /* ---------------------------------------------------------------- Home hero frames (the glass hero) */
+  // The hero plays like cut scenes: each scroll gesture (wheel, swipe, arrow keys) glides to the next frame
+  // and stops there, instead of stopping somewhere between two (for everyone: like the smooth scroll, it
+  // only moves when the visitor scrolls). Frames, as shares of the hero's scroll, matching heroes/glass.js
+  // FRAMES: the headline, then AI, Cloud, Data, Infrastructure and Security with their details; the last
+  // stop is the people network beside "Who we are" (the particles have landed). Below that the page
+  // scrolls freely again.
+  function heroFrames(heroEl) {
+    const FRAMES = [0, 0.2, 0.4, 0.6, 0.8, 1];
+    const sheet = $('.content');
+    const easeFrame = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    const stops = () => {
+      const top = heroEl.getBoundingClientRect().top + window.scrollY;
+      const range = heroEl.offsetHeight - innerHeight;
+      const out = FRAMES.map((f) => Math.round(top + f * range));
+      if (sheet) out.push(Math.round(sheet.getBoundingClientRect().top + window.scrollY - innerHeight * 0.1));
+      return out;
+    };
+    let busy = false;
+    let quietUntil = 0;
+    const at = () => (lenis.isScrolling ? lenis.targetScroll : window.scrollY);
+    // inside the frames: from the top of the page down to the last frame
+    const inFrames = (dir) => { const s = stops(), y = at(); return y < s[s.length - 1] - 2 || (dir < 0 && y <= s[s.length - 1] + 2); };
+    const go = (dir) => {
+      const s = stops(), y = at();
+      let i = s.findIndex((v) => v > y + 2);
+      if (dir > 0) { if (i === -1) return false; }
+      else { i = -1; for (let k = s.length - 1; k >= 0; k--) if (s[k] < y - 2) { i = k; break; } if (i === -1) i = 0; }
+      busy = true;
+      lenis.scrollTo(s[i], {
+        duration: Math.min(2, 1.1 + Math.abs(s[i] - y) / innerHeight * 0.35),
+        easing: easeFrame, lock: true, force: true,
+        onComplete: () => { busy = false; quietUntil = performance.now() + 220; },
+      });
+      return true;
+    };
+    // one frame per gesture: the trailing momentum of a trackpad or wheel flick is swallowed until it stops
+    const onWheel = (e) => {
+      const dir = Math.sign(e.deltaY);
+      if (!dir || !inFrames(dir) || e.ctrlKey) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const now = performance.now();
+      if (busy || now < quietUntil) { quietUntil = Math.max(quietUntil, now + 180); return; }
+      if (Math.abs(e.deltaY) < 4) return;
+      go(dir);
+      quietUntil = now + 180;
+    };
+    window.addEventListener('wheel', onWheel, { passive: false, capture: true });
+    let touchY = null;
+    window.addEventListener('touchstart', (e) => { touchY = e.touches[0].clientY; }, { passive: true });
+    window.addEventListener('touchmove', (e) => { if (touchY !== null && inFrames(touchY - e.touches[0].clientY)) e.preventDefault(); }, { passive: false });
+    window.addEventListener('touchend', (e) => {
+      if (touchY === null) return;
+      const d = touchY - e.changedTouches[0].clientY;
+      touchY = null;
+      if (Math.abs(d) > 30 && !busy && inFrames(Math.sign(d))) go(Math.sign(d));
+    }, { passive: true });
+    window.addEventListener('keydown', (e) => {
+      const dir = { ArrowDown: 1, PageDown: 1, ' ': e.shiftKey ? -1 : 1, ArrowUp: -1, PageUp: -1 }[e.key];
+      if (!dir || e.target.closest('input, textarea, select, [contenteditable]') || !inFrames(dir)) return;
+      e.preventDefault();
+      if (!busy) go(dir);
+    });
+    // the "Scroll to explore" hint takes you to the next frame too
+    $('.hero-scroll')?.addEventListener('click', () => go(1));
   }
   // the scan horizon hero: while the header sits over its light side, the header's button turns dark
   if ($('.hero--scan')) {
