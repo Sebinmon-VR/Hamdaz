@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hero Reference Board – Hamdaz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  /* Hamdaz home hero: a reference board of every direction x every subject, made with real photoreal
+     images (Unsplash, free licence) and real 3D models (Sketchfab embeds), so a direction can be picked
+     before anything is built. Needs internet. */
+  :root { --bg: #05080d; --panel: #0b141f; --line: rgba(238, 246, 251, .1); --fg: #eef6fb; --fg2: #93a3b5; --cyan: #30c1f8; --pink: #fb4994; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--fg); font: 15px/1.55 Inter, system-ui, sans-serif; padding: 48px 16px 140px; }
+  main { max-width: 1320px; margin: 0 auto; display: grid; gap: 56px; }
+  .eyebrow { font: 500 11.5px/1 "JetBrains Mono", monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--pink); }
+  h1 { font: 800 clamp(30px, 4.4vw, 52px)/1.04 Archivo, sans-serif; font-stretch: 112%; letter-spacing: -.02em; margin-top: 12px; }
+  header.top p { color: var(--fg2); max-width: 70ch; margin-top: 12px; }
+  section.dir { display: grid; gap: 20px; }
+  .dir-head { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; align-items: baseline; border-top: 1px solid var(--line); padding-top: 22px; }
+  .dir-head b { font: 800 44px/1 Archivo, sans-serif; font-stretch: 112%; color: var(--cyan); grid-row: span 2; }
+  .dir-head h2 { font: 700 24px/1.2 Archivo, sans-serif; font-stretch: 105%; }
+  .dir-head p { color: var(--fg2); max-width: 80ch; }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  @media (max-width: 1000px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; transition: border-color .25s, box-shadow .25s; }
+  .card.is-picked { border-color: var(--cyan); box-shadow: 0 0 0 1px var(--cyan), 0 18px 50px -20px rgba(48, 193, 248, .5); }
+  .shot { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #03060a; }
+  .shot img { position: absolute; display: block; object-fit: cover; }
+  .shot iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .tag { position: absolute; top: 10px; left: 10px; z-index: 5; font: 500 10.5px/1 "JetBrains Mono", monospace; padding: 5px 8px; border-radius: 99px; background: rgba(5, 8, 13, .7); border: 1px solid var(--line); pointer-events: none; }
+  .subj { position: absolute; top: 10px; right: 10px; z-index: 5; font: 500 10.5px/1 "JetBrains Mono", monospace; padding: 5px 8px; border-radius: 99px; background: rgba(255,255,255,.9); color: #05080d; pointer-events: none; }
+
+  /* mini hero type, the same on every card */
+  .mini { position: absolute; left: 6%; bottom: 11%; z-index: 4; pointer-events: none; }
+  .mini i { display: flex; align-items: center; gap: 6px; font: 600 8.5px/1 Archivo, sans-serif; font-stretch: 125%; letter-spacing: .14em; text-transform: uppercase; font-style: normal; margin-bottom: 6px; }
+  .mini i::before { content: ""; width: 9px; height: 9px; background: #2547ff; }
+  .mini b { display: block; font: 800 clamp(18px, 2.6vw, 34px)/.86 Archivo, sans-serif; font-stretch: 125%; text-transform: uppercase; letter-spacing: -.01em; color: #fff; }
+  .mini--small b { font-size: clamp(12px, 1.5vw, 18px); }
+  .navline { position: absolute; left: 54px; right: 120px; top: 7%; z-index: 4; display: flex; justify-content: space-between; font: 700 8px/1 Archivo, sans-serif; font-stretch: 112%; letter-spacing: .08em; pointer-events: none; }
+  .navline span:last-child { font: 500 7px/1 Inter, sans-serif; letter-spacing: 0; opacity: .75; }
+
+  /* A: editorial cut-in (image on the right, fading into the page) */
+  .ed { background: radial-gradient(circle at 70% 45%, #0e2236, #04070b 70%); }
+  .ed img { right: 0; top: 0; width: 62%; height: 100%; -webkit-mask-image: linear-gradient(to right, transparent, #000 35%); mask-image: linear-gradient(to right, transparent, #000 35%); }
+  .ed .call { position: absolute; z-index: 4; font: 600 7.5px/1.3 Inter, sans-serif; color: #fff; pointer-events: none; }
+  .ed .call::before { content: ""; position: absolute; top: 5px; right: 100%; width: 34px; height: 1px; background: rgba(255,255,255,.5); margin-right: 4px; }
+  .ed .call small { display: block; font: 500 6px/1.3 "JetBrains Mono", monospace; color: #9fb0c2; letter-spacing: .05em; text-transform: uppercase; }
+  /* C: full bleed */
+  .fb img { inset: 0; width: 100%; height: 100%; }
+  .fb::after { content: ""; position: absolute; inset: 0; z-index: 2; background: linear-gradient(90deg, rgba(3,6,10,.86), rgba(3,6,10,.35) 55%, rgba(3,6,10,.1)), linear-gradient(0deg, rgba(3,6,10,.6), transparent 40%); }
+  /* D: type only */
+  .ty { background: #04070b; display: grid; align-content: center; }
+  .rows { display: grid; gap: 2px; transform: translateY(-14%); }
+  .row { white-space: nowrap; font: 800 clamp(26px, 4vw, 54px)/1 Archivo, sans-serif; font-stretch: 125%; text-transform: uppercase; color: transparent; -webkit-text-stroke: 1px rgba(238,246,251,.22); animation: slide 18s linear infinite; }
+  .row:nth-child(2) { animation-direction: reverse; }
+  .row em { font-style: normal; color: #fff; -webkit-text-stroke: 0; }
+  .row strong { color: var(--cyan); -webkit-text-stroke: 0; font-weight: 800; }
+  @keyframes slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .glowtype { position: absolute; inset: 0; display: grid; place-items: center; background: radial-gradient(ellipse at 60% 40%, rgba(48,193,248,.35), transparent 50%), radial-gradient(ellipse at 30% 70%, rgba(251,73,148,.25), transparent 45%), radial-gradient(ellipse at 80% 80%, rgba(107,80,246,.3), transparent 50%), #04070b; }
+  .glowtype span { font: 800 clamp(30px, 5vw, 70px)/.84 Archivo, sans-serif; font-stretch: 125%; text-transform: uppercase; text-align: center; background: linear-gradient(180deg, #fff, rgba(255,255,255,.35)); -webkit-background-clip: text; background-clip: text; color: transparent; transform: translateY(-10%); }
+  @media (prefers-reduced-motion: reduce) { .row { animation: none; } }
+
+  .body { display: grid; gap: 8px; padding: 16px 18px 18px; flex: 1; align-content: start; }
+  .body h3 { font: 600 16.5px/1.25 Archivo, sans-serif; font-stretch: 105%; }
+  .body h3 b { color: var(--cyan); margin-right: 8px; }
+  .body p { color: var(--fg2); font-size: 13.5px; }
+  .credit { font-size: 11.5px !important; color: #6c7c8e !important; }
+  .credit a { color: inherit; }
+  .pick { margin-top: 6px; justify-self: start; height: 36px; padding: 0 16px; border-radius: 99px; border: 1px solid var(--line); background: transparent; color: var(--fg); font: 600 13px Inter, sans-serif; cursor: pointer; }
+  .pick:hover { border-color: var(--fg); }
+  .card.is-picked .pick { background: var(--cyan); border-color: var(--cyan); color: #05080d; }
+  .note { color: var(--fg2); font-size: 13.5px; padding: 12px 16px; border: 1px dashed var(--line); border-radius: 10px; }
+
+  .bar { position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 140%); transition: transform .45s cubic-bezier(.16,1,.3,1); display: flex; align-items: center; gap: 14px; padding: 10px 10px 10px 20px; border-radius: 99px; background: #fff; color: #05080d; box-shadow: 0 20px 60px rgba(0,0,0,.5); max-width: calc(100vw - 32px); z-index: 50; }
+  .bar.is-on { transform: translate(-50%, 0); }
+  .bar p { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar button { height: 38px; padding: 0 16px; border-radius: 99px; border: 0; background: #05080d; color: #fff; font: 600 13px Inter, sans-serif; cursor: pointer; flex: none; }
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <p class="eyebrow">Hamdaz · Home hero · Reference board</p>
+    <h1>Every direction, every subject</h1>
+    <p>Four directions, each shown with humanoid / AI, tech-object, people and abstract subjects. These use real photoreal photos and real 3D models, not sketches, so you see the true quality level. Pick as many as you like ("Choose") and send me the codes, for example "A2" or "B4". The photos are stand-ins: the final would be made in Hamdaz navy, cyan and pink.</p>
+  </header>
+  <div id="board"></div>
+</main>
+<div class="bar" id="bar" role="status" aria-live="polite"><p id="barText"></p><button type="button" id="copy">Copy</button></div>
+
+<script>
+const U = (id, w = 1400) => `https://images.unsplash.com/${id}?w=${w}&q=80&auto=format&fit=crop`;
+const SF = (uid) => `https://sketchfab.com/models/${uid}/embed?autospin=0.25&autostart=0&ui_theme=dark&ui_infos=0&ui_controls=1&ui_hint=0&dnt=1`;
+
+const DIRS = [
+  { key: 'A', title: 'Photoreal subject, editorial layout (like your references)',
+    text: 'One photoreal subject on the right, fading into the dark page, with the huge headline on the left and thin callouts. The final image would be a custom AI render (Higgsfield or Midjourney, prompts written by me) in the brand colours, or a licensed stock render.',
+    kind: 'ed',
+    cards: [
+      { subj: 'Humanoid / AI', title: 'Glossy white humanoids', img: 'photo-1666597107756-ef489e9f1f09', pos: '50% 40%', by: 'Julien Tromeur', page: 'https://unsplash.com/photos/glossy-white-humanoid-robots-6UDansS-rPI', calls: [['Generative AI', 'Custom GPT', 58, 34], ['Cloud', 'Azure · AWS', 80, 62]] },
+      { subj: 'Humanoid / AI', title: 'White robot portrait', img: 'photo-1531747118685-ca8fa6e08806', pos: '50% 30%', by: 'Possessed Photography', page: 'https://unsplash.com/photos/white-robot-action-toy-zbLW0FG8XU8', calls: [['Generative AI', 'Custom GPT', 62, 40], ['Security', 'Info security', 78, 70]] },
+      { subj: 'Humanoid / AI', title: 'Human meets machine', img: 'photo-1736564176042-b3d49989b230', pos: '50% 35%', by: 'Logan Voss', page: 'https://unsplash.com/photos/a-digital-image-of-a-man-with-a-robot-face-zXzRePFvCFQ', calls: [['Generative AI', 'Custom GPT', 60, 38]] },
+      { subj: 'Tech object', title: 'Data-centre close-up', img: 'photo-1683322499436-f4383dd59f5a', pos: '50% 50%', by: 'Scott Rodgerson', page: 'https://unsplash.com/photos/a-bunch-of-blue-wires-connected-to-each-other-PSpf_XgOM5w', calls: [['Cloud', 'Managed infra', 62, 36], ['Data', 'Analytics', 78, 66]] },
+      { subj: 'People + tech', title: 'Engineers at work', img: 'photo-1581091226033-d5c48150dbaa', pos: '50% 40%', by: 'ThisisEngineering', page: 'https://unsplash.com/photos/people-looking-at-laptop-in-workspace-bIltCMXIwRE', calls: [['Managed services', '20 services', 64, 40]] },
+      { subj: 'Abstract', title: 'Flowing blue glass', img: 'photo-1741943092501-f892ec133a2c', pos: '50% 50%', by: 'luthfi alfarizi', page: 'https://unsplash.com/photos/abstract-flowing-blue-glass-sculpture-on-a-gradient-backdrop-LhIi6YEk4Js', calls: [] },
+    ] },
+  { key: 'B', title: 'Real 3D model, interactive',
+    text: 'A professionally modelled 3D asset that turns with the mouse (drag these to try). Much more detailed than anything built in code. Each model has its own licence (most are CC Attribution, which needs a credit); I check it before use, or we buy a store model.',
+    kind: '3d',
+    cards: [
+      { subj: 'Humanoid / AI', title: 'Humanoid robot face', uid: '1532b74a76dc43d18a4fc2c5ba1f2229', by: 'kito1704', page: 'https://sketchfab.com/3d-models/humanoid-robot-face-1532b74a76dc43d18a4fc2c5ba1f2229' },
+      { subj: 'Humanoid / AI', title: 'Sci-fi robot head', uid: 'f7ffd76310214fb99fe5466a68aea041', by: 'mgfxer', page: 'https://sketchfab.com/3d-models/robot-head-2-f7ffd76310214fb99fe5466a68aea041' },
+      { subj: 'Humanoid / AI', title: 'Robot head, mechanical parts', uid: '0fec0b9f46ab4add93cb964dc62ff6b3', by: 'aidand510', page: 'https://sketchfab.com/3d-models/robotic-head-with-visible-mechanical-parts-0fec0b9f46ab4add93cb964dc62ff6b3' },
+      { subj: 'Tech object', title: 'Sci-fi camera drone', uid: '3dbf07385d1b471a96dce6de6cba97d6', by: '3dsofsan', page: 'https://sketchfab.com/3d-models/sci-fi-camera-drone-3dbf07385d1b471a96dce6de6cba97d6' },
+      { subj: 'Tech object', title: 'Sci-fi server rack', uid: '36cebddcea844b0180951a19da74b968', by: 'turtsevich.sergey', page: 'https://sketchfab.com/3d-models/sci-fi-server-rack-36cebddcea844b0180951a19da74b968' },
+    ],
+    note: 'People and abstract subjects don\'t suit this direction. People look best as photo or video (A or C), and abstract forms as renders (A, C or D).' },
+  { key: 'C', title: 'Full-bleed cinematic background',
+    text: 'The image (or a short looping video) fills the whole hero, darkened on the left so the headline reads clearly. Bold and cinematic; the easiest to build and the fastest to load.',
+    kind: 'fb',
+    cards: [
+      { subj: 'Humanoid / AI', title: 'Robot in profile', img: 'photo-1516192518150-0d8fee5425e3', pos: '70% 40%', by: 'Possessed Photography', page: 'https://unsplash.com/photos/white-and-brown-human-robot-illustration-YKW0JjP7rlU' },
+      { subj: 'Tech object', title: 'Blue device glow', img: 'photo-1626379961798-54f819ee896a', pos: '50% 50%', by: 'James Yarema', page: 'https://unsplash.com/photos/blue-and-black-digital-device-npTT9rD8wd4' },
+      { subj: 'People + tech', title: 'Team in VR', img: 'photo-1570730749440-f756e79c4733', pos: '50% 40%', by: 'Jad Limcaco', page: 'https://unsplash.com/photos/people-sitting-and-wearing-vr-headsets-LjSJvdas-oc' },
+      { subj: 'Abstract', title: 'Iridescent glass', img: 'photo-1759583545970-0106ff47353f', pos: '50% 50%', by: 'Rohit Choudhari', page: 'https://unsplash.com/photos/abstract-glass-structure-with-iridescent-light-reflections-sC2Twgvu3lg' },
+      { subj: 'Abstract', title: 'Dark blue cubes', img: 'photo-1759159347914-88541fa4bd14', pos: '50% 50%', by: 'Steve A Johnson', page: 'https://unsplash.com/photos/abstract-geometric-pattern-of-dark-blue-cubes-0MSgpdg42wg' },
+      { subj: 'Abstract', title: 'Light curves on black', img: 'photo-1775887065658-988ef1c262c6', pos: '50% 50%', by: 'Veli Batuhan Aytaç', page: 'https://unsplash.com/photos/abstract-iridescent-curves-on-a-black-background-p-8ZW6wy1QM' },
+      { subj: 'Abstract', title: 'Liquid metal on black', img: 'photo-1764258906061-90d80be359a2', pos: '50% 45%', by: 'Logan Voss', page: 'https://unsplash.com/photos/abstract-metallic-fluid-shapes-on-black-background-Tvl0vDC_eUg' },
+      { subj: 'Abstract', title: 'Swirling chrome', img: 'photo-1762281749806-213ae55fef28', pos: '50% 50%', by: 'Logan Voss', page: 'https://unsplash.com/photos/abstract-swirling-metallic-patterns-on-black-background-3cct2HPsNbA' },
+      { subj: 'Abstract', title: 'Iridescent ribbon', img: 'photo-1720173391541-523cdbf2f21f', pos: '50% 50%', by: 'Yue Ma', page: 'https://unsplash.com/photos/translucent-iridescent-ribbon-abstract-shape-mQEjK67BCTA' },
+      { subj: 'Abstract', title: 'Dark ribbons, soft light', img: 'photo-1678366633407-7f49da199a42', pos: '50% 50%', by: 'Andrew Kliatskyi', page: 'https://unsplash.com/photos/curved-black-ribbons-with-highlights-7og8GybWcZw' },
+      { subj: 'Abstract', title: 'Amber light curves', img: 'photo-1709377195538-5522ed0f9e10', pos: '50% 50%', by: 'Pawel Czerwinski', page: 'https://unsplash.com/photos/amber-and-dark-curves-on-black-Li56AhRlcI8' },
+      { subj: 'Abstract', title: 'Chromatic glass object', img: 'photo-1678782307359-064ba12b45ba', pos: '50% 50%', by: 'Dirty barn', page: 'https://unsplash.com/photos/a-glass-object-is-shown-on-a-black-background-3Zh7XStV8uc' },
+      { subj: 'Abstract', title: 'Pink and blue swirl', img: 'photo-1654198340681-a2e0fc449f1b', pos: '50% 50%', by: 'Pawel Czerwinski', page: 'https://unsplash.com/photos/a-black-background-with-a-pink-and-blue-swirl-ZkzobNDayXo' },
+      { subj: 'Abstract', title: 'Clear glass spiral', img: 'photo-1783431412513-8043c76cc987', pos: '50% 50%', by: 'Milad Fakurian', page: 'https://unsplash.com/photos/shiny-clear-spiral-abstract-object-with-reflections-FV8ZkyFXbzs' },
+      { subj: 'Abstract', title: 'Rainbow liquid metal', img: 'photo-1659776026024-ab5d7c6b4433', pos: '50% 50%', by: 'Darkhan Basshybayev', page: 'https://unsplash.com/photos/iridescent-liquid-metal-swirls-o6uvtosEZeo' },
+      { subj: 'Humanoid / AI', title: 'Iridescent glass head', img: 'photo-1737071371043-761e02b1ef95', pos: '50% 40%', by: 'Maxim Berg', page: 'https://unsplash.com/photos/a-glass-sculpture-of-a-persons-head-on-a-black-background-QNVh6QXPXLk' },
+    ] },
+  { key: 'D', title: 'No object: type only',
+    text: 'No image at all. The words and the brand colours carry the hero. Clean, fast and timeless, and it works with any subject because the subject is the message.',
+    kind: 'ty',
+    cards: [
+      { subj: 'Any', title: 'Kinetic words', type: 'kinetic' },
+      { subj: 'Any', title: 'Glowing headline', type: 'glow' },
+    ] },
+];
+
+const board = document.getElementById('board'), bar = document.getElementById('bar'), barText = document.getElementById('barText');
+const picked = new Set();
+const mini = (small) => `<div class="navline"><span>HAMDAZ</span><span>Home · Who We Are · What We Do</span></div><div class="mini${small ? ' mini--small' : ''}"><i>Delivering the</i><b>Digital<br>Future</b></div>`;
+
+for (const d of DIRS) {
+  const sec = document.createElement('section'); sec.className = 'dir';
+  sec.innerHTML = `<div class="dir-head"><b>${d.key}</b><h2>${d.title}</h2><p>${d.text}</p></div><div class="grid"></div>${d.note ? `<p class="note">${d.note}</p>` : ''}`;
+  const grid = sec.querySelector('.grid');
+  d.cards.forEach((c, i) => {
+    const code = `${d.key}${i + 1}`, card = document.createElement('article');
+    card.className = 'card'; card.dataset.code = code;
+    let shot = '';
+    if (d.kind === 'ed') shot = `<div class="shot ed"><img loading="lazy" src="${U(c.img)}" alt="" style="object-position:${c.pos}">${mini()}${(c.calls || []).map(([t, s, x, y]) => `<span class="call" style="left:${x}%;top:${y}%">${t}<small>${s}</small></span>`).join('')}`;
+    if (d.kind === 'fb') shot = `<div class="shot fb"><img loading="lazy" src="${U(c.img)}" alt="" style="object-position:${c.pos}">${mini()}`;
+    if (d.kind === '3d') shot = `<div class="shot"><iframe loading="lazy" title="${c.title} (3D model)" src="${SF(c.uid)}" allow="autoplay; fullscreen; xr-spatial-tracking"></iframe>${mini(true)}`;
+    if (d.kind === 'ty' && c.type === 'kinetic') shot = `<div class="shot ty"><div class="rows"><div class="row">Generative AI · <em>Cloud</em> · Data · Security · Generative AI · <em>Cloud</em> · Data · Security ·&nbsp;</div><div class="row">Managed services · <strong>AI products</strong> · Consulting · Managed services · <strong>AI products</strong> · Consulting ·&nbsp;</div></div>${mini()}`;
+    if (d.kind === 'ty' && c.type === 'glow') shot = `<div class="shot"><div class="glowtype"><span>Digital<br>Future</span></div><div class="navline"><span>HAMDAZ</span><span>Home · Who We Are · What We Do</span></div>`;
+    shot += `<span class="tag">${code}</span><span class="subj">${c.subj}</span></div>`;
+    const credit = c.by ? `<p class="credit">${d.kind === '3d' ? 'Model' : 'Photo'}: <a href="${c.page}" target="_blank" rel="noopener">${c.by}</a> (${d.kind === '3d' ? 'Sketchfab' : 'Unsplash'})</p>` : '';
+    card.innerHTML = `${shot}<div class="body"><h3><b>${code}</b>${c.title}</h3>${credit}<button class="pick" type="button">Choose</button></div>`;
+    card.querySelector('.pick').addEventListener('click', () => {
+      picked.has(code) ? picked.delete(code) : picked.add(code);
+      card.classList.toggle('is-picked', picked.has(code));
+      card.querySelector('.pick').textContent = picked.has(code) ? 'Chosen ✓' : 'Choose';
+      barText.textContent = picked.size ? `Chosen: ${[...picked].join(', ')}` : '';
+      bar.classList.toggle('is-on', picked.size > 0);
+    });
+    grid.appendChild(card);
+  });
+  board.appendChild(sec);
+}
+document.getElementById('copy').addEventListener('click', async (e) => {
+  try { await navigator.clipboard.writeText(`Hero reference board, ${barText.textContent}`); e.target.textContent = 'Copied'; } catch { e.target.textContent = 'Copy failed'; }
+  setTimeout(() => (e.target.textContent = 'Copy'), 1400);
+});
+</script>
+</body>
+</html>

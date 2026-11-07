@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hamdaz Story Clips</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; each chapter is a strip of four clip cards that all pass through "the spark". */
+:root {
+  --bg: #061423;          /* the site's navy */
+  --panel: #0b1f33;
+  --panel-2: #10283f;
+  --line: rgba(141, 201, 240, 0.16);
+  --fg: #eaf4fb;
+  --fg-2: #9fb3c4;
+  --cyan: #30c1f8;
+  --pink: #eb4b96;
+  --display: "Archivo", "Arial Narrow", Arial, sans-serif;
+  --body: "Inter", "Segoe UI", Arial, sans-serif;
+  --mono: "JetBrains Mono", Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.6 var(--body); }
+.wrap { max-width: 980px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 48px 96px; display: grid; gap: 56px; }
+h1, h2, h3 { font-family: var(--display); font-stretch: 112%; text-wrap: balance; margin: 0; letter-spacing: -0.02em; }
+h1 { font-size: clamp(34px, 6vw, 58px); line-height: 1; font-weight: 700; text-transform: uppercase; }
+h1 span { color: var(--cyan); }
+h2 { font-size: clamp(22px, 3vw, 30px); font-weight: 600; text-transform: uppercase; }
+h3 { font-size: 18px; font-weight: 600; }
+p { margin: 0; max-width: 68ch; color: var(--fg-2); }
+p strong { color: var(--fg); font-weight: 600; }
+.eyebrow { font: 500 11.5px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--pink); }
+.mono { font-family: var(--mono); }
+section { display: grid; gap: 20px; }
+header { display: grid; gap: 18px; }
+
+/* the shared-frame diagram */
+.flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); }
+.flow span { font: 500 12.5px var(--mono); padding: 6px 10px; border-radius: 999px; background: var(--panel-2); color: var(--fg); white-space: nowrap; }
+.flow .spark { background: transparent; color: var(--cyan); box-shadow: inset 0 0 0 1px var(--cyan); }
+.flow i { color: var(--fg-2); font-style: normal; }
+
+ol.steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; counter-reset: s; }
+ol.steps li { counter-increment: s; display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; }
+ol.steps li::before { content: counter(s); font: 600 13px var(--mono); color: var(--bg); background: var(--cyan); width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; margin-top: 1px; }
+
+/* specs */
+.specs { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.specs div { background: var(--panel); padding: 14px 16px; display: grid; gap: 4px; min-width: 0; }
+.specs b { font: 500 11px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-2); }
+.specs span { color: var(--fg); }
+
+/* prompt blocks */
+.prompt { border: 1px solid var(--line); border-radius: 14px; background: var(--panel); overflow: hidden; display: grid; min-width: 0; }
+.prompt-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+.prompt-head h3 { margin-right: auto; }
+.file { font: 500 12px var(--mono); color: var(--cyan); background: rgba(48, 193, 248, 0.1); padding: 3px 8px; border-radius: 6px; }
+.frames { font: 12px var(--mono); color: var(--fg-2); width: 100%; }
+.frames em { font-style: normal; color: var(--fg); }
+.prompt pre { margin: 0; padding: 14px; white-space: pre-wrap; word-break: break-word; font: 13.5px/1.6 var(--body); color: var(--fg); }
+button.copy { font: 500 12px var(--mono); color: var(--bg); background: var(--fg); border: 0; border-radius: 999px; padding: 6px 12px; cursor: pointer; transition: background 0.2s; }
+button.copy:hover { background: var(--cyan); }
+button.copy:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+button.copy.done { background: var(--cyan); }
+
+.chapter { display: grid; gap: 14px; padding-top: 28px; border-top: 1px solid var(--line); }
+.chapter-head { display: grid; gap: 6px; }
+.clips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 720px) { .clips { grid-template-columns: 1fr; } }
+
+/* checklist */
+.check { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 6px 20px; padding: 0; margin: 0; list-style: none; }
+.check label { display: flex; gap: 10px; align-items: center; font: 13px var(--mono); color: var(--fg); cursor: pointer; }
+.check input { accent-color: var(--cyan); width: 16px; height: 16px; }
+.check .opt { color: var(--fg-2); }
+.note { padding: 14px 16px; border-left: 2px solid var(--pink); background: var(--panel); border-radius: 0 10px 10px 0; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Hamdaz Technologies · website film</p>
+    <h1>From a spark <span>to the digital future</span></h1>
+    <p>Each page of hamdaz.com is one chapter with its own element. Every clip starts or ends on the same frame: <strong>the spark</strong>, a single point of cyan light on navy. Because of that, any page can hand over to any other page and it always plays as one continuous story.</p>
+  </header>
+
+  <section aria-labelledby="h-join">
+    <h2 id="h-join">How the clips join</h2>
+    <div class="flow" aria-label="Clip order when moving between two pages">
+      <span>Home · in</span><i>→</i><span>Home · loop</span><i>→</i><span>Home · out</span><i>→</i><span class="spark">the spark</span><i>→</i><span>Services · in</span><i>→</i><span>Services · loop</span><i>→</i><span>…</span>
+    </div>
+    <p>On the site: a page opens by playing its <strong>in</strong> clip, then its <strong>loop</strong> plays behind the text. When someone clicks a link, the page plays its <strong>out</strong> clip down to the spark, and the next page picks up from the spark with its own <strong>in</strong> clip.</p>
+  </section>
+
+  <section aria-labelledby="h-steps">
+    <h2 id="h-steps">Steps in Higgsfield</h2>
+    <ol class="steps">
+      <li><p><strong>Make the 6 stills first:</strong> the spark plus one still per page. They lock the look, and every video is made between them.</p></li>
+      <li><p><strong>Make the clips with Start &amp; End Frame</strong> (Pro or Ultimate plan; with Kling, use the General preset). <em>In</em> = spark → page still. <em>Loop</em> = page still → the same still. <em>Out</em> = page still → spark.</p></li>
+      <li><p><strong>Paste the style lock</strong> at the end of every image prompt. Use the same model and settings for every clip, so they match.</p></li>
+      <li><p><strong>Download and rename</strong> each file to the name shown on its card, then put them all in <span class="mono">assets/video/</span> in the project. Tell me when they're in and I'll wire them up.</p></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="h-specs">
+    <h2 id="h-specs">Specs</h2>
+    <div class="specs">
+      <div><b>Aspect</b><span>16:9 for everything</span></div>
+      <div><b>Size</b><span>1920 × 1080, or 1280 × 720</span></div>
+      <div><b>Format</b><span>MP4, no audio needed (the site plays muted)</span></div>
+      <div><b>Length</b><span>In and out: 4–5 s · Loop: 5–10 s</span></div>
+      <div><b>Composition</b><span>Element on the right half; left half and bottom-left dark, for the headline</span></div>
+      <div><b>Never in frame</b><span>Text, logos, people, watermarks</span></div>
+    </div>
+    <p class="note">The spark must sit in the same spot in every clip, about 62% across and halfway down. That's where each element is centred, so the in and out clips meet exactly.</p>
+  </section>
+
+  <section aria-labelledby="h-style">
+    <h2 id="h-style">Style lock</h2>
+    <div class="prompt">
+      <div class="prompt-head"><h3>Add to the end of every image prompt</h3><button class="copy" type="button" data-copy="style">Copy</button></div>
+      <pre id="style">Cinematic 3D render, deep navy background (#061423), glowing cyan (#30c1f8) light with small accents of pink (#eb4b96) and violet, dark glass and circuit-board materials, soft volumetric glow, shallow depth of field, clean premium technology aesthetic, 16:9. The subject sits in the right half of the frame, centred about 62% across and halfway down; the left half and the bottom-left stay dark and empty. No text, no letters, no logos, no people, no watermark.</pre>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-spark" class="chapter">
+    <div class="chapter-head"><p class="eyebrow">Shared frame</p><h2 id="h-spark">The spark</h2><p>Used by every page. Make this still first.</p></div>
+    <div class="clips">
+      <div class="prompt">
+        <div class="prompt-head"><h3>Still</h3><span class="file">spark.jpg</span><button class="copy" type="button" data-copy="p-spark">Copy</button></div>
+        <pre id="p-spark">A single tiny point of cyan-white light floating at the right-centre of the frame, about 62% across and exactly halfway down, with a soft round glow and a faint lens bloom, on a deep navy background with a very faint dust of floating particles. Nothing else in the frame. [style lock]</pre>
+      </div>
+      <div class="prompt">
+        <div class="prompt-head"><h3>Loop (optional, for the 404 page)</h3><span class="file">spark-loop.mp4</span><button class="copy" type="button" data-copy="p-spark-loop">Copy</button><p class="frames">Start <em>spark.jpg</em> · End <em>spark.jpg</em></p></div>
+        <pre id="p-spark-loop">Locked-off camera, no camera movement. The point of light breathes softly, growing slightly brighter and dimmer, while faint particles drift slowly around it. Calm, seamless loop.</pre>
+      </div>
+    </div>
+  </section>
+
+  <div id="chapters"></div>
+
+  <section aria-labelledby="h-files">
+    <h2 id="h-files">Files checklist</h2>
+    <p>Tick them off as you make them. This only saves in your browser.</p>
+    <ul class="check" id="check"></ul>
+  </section>
+
+  <section aria-labelledby="h-tips">
+    <h2 id="h-tips">If a clip doesn't match</h2>
+    <p><strong>The in clip ends slightly differently from the still:</strong> fine. The site cross-fades into the loop, so small differences don't show.</p>
+    <p><strong>The loop jumps when it restarts:</strong> regenerate it with "locked-off camera, no camera movement" at the start of the prompt. With the same image as start and end frame, Higgsfield may otherwise orbit the camera.</p>
+    <p><strong>The element drifts to the centre of the frame:</strong> add "positioned on the right side of the frame" to the prompt and regenerate the still first.</p>
+  </section>
+</div>
+
+<script>
+// One entry per page: [file prefix, page name, chapter title, idea, still, in, loop, out]
+const CHAPTERS = [
+  ['home', 'Home', 'The core', 'An AI chip: the light of the spark becomes circuits and powers the core.',
+    'An AI processor chip seen from slightly above at an angle, sitting on a dark circuit board. The top of the chip is a grid of softly glowing compute cells around one bright square core. Hundreds of thin cyan circuit traces fan out from its pins across the board, ending in small round vias, and fade into darkness. A soft cyan glow rises from the core. [style lock]',
+    'Locked-off camera. The point of light pulses once, then silky ribbons of light flow in from the edges of the frame, curl, and lay down on a dark board as glowing circuit traces that race towards the point. Where they meet, the AI chip materialises and its core lights up. Smooth, continuous motion.',
+    'Locked-off camera, no camera movement. Small pulses of light travel along the circuit traces into the chip, the compute cells on the chip flicker softly, and a gentle shimmer of particles rises from the core. Calm, seamless loop.',
+    'Locked-off camera. The circuit traces go dark from the edges inwards as their light drains back into the chip, then the chip dissolves into fine glowing particles that spiral together and condense into a single point of light. Smooth, continuous motion.'],
+  ['about', 'Who We Are', 'The people', 'A network of connected nodes: the team, with two bright hubs joined by an arc (UAE and India).',
+    'A floating, roughly spherical constellation of glowing nodes connected by fine lines of light, like a network of people working together. Some nodes are brighter than others. Two larger glowing hubs sit on opposite sides of the network, joined by a bright arc of light. [style lock]',
+    'Locked-off camera. The point of light splits into many smaller sparks that drift outwards and link up with fine lines of light, growing into the glowing network. The two large hubs light up last and are joined by a bright arc. Smooth, continuous motion.',
+    'Locked-off camera, no camera movement. The network turns very slowly, small pulses of light travel along the connections, and the nodes softly brighten and dim. Calm, seamless loop.',
+    'Locked-off camera. The connections fade one by one, and the nodes drift inwards and merge into a single point of light. Smooth, continuous motion.'],
+  ['services', 'What We Do', 'The building blocks', 'A cube of circuit blocks: many services fitting together into one solution.',
+    'A large cube built from 3 by 3 by 3 smaller dark-glass blocks, seen from a three-quarter angle slightly above. Each block face is etched with glowing cyan circuit patterns, with thin gaps of light between the blocks, and a soft glow leaks from the centre of the cube through the gaps. [style lock]',
+    'Locked-off camera. The point of light swells into a bright glowing core. Dark-glass blocks glide in from the darkness and lock together around it one by one, forming the cube, and circuit patterns light up across its faces. Smooth, continuous motion.',
+    'Locked-off camera, no camera movement. One outer layer of the cube slowly turns a quarter turn, then another, like a puzzle cube, while a band of light sweeps through the circuit patterns. Calm, seamless loop.',
+    'Locked-off camera. The blocks drift apart to reveal the bright core, then fade into the darkness while the core shrinks into a single point of light. Smooth, continuous motion.'],
+  ['solutions', 'How We Do', 'The flow', 'Silky ribbons of light: solutions flowing into every industry.',
+    'Silky ribbons of light, each woven from hundreds of fine glowing threads, flowing in smooth waves across the right side of the frame in cyan, violet and pink, with tiny sparks drifting along them. [style lock]',
+    'Locked-off camera. The point of light stretches into a thin glowing line, which unfurls into three flowing ribbons made of fine threads of light that wave across the right side of the frame. Smooth, continuous motion.',
+    'Locked-off camera, no camera movement. The ribbons flow and twist gently while small sparks drift along them. Calm, seamless loop.',
+    'Locked-off camera. The ribbons draw together and twist into one thin thread of light, which shrinks into a single point of light. Smooth, continuous motion.'],
+  ['contact', 'Contact Us', 'The signal', 'A beacon sending out a signal: ready to connect.',
+    'A glowing beacon: a bright point of light resting on a dark, softly reflective surface, sending out slow concentric rings of cyan light across the surface, with a thin beam of light rising straight up from it and faint arcs of signal reaching outwards. [style lock]',
+    'Locked-off camera. The point of light drops gently onto a dark reflective surface, rings of light ripple outwards from where it lands, and a thin beam of light rises from it. Smooth, continuous motion.',
+    'Locked-off camera, no camera movement. Rings of light pulse slowly outwards from the beacon across the surface and the beam shimmers. Calm, seamless loop.',
+    'Locked-off camera. The rings fade, the beam sinks back into the surface, and the light lifts back up into a single floating point. Smooth, continuous motion.'],
+];
+
+const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const card = (title, file, id, text, frames) => `
+  <div class="prompt">
+    <div class="prompt-head"><h3>${title}</h3><span class="file">${file}</span><button class="copy" type="button" data-copy="${id}">Copy</button>${frames ? `<p class="frames">${frames}</p>` : ''}</div>
+    <pre id="${id}">${esc(text)}</pre>
+  </div>`;
+document.getElementById('chapters').innerHTML = CHAPTERS.map(([f, page, title, idea, still, inn, loop, out], i) => `
+  <section class="chapter" aria-labelledby="h-${f}">
+    <div class="chapter-head"><p class="eyebrow">Chapter ${i + 1} · ${page}</p><h2 id="h-${f}">${title}</h2><p>${idea}</p></div>
+    <div class="clips">
+      ${card('Still', `${f}.jpg`, `p-${f}-still`, still, '')}
+      ${card('In', `${f}-in.mp4`, `p-${f}-in`, inn, 'Start <em>spark.jpg</em> · End <em>' + f + '.jpg</em>')}
+      ${card('Loop', `${f}-loop.mp4`, `p-${f}-loop`, loop, 'Start <em>' + f + '.jpg</em> · End <em>' + f + '.jpg</em>')}
+      ${card('Out', `${f}-out.mp4`, `p-${f}-out`, out, 'Start <em>' + f + '.jpg</em> · End <em>spark.jpg</em>')}
+    </div>
+  </section>`).join('');
+
+// copy buttons: the style lock is appended where a prompt says [style lock]
+const styleText = document.getElementById('style').textContent.trim();
+document.addEventListener('click', async (e) => {
+  const btn = e.target.closest('button.copy');
+  if (!btn) return;
+  const pre = document.getElementById(btn.dataset.copy);
+  const text = pre.textContent.replace('[style lock]', styleText);
+  try {
+    await navigator.clipboard.writeText(text);
+    btn.textContent = 'Copied';
+  } catch (err) {
+    const r = document.createRange();
+    r.selectNodeContents(pre);
+    const sel = getSelection();
+    sel.removeAllRanges();
+    sel.addRange(r);
+    btn.textContent = 'Selected';
+  }
+  btn.classList.add('done');
+  setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('done'); }, 1600);
+});
+
+// checklist, remembered in this browser only
+const files = ['spark.jpg', ...CHAPTERS.flatMap(([f]) => [`${f}.jpg`, `${f}-in.mp4`, `${f}-loop.mp4`, `${f}-out.mp4`]), 'spark-loop.mp4'];
+let done = {};
+try { done = JSON.parse(localStorage.getItem('hz-clips') || '{}'); } catch (e) { done = {}; }
+document.getElementById('check').innerHTML = files.map((f, i) => `<li><label for="f${i}"><input type="checkbox" id="f${i}" data-f="${f}"${done[f] ? ' checked' : ''}>${f}${f === 'spark-loop.mp4' ? ' <span class="opt">(optional)</span>' : ''}</label></li>`).join('');
+document.getElementById('check').addEventListener('change', (e) => {
+  done[e.target.dataset.f] = e.target.checked;
+  try { localStorage.setItem('hz-clips', JSON.stringify(done)); } catch (err) { /* not saved */ }
+});
+</script>
+</body>
+</html>

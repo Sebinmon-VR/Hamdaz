@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tech Spheres – Hamdaz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  /* Hamdaz home hero, round 3: globe-like spheres built from technology instead of a map (and not a
+     neural / network sphere). Each card plays a rough live sketch. Pick one and tell Claude its number. */
+  :root { --bg: #061423; --panel: #0b1d31; --line: rgba(238, 246, 251, 0.12); --fg: #eef6fb; --fg2: #9fb0c2; --cyan: #30c1f8; --pink: #fb4994; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--fg); font: 15px/1.55 Inter, system-ui, sans-serif; padding: 48px 16px 140px; }
+  main { max-width: 1240px; margin: 0 auto; display: grid; gap: 36px; }
+  header.top { display: grid; gap: 12px; max-width: 780px; }
+  .eyebrow { font: 500 11.5px/1 "JetBrains Mono", ui-monospace, monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--pink); }
+  h1 { font: 700 clamp(28px, 4vw, 46px)/1.08 Archivo, Inter, sans-serif; letter-spacing: -.02em; }
+  header.top p { color: var(--fg2); }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+  .card { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: border-color .25s, box-shadow .25s; }
+  .card.is-picked { border-color: var(--cyan); box-shadow: 0 0 0 1px var(--cyan), 0 18px 60px -20px rgba(48, 193, 248, .45); }
+  .shot { position: relative; aspect-ratio: 16 / 9; background: #061423; }
+  .shot canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .shot .hl { position: absolute; left: 5.5%; bottom: 10%; pointer-events: none; }
+  .shot .hl b { display: block; font: 800 clamp(16px, 2.5vw, 30px)/.98 Archivo, Inter, sans-serif; letter-spacing: -.03em; color: #fff; }
+  .shot .hl i { display: block; font: 500 9.5px/1 "JetBrains Mono", monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--fg2); font-style: normal; margin-bottom: 8px; }
+  .shot .num { position: absolute; top: 12px; left: 12px; font: 500 11px/1 "JetBrains Mono", monospace; padding: 5px 8px; border-radius: 99px; background: rgba(6, 20, 35, .6); border: 1px solid var(--line); }
+  .shot .badge { position: absolute; top: 12px; right: 12px; font: 500 11px/1 "JetBrains Mono", monospace; padding: 5px 9px; border-radius: 99px; background: var(--cyan); color: #061423; }
+  .body { display: grid; gap: 10px; padding: 20px 22px 22px; flex: 1; align-content: start; }
+  .body h2 { font: 600 20px/1.2 Archivo, Inter, sans-serif; letter-spacing: -.01em; }
+  .body h2 b { color: var(--cyan); font-weight: 700; margin-right: 8px; }
+  .body p { color: var(--fg2); }
+  dl { display: grid; grid-template-columns: 92px 1fr; gap: 6px 12px; font-size: 13.5px; margin-top: 2px; }
+  dt { font: 500 10.5px/1.9 "JetBrains Mono", monospace; letter-spacing: .06em; text-transform: uppercase; color: var(--fg2); }
+  dd { margin: 0; }
+  .pick { margin-top: 8px; justify-self: start; height: 40px; padding: 0 18px; border-radius: 99px; border: 1px solid var(--line); background: transparent; color: var(--fg); font: 600 14px Inter, sans-serif; cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+  .pick:hover { border-color: var(--fg); }
+  .card.is-picked .pick { background: var(--cyan); border-color: var(--cyan); color: #061423; }
+  .note { border-top: 1px solid var(--line); padding-top: 24px; color: var(--fg2); font-size: 14px; }
+  .bar { position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 140%); transition: transform .45s cubic-bezier(.16,1,.3,1); display: flex; align-items: center; gap: 14px; padding: 10px 10px 10px 20px; border-radius: 99px; background: #fff; color: #061423; box-shadow: 0 20px 60px rgba(0,0,0,.5); max-width: calc(100vw - 32px); }
+  .bar.is-on { transform: translate(-50%, 0); }
+  .bar p { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar button { height: 38px; padding: 0 16px; border-radius: 99px; border: 0; background: #061423; color: #fff; font: 600 13px Inter, sans-serif; cursor: pointer; flex: none; }
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <p class="eyebrow">Hamdaz · Home hero · Round 3</p>
+    <h1>Like the globe, but made of technology</h1>
+    <p>Each one keeps what works about the globe: one big sphere, turning slowly, with a glowing atmosphere and stars behind it. But it is made from technology, not a map. There are no countries, no locations, and no neural or network lines. The previews are quick sketches; the real build would be smooth 3D.</p>
+  </header>
+  <section class="grid" id="grid"></section>
+  <p class="note">Pick one with "Choose this" and tell me the number. Whichever you pick, I will first build it as a full scrolling prototype for you and the CEO to see, before anything on the site changes.</p>
+</main>
+<div class="bar" id="bar" role="status" aria-live="polite"><p id="barText"></p><button type="button" id="copy">Copy</button></div>
+
+<script>
+const OPTIONS = [
+  { id: 'hex', title: 'Hex shell', star: true,
+    text: 'A sphere covered in hexagonal tech panels, like armour plating. Waves of light run across the panels as data moves, and a few panels lift up and settle back.',
+    scroll: 'The panels lift off one by one and become the particles that flow down the page.',
+    why: 'Reads as technology at once, and suggests security and cloud protection. Solid and premium, like the globe.' },
+  { id: 'code', title: 'Code sphere',
+    text: 'A sphere made of code. Characters stream down its surface in columns, bright at the head and fading behind, and change as they fall.',
+    scroll: 'The code streams speed up and pour off the sphere into the page.',
+    why: 'Shows what Hamdaz does: software. Very recognisable and alive.' },
+  { id: 'core', title: 'Data core',
+    text: 'A sphere built from rings of server blades with status lights. Neighbouring rings turn in opposite directions around a bright core that shows through the gaps.',
+    scroll: 'The rings open apart to reveal the core, and its light flows into the page.',
+    why: 'Feels like a data centre or a cloud engine: managed services you can see working.' },
+  { id: 'spikes', title: 'Data pulse',
+    text: 'A sphere of light points where each point rises and falls like a live analytics chart, so the whole surface ripples with data.',
+    scroll: 'The spikes calm down, flatten into a ring, and stream away.',
+    why: 'Says data, analytics and AI insight. Very dynamic, but still one clean shape.' },
+  { id: 'voxel', title: 'Digital sphere',
+    text: 'A sphere built from small cubes, like pixels in 3D. Some cubes light up, and a few drift out and click back into place.',
+    scroll: 'The cubes come apart and rebuild as the next section.',
+    why: 'A literal "digital world". Playful but precise, and very different from the other pages.' },
+  { id: 'holo', title: 'Hologram sphere',
+    text: 'A clean wireframe sphere with a glowing core, with a scan line sweeping slowly up and down it, like a hologram being projected.',
+    scroll: 'The scan line drops and pulls the hologram down with it into the page.',
+    why: 'The closest to the globe you like, just without the map. The most minimal option.' },
+];
+
+/* ---------------------------------------------------------------- helpers */
+const TAU = Math.PI * 2;
+const CY = [48, 193, 248], PK = [251, 73, 148], VI = [107, 80, 246], WH = [255, 255, 255];
+const rgba = (c, a) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a})`;
+const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const rotY = (p, a) => { const c = Math.cos(a), s = Math.sin(a); return [p[0] * c + p[2] * s, p[1], -p[0] * s + p[2] * c]; };
+const rotX = (p, a) => { const c = Math.cos(a), s = Math.sin(a); return [p[0], p[1] * c - p[2] * s, p[1] * s + p[2] * c]; };
+const norm = (p) => { const l = Math.hypot(...p) || 1; return [p[0] / l, p[1] / l, p[2] / l]; };
+const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+function glow(ctx, x, y, r, c, a) { const g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, rgba(c, a)); g.addColorStop(1, rgba(c, 0)); ctx.fillStyle = g; ctx.fillRect(x - r, y - r, r * 2, r * 2); }
+function fib(n) { const out = []; for (let i = 0; i < n; i++) { const y = 1 - (i + .5) / n * 2, r = Math.sqrt(1 - y * y), a = i * 2.39996323; out.push([Math.cos(a) * r, y, Math.sin(a) * r]); } return out; }
+// the shared frame: where the sphere sits, how it turns
+function view(W, H, t, spin = .12) {
+  const R = H * .31, v = { cx: W * .64, cy: H * .48, dist: 4, R };
+  v.f = R * v.dist;
+  v.T = (p) => rotX(rotY(p, t * spin), .32);
+  v.P = (p) => { const k = v.f / (v.dist - p[2]); return [v.cx + p[0] * k, v.cy - p[1] * k]; };
+  return v;
+}
+const STARS = (() => { const r = rng(2); return Array.from({ length: 120 }, () => [r(), r(), .3 + r() * 1.1, r()]); })();
+function backdrop(ctx, W, H, t, v) {
+  for (const [x, y, s, k] of STARS) { ctx.fillStyle = `rgba(255,255,255,${.1 + .4 * k * (.6 + .4 * Math.sin(t * .8 + k * 20))})`; ctx.fillRect(x * W, y * H, s, s); }
+  glow(ctx, v.cx, v.cy, v.R * 2.2, VI, .12);
+}
+// the atmosphere: a soft glowing rim, like the globe's
+function atmosphere(ctx, v, c = CY, k = 1) {
+  ctx.save(); ctx.globalCompositeOperation = 'lighter';
+  const g = ctx.createRadialGradient(v.cx, v.cy, v.R * .9, v.cx, v.cy, v.R * 1.28);
+  g.addColorStop(0, rgba(c, 0)); g.addColorStop(.22, rgba(c, .32 * k)); g.addColorStop(.32, rgba([150, 225, 255], .42 * k)); g.addColorStop(.55, rgba(c, .12 * k)); g.addColorStop(1, rgba(c, 0));
+  ctx.fillStyle = g; ctx.fillRect(v.cx - v.R * 1.3, v.cy - v.R * 1.3, v.R * 2.6, v.R * 2.6);
+  ctx.restore();
+}
+function body(ctx, v, a = 1) {
+  const g = ctx.createRadialGradient(v.cx - v.R * .35, v.cy - v.R * .4, 0, v.cx, v.cy, v.R);
+  g.addColorStop(0, `rgba(16,44,72,${a})`); g.addColorStop(1, `rgba(3,10,20,${a})`);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(v.cx, v.cy, v.R * .985, 0, TAU); ctx.fill();
+}
+
+/* ---------------------------------------------------------------- the spheres */
+const SCENES = {
+  hex: {
+    init() {
+      const r = rng(5), s = .088;
+      this.panels = fib(520).map((n) => {
+        const up = Math.abs(n[1]) > .95 ? [1, 0, 0] : [0, 1, 0], u = norm(cross(n, up)), w = cross(n, u);
+        const verts = Array.from({ length: 6 }, (_, i) => { const a = i / 6 * TAU + Math.PI / 6; return [n[0] + (u[0] * Math.cos(a) + w[0] * Math.sin(a)) * s, n[1] + (u[1] * Math.cos(a) + w[1] * Math.sin(a)) * s, n[2] + (u[2] * Math.cos(a) + w[2] * Math.sin(a)) * s]; });
+        return { n, verts, ph: r(), pink: r() < .06 };
+      });
+    },
+    draw(ctx, W, H, t) {
+      const v = view(W, H, t); backdrop(ctx, W, H, t, v); body(ctx, v);
+      const list = [];
+      for (const p of this.panels) { const c = v.T(p.n); if (c[2] > -.05) list.push([p, c]); }
+      list.sort((a, b) => a[1][2] - b[1][2]);
+      for (const [p, c] of list) {
+        const lift = 1 + Math.pow(Math.max(0, Math.sin(t * .6 + p.ph * TAU)), 14) * .12;
+        const lon = Math.atan2(p.n[2], p.n[0]), wave = Math.pow(Math.max(0, Math.sin(p.n[1] * 4.5 - t * 1.4 + lon)), 8);
+        const face = clamp(c[2]), light = clamp(.35 + .65 * (c[0] * -.4 + c[1] * .55 + c[2] * .73));
+        ctx.beginPath(); p.verts.forEach((q, i) => { const s = v.P(v.T([q[0] * lift, q[1] * lift, q[2] * lift])); i ? ctx.lineTo(s[0], s[1]) : ctx.moveTo(s[0], s[1]); }); ctx.closePath();
+        const base = [10 + 26 * light, 28 + 46 * light, 46 + 62 * light], col = mix(base, p.pink ? PK : CY, wave * .85 + (lift > 1.01 ? .35 : 0));
+        ctx.fillStyle = rgba(col, .96); ctx.fill();
+        ctx.strokeStyle = rgba(CY, (.12 + .45 * face) * (.6 + .4 * wave)); ctx.lineWidth = .8; ctx.stroke();
+      }
+      atmosphere(ctx, v);
+    },
+  },
+
+  code: {
+    init() {
+      const r = rng(8); this.cols = Array.from({ length: 52 }, (_, i) => ({ lon: i / 52 * TAU, sp: .25 + r() * .35, ph: r() * 3, pink: r() < .12 }));
+      this.rows = 30; this.glyphs = '01<>{}[]/=+*#$%&ABCDEF0123456789λΣ';
+    },
+    draw(ctx, W, H, t) {
+      const v = view(W, H, t, .08); backdrop(ctx, W, H, t, v);
+      glow(ctx, v.cx, v.cy, v.R * .9, CY, .08);
+      ctx.font = `500 ${Math.round(v.R * .075)}px "JetBrains Mono", monospace`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      const G = this.glyphs;
+      for (let pass = 0; pass < 2; pass++) {
+        this.cols.forEach((c, ci) => {
+          const head = ((t * c.sp + c.ph) % 1.5) * this.rows;
+          for (let r = 0; r < this.rows; r++) {
+            const lat = Math.PI / 2 - (r + .5) / this.rows * Math.PI, p = v.T([Math.cos(lat) * Math.cos(c.lon), Math.sin(lat), Math.cos(lat) * Math.sin(c.lon)]);
+            if ((p[2] >= 0) !== (pass === 1)) continue;
+            const d = head - r, tr = d >= 0 ? Math.exp(-d / 8) : 0, front = clamp(p[2] * 1.4 + .2);
+            const a = (.16 + .84 * tr) * (pass ? (.35 + .65 * front) : .2);
+            if (a < .03) continue;
+            const s = v.P(p), ch = G[(ci * 7 + r * 13 + Math.floor(t * 6 + ci)) % G.length];
+            ctx.fillStyle = d >= 0 && d < 1 ? rgba(WH, a) : rgba(c.pink ? PK : CY, a);
+            ctx.fillText(ch, s[0], s[1]);
+          }
+        });
+      }
+      ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+      atmosphere(ctx, v, CY, .8);
+    },
+  },
+
+  core: {
+    init() {
+      const r = rng(11); this.quads = [];
+      for (let k = 0; k < 13; k++) {
+        const lat = -1.2 + k * .2, n = Math.max(10, Math.round(46 * Math.cos(lat))), dir = k % 2 ? 1 : -1, sp = (.12 + r() * .12) * dir;
+        for (let s = 0; s < n; s++) this.quads.push({ lat, a0: s / n * TAU, w: TAU / n * .82, sp, ph: r() * TAU, rate: .6 + r() * 2.5, pink: r() < .1 });
+      }
+    },
+    draw(ctx, W, H, t) {
+      const v = view(W, H, t, .05); backdrop(ctx, W, H, t, v);
+      const pt = (lat, lon) => [Math.cos(lat) * Math.cos(lon), Math.sin(lat), Math.cos(lat) * Math.sin(lon)];
+      const list = this.quads.map((q) => {
+        const a = q.a0 + t * q.sp, d = .075;
+        const c = [pt(q.lat - d, a), pt(q.lat - d, a + q.w), pt(q.lat + d, a + q.w), pt(q.lat + d, a)].map(v.T);
+        return { q, c, z: (c[0][2] + c[2][2]) / 2, mid: v.T(pt(q.lat, a + q.w / 2)) };
+      }).sort((a, b) => a.z - b.z);
+      let coreDone = false;
+      const core = () => { ctx.save(); ctx.globalCompositeOperation = 'lighter'; glow(ctx, v.cx, v.cy, v.R * .95, CY, .5); glow(ctx, v.cx, v.cy, v.R * .45, WH, .55); glow(ctx, v.cx, v.cy, v.R * 1.3, VI, .2); ctx.restore(); };
+      for (const it of list) {
+        if (!coreDone && it.z >= 0) { core(); coreDone = true; }
+        const face = clamp(it.mid[2]), back = it.z < 0;
+        ctx.beginPath(); it.c.forEach((p, i) => { const s = v.P(p); i ? ctx.lineTo(s[0], s[1]) : ctx.moveTo(s[0], s[1]); }); ctx.closePath();
+        const l = .25 + .75 * face;
+        ctx.fillStyle = back ? 'rgba(8,22,36,.55)' : `rgb(${12 + 22 * l},${30 + 40 * l},${48 + 56 * l})`; ctx.fill();
+        ctx.strokeStyle = rgba(CY, back ? .08 : .2 + .4 * face); ctx.lineWidth = .7; ctx.stroke();
+        if (!back && Math.sin(t * it.q.rate + it.q.ph) > .55) { const s = v.P(it.mid); ctx.fillStyle = rgba(it.q.pink ? PK : CY, .95); ctx.fillRect(s[0] - 1.2, s[1] - 1.2, 2.4, 2.4); glow(ctx, s[0], s[1], 6, it.q.pink ? PK : CY, .5); }
+      }
+      if (!coreDone) core();
+      atmosphere(ctx, v, CY, .8);
+    },
+  },
+
+  spikes: {
+    init() { const r = rng(14); this.pts = fib(760).map((p) => ({ p, ph: r() * TAU })); },
+    draw(ctx, W, H, t) {
+      const v = view(W, H, t, .1); backdrop(ctx, W, H, t, v);
+      const list = this.pts.map((o) => {
+        const p = o.p, n = .5 + .5 * Math.sin(p[0] * 3.1 + t * 1.1) * Math.sin(p[1] * 3.7 - t * .8) + .25 * Math.sin(t * 2.2 + o.ph);
+        const L = .02 + .32 * Math.pow(clamp(n), 3);
+        return { b: v.T(p), tip: v.T([p[0] * (1 + L), p[1] * (1 + L), p[2] * (1 + L)]), L };
+      }).sort((a, b) => a.b[2] - b.b[2]);
+      let bodyDone = false;
+      ctx.lineCap = 'round';
+      for (const s of list) {
+        if (!bodyDone && s.b[2] >= 0) { body(ctx, v, .92); bodyDone = true; }
+        const c = mix(CY, PK, clamp(s.L / .3)), front = s.b[2] >= 0, a = front ? .35 + .6 * clamp(s.b[2] + .3) : .25;
+        const b = v.P(s.b), e = v.P(s.tip);
+        ctx.strokeStyle = rgba(c, a); ctx.lineWidth = front ? 1.4 : .9; ctx.beginPath(); ctx.moveTo(b[0], b[1]); ctx.lineTo(e[0], e[1]); ctx.stroke();
+        ctx.fillStyle = rgba(front ? mix(c, WH, .4) : c, a); ctx.fillRect(e[0] - 1, e[1] - 1, 2, 2);
+      }
+      atmosphere(ctx, v, CY, .7);
+    },
+  },
+
+  voxel: {
+    init() {
+      const r = rng(17), g = .135; this.g = g; this.cubes = [];
+      for (let i = -8; i <= 8; i++) for (let j = -8; j <= 8; j++) for (let k = -8; k <= 8; k++) {
+        const p = [i * g, j * g, k * g], d = Math.hypot(...p);
+        if (d > .86 && d <= 1.0) this.cubes.push({ p, ph: r(), lit: r() < .07 ? (r() < .3 ? PK : CY) : null });
+      }
+    },
+    draw(ctx, W, H, t) {
+      const v = view(W, H, t, .1); backdrop(ctx, W, H, t, v);
+      glow(ctx, v.cx, v.cy, v.R * 1.1, CY, .07);
+      const ax = [v.T([1, 0, 0]), v.T([0, 1, 0]), v.T([0, 0, 1])], h = this.g * .44, L = norm([-.45, .6, .65]);
+      const list = [];
+      for (const c of this.cubes) {
+        const out = 1 + (c.ph < .12 ? Math.pow(Math.max(0, Math.sin(t * .45 + c.ph * 52)), 24) * .3 : 0), q = v.T([c.p[0] * out, c.p[1] * out, c.p[2] * out]);
+        if (q[2] > -.25) list.push([c, q, out]);
+      }
+      list.sort((a, b) => a[1][2] - b[1][2]);
+      for (const [c, q, out] of list) {
+        for (let k = 0; k < 3; k++) {
+          const sgn = ax[k][2] >= 0 ? 1 : -1, n = ax[k].map((x) => x * sgn);
+          if (n[2] < .02) continue;
+          const b = ax[(k + 1) % 3], d = ax[(k + 2) % 3], fc = [q[0] + n[0] * h, q[1] + n[1] * h, q[2] + n[2] * h];
+          ctx.beginPath();
+          [[1, 1], [1, -1], [-1, -1], [-1, 1]].forEach(([u, w], i) => { const p = v.P([fc[0] + (b[0] * u + d[0] * w) * h, fc[1] + (b[1] * u + d[1] * w) * h, fc[2] + (b[2] * u + d[2] * w) * h]); i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); });
+          ctx.closePath();
+          const sh = clamp(.25 + .75 * (n[0] * L[0] + n[1] * L[1] + n[2] * L[2]));
+          const base = [10 + 34 * sh, 26 + 58 * sh, 44 + 80 * sh], col = c.lit ? mix(c.lit, WH, sh * .3) : out > 1.02 ? mix(base, CY, .55) : base;
+          ctx.fillStyle = rgba(col, 1); ctx.fill();
+          ctx.strokeStyle = rgba(CY, c.lit ? .5 : .14); ctx.lineWidth = .6; ctx.stroke();
+        }
+      }
+      atmosphere(ctx, v, CY, .75);
+    },
+  },
+
+  holo: {
+    draw(ctx, W, H, t) {
+      const v = view(W, H, t, .1); backdrop(ctx, W, H, t, v);
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      glow(ctx, v.cx, v.cy, v.R * .55, CY, .35); glow(ctx, v.cx, v.cy, v.R * .18, WH, .7);
+      const ys = Math.sin(t * .55) * .92, seg = (a, b, base) => {
+        const z = (a[2] + b[2]) / 2, y = (a[1] + b[1]) / 2, sc = Math.exp(-(((y - ys) / .09) ** 2));
+        const al = (z >= 0 ? .1 + .3 * z : .05) * base + .7 * sc;
+        const A = v.P(a), B = v.P(b); ctx.strokeStyle = rgba(sc > .3 ? mix(CY, WH, sc * .6) : CY, al); ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(B[0], B[1]); ctx.stroke();
+      };
+      ctx.lineWidth = 1;
+      for (let i = 1; i < 12; i++) { const lat = -Math.PI / 2 + i * Math.PI / 12; let prev = null; for (let k = 0; k <= 72; k++) { const lon = k / 72 * TAU, p = v.T([Math.cos(lat) * Math.cos(lon), Math.sin(lat), Math.cos(lat) * Math.sin(lon)]); if (prev) seg(prev, p, 1); prev = p; } }
+      for (let i = 0; i < 24; i++) { const lon = i / 24 * TAU; let prev = null; for (let k = 0; k <= 36; k++) { const lat = -Math.PI / 2 + k / 36 * Math.PI, p = v.T([Math.cos(lat) * Math.cos(lon), Math.sin(lat), Math.cos(lat) * Math.sin(lon)]); if (prev) seg(prev, p, .8); prev = p; } }
+      // the scan ring
+      const rr = Math.sqrt(1 - ys * ys); let prev = null; ctx.lineWidth = 2;
+      for (let k = 0; k <= 96; k++) { const lon = k / 96 * TAU, p = v.T([rr * Math.cos(lon), ys, rr * Math.sin(lon)]), s = v.P(p); if (prev) { ctx.strokeStyle = rgba([170, 235, 255], p[2] >= 0 ? .95 : .3); ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(s[0], s[1]); ctx.stroke(); } prev = s; }
+      // a thin outer ring with ticks, turning slowly
+      ctx.lineWidth = 1;
+      for (let k = 0; k < 120; k++) { const a = k / 120 * TAU + t * .05, r0 = v.R * 1.16, r1 = r0 + (k % 10 === 0 ? v.R * .05 : v.R * .02); ctx.strokeStyle = rgba(CY, k % 10 === 0 ? .5 : .2); ctx.beginPath(); ctx.moveTo(v.cx + Math.cos(a) * r0, v.cy + Math.sin(a) * r0); ctx.lineTo(v.cx + Math.cos(a) * r1, v.cy + Math.sin(a) * r1); ctx.stroke(); }
+      ctx.restore();
+      atmosphere(ctx, v, CY, .6);
+    },
+  },
+};
+
+/* ---------------------------------------------------------------- cards, selection, render loop */
+const grid = document.getElementById('grid'), bar = document.getElementById('bar'), barText = document.getElementById('barText');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let picked = null;
+OPTIONS.forEach((o, n) => {
+  const card = document.createElement('article');
+  card.className = 'card'; card.dataset.id = o.id;
+  card.innerHTML = `
+    <div class="shot"><canvas></canvas>
+      <div class="hl"><i>+ Hamdaz Technologies</i><b>Delivering the<br>Digital Future</b></div>
+      <span class="num">${String(n + 1).padStart(2, '0')}</span>${o.star ? '<span class="badge">★ Recommended</span>' : ''}
+    </div>
+    <div class="body">
+      <h2><b>${n + 1}</b>${o.title}</h2>
+      <p>${o.text}</p>
+      <dl><dt>On scroll</dt><dd>${o.scroll}</dd><dt>Why</dt><dd>${o.why}</dd></dl>
+      <button class="pick" type="button">Choose this</button>
+    </div>`;
+  grid.appendChild(card);
+  card.querySelector('.pick').addEventListener('click', () => {
+    picked = picked === o.id ? null : o.id;
+    document.querySelectorAll('.card').forEach((c) => c.classList.toggle('is-picked', c.dataset.id === picked));
+    document.querySelectorAll('.pick').forEach((b) => (b.textContent = b.closest('.card').dataset.id === picked ? 'Chosen ✓' : 'Choose this'));
+    barText.textContent = picked ? `Round 3, option ${n + 1}: ${o.title}` : '';
+    bar.classList.toggle('is-on', !!picked);
+  });
+  const scene = Object.create(SCENES[o.id]); scene.init?.();
+  o.canvas = card.querySelector('canvas'); o.scene = scene; o.visible = false;
+});
+document.getElementById('copy').addEventListener('click', async (e) => {
+  try { await navigator.clipboard.writeText(`Use hero ${barText.textContent}`); e.target.textContent = 'Copied'; } catch { e.target.textContent = 'Copy failed'; }
+  setTimeout(() => (e.target.textContent = 'Copy'), 1400);
+});
+const io = new IntersectionObserver((es) => es.forEach((en) => { const o = OPTIONS.find((x) => x.canvas === en.target); if (o) o.visible = en.isIntersecting; }), { rootMargin: '100px' });
+OPTIONS.forEach((o) => io.observe(o.canvas));
+
+function render(o, t) {
+  const c = o.canvas, dpr = Math.min(devicePixelRatio || 1, 2), W = c.clientWidth, H = c.clientHeight;
+  if (!W || !H) return;
+  if (c.width !== Math.round(W * dpr) || c.height !== Math.round(H * dpr)) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); }
+  const ctx = c.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const bg = ctx.createRadialGradient(W * .62, H * .45, 0, W * .62, H * .45, W * .8); bg.addColorStop(0, '#0a1d33'); bg.addColorStop(1, '#030b16');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  o.scene.draw(ctx, W, H, t);
+  const l = ctx.createLinearGradient(0, 0, W * .5, 0); l.addColorStop(0, 'rgba(3,11,22,.55)'); l.addColorStop(1, 'rgba(3,11,22,0)');
+  ctx.fillStyle = l; ctx.fillRect(0, 0, W * .5, H);
+}
+const t0 = performance.now();
+function loop(now) { const t = (now - t0) / 1000; OPTIONS.forEach((o) => o.visible && render(o, t)); requestAnimationFrame(loop); }
+document.fonts.ready.then(() => {
+  if (reduce) { const all = () => OPTIONS.forEach((o) => render(o, 6)); all(); addEventListener('resize', all); }
+  else requestAnimationFrame(loop);
+});
+</script>
+</body>
+</html>

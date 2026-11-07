@@ -1,0 +1,111 @@
+HAMDAZ — HIGGSFIELD STORY CLIPS
+"From a spark to the digital future"
+
+HOW IT WORKS
+Every clip starts or ends on the same frame: THE SPARK (a point of cyan light on navy).
+Each page has 3 clips: IN (spark -> page still), LOOP (page still -> same still), OUT (page still -> spark).
+Use Higgsfield "Start & End Frame" (Pro/Ultimate; with Kling use the General preset). Make all stills first.
+
+SPECS
+16:9 · 1920x1080 or 1280x720 · MP4, no audio · In/Out 4-5 s · Loop 5-10 s
+Element on the right half (centred ~62% across, halfway down); left half and bottom-left dark. No text, logos, people or watermarks.
+Save every file in assets/video/ with the exact name given.
+
+STYLE LOCK (already added to every image prompt below)
+Cinematic 3D render, deep navy background (#061423), glowing cyan (#30c1f8) light with small accents of pink (#eb4b96) and violet, dark glass and circuit-board materials, soft volumetric glow, shallow depth of field, clean premium technology aesthetic, 16:9. The subject sits in the right half of the frame, centred about 62% across and halfway down; the left half and the bottom-left stay dark and empty. No text, no letters, no logos, no people, no watermark.
+
+========================================================================
+THE SPARK (shared frame)
+========================================================================
+
+[spark.jpg] STILL
+A single tiny point of cyan-white light floating at the right-centre of the frame, about 62% across and exactly halfway down, with a soft round glow and a faint lens bloom, on a deep navy background with a very faint dust of floating particles. Nothing else in the frame. Cinematic 3D render, deep navy background (#061423), glowing cyan (#30c1f8) light with small accents of pink (#eb4b96) and violet, dark glass and circuit-board materials, soft volumetric glow, shallow depth of field, clean premium technology aesthetic, 16:9. The subject sits in the right half of the frame, centred about 62% across and halfway down; the left half and the bottom-left stay dark and empty. No text, no letters, no logos, no people, no watermark.
+
+[spark-loop.mp4] LOOP (optional, for the 404 page) · Start: spark.jpg · End: spark.jpg
+Locked-off camera, no camera movement. The point of light breathes softly, growing slightly brighter and dimmer, while faint particles drift slowly around it. Calm, seamless loop.
+
+========================================================================
+CHAPTER 1 · HOME · THE CORE
+An AI chip: the light of the spark becomes circuits and powers the core.
+========================================================================
+
+[home.jpg] STILL
+An AI processor chip seen from slightly above at an angle, sitting on a dark circuit board. The top of the chip is a grid of softly glowing compute cells around one bright square core. Hundreds of thin cyan circuit traces fan out from its pins across the board, ending in small round vias, and fade into darkness. A soft cyan glow rises from the core. Cinematic 3D render, deep navy background (#061423), glowing cyan (#30c1f8) light with small accents of pink (#eb4b96) and violet, dark glass and circuit-board materials, soft volumetric glow, shallow depth of field, clean premium technology aesthetic, 16:9. The subject sits in the right half of the frame, centred about 62% across and halfway down; the left half and the bottom-left stay dark and empty. No text, no letters, no logos, no people, no watermark.
+
+[home-in.mp4] IN · Start: spark.jpg · End: home.jpg
+Locked-off camera. The point of light pulses once, then silky ribbons of light flow in from the edges of the frame, curl, and lay down on a dark board as glowing circuit traces that race towards the point. Where they meet, the AI chip materialises and its core lights up. Smooth, continuous motion.
+
+[home-loop.mp4] LOOP · Start: home.jpg · End: home.jpg
+Locked-off camera, no camera movement. Small pulses of light travel along the circuit traces into the chip, the compute cells on the chip flicker softly, and a gentle shimmer of particles rises from the core. Calm, seamless loop.
+
+[home-out.mp4] OUT · Start: home.jpg · End: spark.jpg
+Locked-off camera. The circuit traces go dark from the edges inwards as their light drains back into the chip, then the chip dissolves into fine glowing particles that spiral together and condense into a single point of light. Smooth, continuous motion.
+
+========================================================================
+CHAPTER 2 · WHO WE ARE · THE PEOPLE
+A network of connected nodes: the team, with two bright hubs joined by an arc (UAE and India).
+========================================================================
+
+[about.jpg] STILL
+A floating, roughly spherical constellation of glowing nodes connected by fine lines of light, like a network of people working together. Some nodes are brighter than others. Two larger glowing hubs sit on opposite sides of the network, joined by a bright arc of light. Cinematic 3D render, deep navy background (#061423), glowing cyan (#30c1f8) light with small accents of pink (#eb4b96) and violet, dark glass and circuit-board materials, soft volumetric glow, shallow depth of field, clean premium technology aesthetic, 16:9. The subject sits in the right half of the frame, centred about 62% across and halfway down; the left half and the bottom-left stay dark and empty. No text, no letters, no logos, no people, no watermark.
+
+[about-in.mp4] IN · Start: spark.jpg · End: about.jpg
+Locked-off camera. The point of light splits into many smaller sparks that drift outwards and link up with fine lines of light, growing into the glowing network. The two large hubs light up last and are joined by a bright arc. Smooth, continuous motion.
+
+[about-loop.mp4] LOOP · Start: about.jpg · End: about.jpg
+Locked-off camera, no camera movement. The network turns very slowly, small pulses of light travel along the connections, and the nodes softly brighten and dim. Calm, seamless loop.
+
+[about-out.mp4] OUT · Start: about.jpg · End: spark.jpg
+Locked-off camera. The connections fade one by one, and the nodes drift inwards and merge into a single point of light. Smooth, continuous motion.
+
+========================================================================
+CHAPTER 3 · WHAT WE DO · THE BUILDING BLOCKS
+A cube of circuit blocks: many services fitting together into one solution.
+========================================================================
+
+[services.jpg] STILL
+A large cube built from 3 by 3 by 3 smaller dark-glass blocks, seen from a three-quarter angle slightly above. Each block face is etched with glowing cyan circuit patterns, with thin gaps of light between the blocks, and a soft glow leaks from the centre of the cube through the gaps. Cinematic 3D render, deep navy background (#061423), glowing cyan (#30c1f8) light with small accents of pink (#eb4b96) and violet, dark glass and circuit-board materials, soft volumetric glow, shallow depth of field, clean premium technology aesthetic, 16:9. The subject sits in the right half of the frame, centred about 62% across and halfway down; the left half and the bottom-left stay dark and empty. No text, no letters, no logos, no people, no watermark.
+
+[services-in.mp4] IN · Start: spark.jpg · End: services.jpg
+Locked-off camera. The point of light swells into a bright glowing core. Dark-glass blocks glide in from the darkness and lock together around it one by one, forming the cube, and circuit patterns light up across its faces. Smooth, continuous motion.
+
+[services-loop.mp4] LOOP · Start: services.jpg · End: services.jpg
+Locked-off camera, no camera movement. One outer layer of the cube slowly turns a quarter turn, then another, like a puzzle cube, while a band of light sweeps through the circuit patterns. Calm, seamless loop.
+
+[services-out.mp4] OUT · Start: services.jpg · End: spark.jpg
+Locked-off camera. The blocks drift apart to reveal the bright core, then fade into the darkness while the core shrinks into a single point of light. Smooth, continuous motion.
+
+========================================================================
+CHAPTER 4 · HOW WE DO · THE FLOW
+Silky ribbons of light: solutions flowing into every industry.
+========================================================================
+
+[solutions.jpg] STILL
+Silky ribbons of light, each woven from hundreds of fine glowing threads, flowing in smooth waves across the right side of the frame in cyan, violet and pink, with tiny sparks drifting along them. Cinematic 3D render, deep navy background (#061423), glowing cyan (#30c1f8) light with small accents of pink (#eb4b96) and violet, dark glass and circuit-board materials, soft volumetric glow, shallow depth of field, clean premium technology aesthetic, 16:9. The subject sits in the right half of the frame, centred about 62% across and halfway down; the left half and the bottom-left stay dark and empty. No text, no letters, no logos, no people, no watermark.
+
+[solutions-in.mp4] IN · Start: spark.jpg · End: solutions.jpg
+Locked-off camera. The point of light stretches into a thin glowing line, which unfurls into three flowing ribbons made of fine threads of light that wave across the right side of the frame. Smooth, continuous motion.
+
+[solutions-loop.mp4] LOOP · Start: solutions.jpg · End: solutions.jpg
+Locked-off camera, no camera movement. The ribbons flow and twist gently while small sparks drift along them. Calm, seamless loop.
+
+[solutions-out.mp4] OUT · Start: solutions.jpg · End: spark.jpg
+Locked-off camera. The ribbons draw together and twist into one thin thread of light, which shrinks into a single point of light. Smooth, continuous motion.
+
+========================================================================
+CHAPTER 5 · CONTACT US · THE SIGNAL
+A beacon sending out a signal: ready to connect.
+========================================================================
+
+[contact.jpg] STILL
+A glowing beacon: a bright point of light resting on a dark, softly reflective surface, sending out slow concentric rings of cyan light across the surface, with a thin beam of light rising straight up from it and faint arcs of signal reaching outwards. Cinematic 3D render, deep navy background (#061423), glowing cyan (#30c1f8) light with small accents of pink (#eb4b96) and violet, dark glass and circuit-board materials, soft volumetric glow, shallow depth of field, clean premium technology aesthetic, 16:9. The subject sits in the right half of the frame, centred about 62% across and halfway down; the left half and the bottom-left stay dark and empty. No text, no letters, no logos, no people, no watermark.
+
+[contact-in.mp4] IN · Start: spark.jpg · End: contact.jpg
+Locked-off camera. The point of light drops gently onto a dark reflective surface, rings of light ripple outwards from where it lands, and a thin beam of light rises from it. Smooth, continuous motion.
+
+[contact-loop.mp4] LOOP · Start: contact.jpg · End: contact.jpg
+Locked-off camera, no camera movement. Rings of light pulse slowly outwards from the beacon across the surface and the beam shimmers. Calm, seamless loop.
+
+[contact-out.mp4] OUT · Start: contact.jpg · End: spark.jpg
+Locked-off camera. The rings fade, the beam sinks back into the surface, and the light lifts back up into a single floating point. Smooth, continuous motion.
+

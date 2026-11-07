@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Android Hero – Hamdaz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  /* Hamdaz home hero, round 4: a glossy android bust rendered live in 3D (Three.js), framed like an
+     editorial product page: huge type passing behind and in front of it, thin callouts to its parts,
+     a glass info strip. Light and dark versions (switch top right). Open with internet on (Three.js
+     loads from unpkg). */
+  :root {
+    --bg: #e2e6eb; --ink: #0b1b2b; --dim: #5d6b7b; --type: #ffffff; --line: rgba(11, 27, 43, .14);
+    --glass: rgba(255, 255, 255, .42); --glass-line: rgba(255, 255, 255, .7); --accent: #2547ff; --cyan: #30c1f8; --pink: #fb4994;
+    --call: rgba(11, 27, 43, .55);
+  }
+  body[data-theme="dark"] {
+    --bg: #04070b; --ink: #eef3f8; --dim: #8b98a7; --type: #ffffff; --line: rgba(255, 255, 255, .07);
+    --glass: rgba(18, 24, 32, .55); --glass-line: rgba(255, 255, 255, .08); --call: rgba(238, 243, 248, .5);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; }
+  body { background: var(--bg); color: var(--ink); font: 15px/1.55 Inter, system-ui, sans-serif; overflow: hidden; transition: background .6s; }
+  .mono { font: 500 11px/1.3 "JetBrains Mono", monospace; letter-spacing: .1em; text-transform: uppercase; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  .hero { position: relative; height: 100vh; min-height: 620px; overflow: hidden; isolation: isolate; }
+  /* backdrops */
+  .halo { position: absolute; width: 78vh; height: 78vh; border-radius: 50%; left: calc(66% - 39vh); top: calc(44% - 39vh); background: radial-gradient(circle, rgba(255,255,255,.75), rgba(255,255,255,.35) 60%, rgba(255,255,255,0) 71%); z-index: 0; transition: opacity .6s; }
+  body[data-theme="dark"] .halo { background: radial-gradient(circle, rgba(48,193,248,.16), rgba(107,80,246,.08) 45%, rgba(0,0,0,0) 70%); }
+  .grid-lines { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .grid-lines i { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line); }
+
+  /* the big words: one copy behind the android, the second line again in front of it */
+  .type { position: absolute; left: clamp(16px, 4vw, 64px); top: 17vh; font-family: Archivo, sans-serif; font-weight: 800; font-stretch: 125%; text-transform: uppercase; font-size: clamp(64px, 12.6vw, 230px); line-height: .84; letter-spacing: -.02em; color: var(--type); pointer-events: none; white-space: nowrap; }
+  .type span { display: block; }
+  .type--back { z-index: 1; }
+  .type--front { z-index: 3; }
+  .type--front .l1 { visibility: hidden; }
+  body[data-theme="light"] .type { text-shadow: 0 10px 40px rgba(11, 27, 43, .08); }
+  .eyebrow { position: absolute; left: clamp(16px, 4vw, 64px); top: calc(17vh - 46px); z-index: 4; display: flex; align-items: center; gap: 12px; }
+  .eyebrow b { width: 30px; height: 30px; background: var(--accent); display: block; }
+  .eyebrow span { font: 600 15px/1 Archivo, sans-serif; font-stretch: 125%; letter-spacing: .12em; text-transform: uppercase; }
+
+  #gl { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; display: block; -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 96%); mask-image: linear-gradient(to bottom, #000 72%, transparent 96%); }
+
+  header { position: absolute; inset: 0 0 auto; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 22px clamp(16px, 4vw, 64px); }
+  header .brand { display: flex; align-items: center; gap: 10px; font: 800 19px/1 Archivo, sans-serif; font-stretch: 112%; letter-spacing: .06em; }
+  header .brand img { height: 30px; width: auto; }
+  header nav { display: flex; gap: 30px; font-size: 14px; }
+  header nav a { color: inherit; text-decoration: none; opacity: .7; }
+  header nav a.on { opacity: 1; font-weight: 600; }
+  header nav a.on::before { content: ""; display: inline-block; width: 8px; height: 8px; background: var(--pink); margin-right: 8px; transform: skewX(-12deg); }
+  .talk { height: 40px; padding: 0 18px; border-radius: 99px; border: 1px solid var(--ink); display: inline-flex; align-items: center; font-weight: 600; font-size: 13px; color: inherit; text-decoration: none; }
+
+  .intro { position: absolute; left: clamp(16px, 4vw, 64px); top: 60vh; z-index: 4; max-width: 360px; }
+  .intro h3 { font: 600 15px/1.3 Inter, sans-serif; margin-bottom: 8px; }
+  .intro p { color: var(--dim); font-size: 13.5px; border-left: 2px solid var(--line); padding-left: 12px; }
+  .ctas { display: flex; gap: 10px; margin-top: 22px; }
+  .btn { height: 44px; padding: 0 20px; display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 13.5px; text-decoration: none; color: var(--bg); background: var(--ink); border-radius: 99px; }
+  .btn--ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+  .btn i { width: 22px; height: 22px; border-radius: 50%; background: var(--pink); color: #fff; display: grid; place-items: center; font-style: normal; font-size: 15px; }
+
+  .side { position: absolute; right: clamp(16px, 4vw, 64px); top: 40vh; z-index: 4; text-align: right; }
+  .side p:first-child { font: 300 40px/1 Archivo, sans-serif; font-stretch: 112%; }
+  .side .mono { color: var(--dim); margin-top: 6px; }
+
+  /* callouts drawn over the android */
+  #calls { position: absolute; inset: 0; z-index: 5; pointer-events: none; overflow: visible; }
+  #calls path { fill: none; stroke: var(--call); stroke-width: 1; }
+  #calls circle { fill: var(--bg); stroke: var(--ink); stroke-width: 1.5; }
+  .call { position: absolute; left: 0; top: 0; z-index: 6; pointer-events: none; white-space: nowrap; }
+  .call b { display: block; font: 600 13px/1.2 Inter, sans-serif; }
+  .call span { display: block; font: 500 10px/1.6 "JetBrains Mono", monospace; letter-spacing: .06em; color: var(--dim); text-transform: uppercase; }
+  .call.r { text-align: right; }
+
+  /* glass strip */
+  .strip { position: absolute; left: 0; right: 0; bottom: 0; z-index: 7; display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; align-items: center; gap: 0; padding: 0 clamp(16px, 4vw, 64px); height: 15vh; min-height: 104px; background: var(--glass); backdrop-filter: blur(22px) saturate(1.2); -webkit-backdrop-filter: blur(22px) saturate(1.2); border-top: 1px solid var(--glass-line); }
+  .strip > div { padding: 0 24px; border-left: 1px solid var(--line); }
+  .strip > div:first-child { border-left: 0; padding-left: 0; }
+  .strip .mono { color: var(--dim); }
+  .strip strong { display: block; font: 800 34px/1.1 Archivo, sans-serif; font-stretch: 112%; margin-top: 4px; }
+  .strip p.t { font-weight: 600; margin-top: 4px; }
+  .strip p.d { color: var(--dim); font-size: 13px; }
+  .dots { display: flex; gap: 6px; margin-top: 10px; }
+  .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--pink); opacity: .3; }
+  .dots i.on { opacity: 1; }
+
+  /* prototype switch */
+  .proto { position: fixed; right: 16px; top: 84px; z-index: 30; display: flex; align-items: center; gap: 6px; padding: 6px; border-radius: 99px; background: rgba(6, 20, 35, .88); color: #fff; font: 500 12px Inter, sans-serif; box-shadow: 0 10px 40px rgba(0,0,0,.25); }
+  .proto span { padding: 0 8px 0 10px; opacity: .7; }
+  .proto button { height: 30px; padding: 0 14px; border-radius: 99px; border: 0; background: transparent; color: #fff; font: 600 12px Inter, sans-serif; cursor: pointer; }
+  .proto button[aria-pressed="true"] { background: #fff; color: #061423; }
+  .loading { position: absolute; left: 66%; top: 44%; transform: translate(-50%, -50%); z-index: 2; font: 500 11px "JetBrains Mono", monospace; letter-spacing: .1em; color: var(--dim); }
+
+  @media (max-width: 860px) {
+    header nav, .side, .call, #calls { display: none; }
+    .type { top: 14vh; font-size: 17vw; }
+    .eyebrow { top: calc(14vh - 44px); }
+    .intro { top: auto; bottom: calc(15vh + 130px); max-width: 80vw; }
+    .strip { grid-template-columns: 1fr 1fr; }
+    .strip > div:nth-child(n+3) { display: none; }
+    .halo { left: calc(55% - 30vh); width: 60vh; height: 60vh; }
+  }
+</style>
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
+</script>
+</head>
+<body data-theme="light">
+<section class="hero">
+  <div class="halo" aria-hidden="true"></div>
+  <div class="grid-lines" aria-hidden="true"><i style="left:18%"></i><i style="left:49%"></i><i style="left:86%"></i></div>
+
+  <header>
+    <div class="brand"><img src="../assets/img/logo.svg" alt="">HAMDAZ</div>
+    <nav><a href="#" class="on">Home</a><a href="#">Who We Are</a><a href="#">What We Do</a><a href="#">How We Do</a></nav>
+    <a class="talk" href="#">Let's talk</a>
+  </header>
+
+  <h1 class="sr">Delivering the Digital Future</h1>
+  <p class="eyebrow" aria-hidden="true"><b></b><span>Delivering the</span></p>
+  <div class="type type--back" aria-hidden="true"><span class="l1">Digital</span><span>Future</span></div>
+  <p class="loading" id="loading">LOADING 3D…</p>
+  <canvas id="gl" aria-hidden="true"></canvas>
+
+  <svg id="calls" aria-hidden="true"></svg>
+  <div class="call" data-call="ai"><b>Generative AI</b><span>Custom GPT · Bots</span></div>
+  <div class="call" data-call="cloud"><b>Cloud</b><span>Azure · AWS · GCP · OCI</span></div>
+  <div class="call" data-call="data"><b>Data &amp; Analytics</b><span>Predictive insight</span></div>
+  <div class="call" data-call="sec"><b>Security</b><span>Information security</span></div>
+
+
+  <div class="intro">
+    <h3>Pioneering tomorrow</h3>
+    <p>Unleashing the power of AI for a bold future: intelligent solutions built with cutting-edge technology, expertly managed.</p>
+    <div class="ctas"><a class="btn" href="#"><i>+</i>Contact Now</a><a class="btn btn--ghost" href="#">What We Do</a></div>
+  </div>
+
+  <div class="strip">
+    <div><p class="mono">Hamdaz Technologies</p><p class="t">TechCraft Innovations</p><p class="d">Intelligent solutions with cutting-edge technology</p></div>
+    <div><p class="mono">Managed services</p><strong>20</strong></div>
+    <div><p class="mono">AI products</p><strong>05</strong></div>
+    <div><p class="mono">Highlights</p><p class="t">Streamlined Excellence</p><div class="dots"><i class="on"></i><i></i><i></i></div></div>
+  </div>
+</section>
+
+<div class="proto" role="group" aria-label="Prototype theme"><span>Prototype</span><button type="button" data-theme-btn="light" aria-pressed="true">Light</button><button type="button" data-theme-btn="dark" aria-pressed="false">Dark</button></div>
+
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const canvas = document.getElementById('gl');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+const camera = new THREE.PerspectiveCamera(28, 1, .1, 100);
+camera.position.set(0, 0, 9);
+
+/* ------------------------------------------------------------------ the android's shape */
+// a unit sphere pushed into a helmet: rounder skull at the back, narrower jaw, a face that leans forward (+z)
+function shape(v) {
+  let { x, y, z } = v;
+  const low = Math.max(0, -y), ax = Math.abs(x);
+  // flat side plates (a crease where they start), a long skull, a jaw that juts forward, a flatter crown
+  x = Math.sign(x) * (ax < .7 ? ax : .7 + (ax - .7) * .2) * .86;
+  x *= 1 - .34 * low * low;
+  z *= 1.1 * (1 - .08 * low);
+  if (z > 0) { z += .26 * low * z; y -= .06 * z * low; }
+  if (z < 0) { z *= 1.08; y += .08 * -z; }
+  if (y > .78) y = .78 + (y - .78) * .55;
+  y *= 1.04;
+  if (y < -.86) y = -.86 + (y + .86) * .3;
+  return v.set(x, y, z);
+}
+function shaped(r, ...args) {
+  const g = new THREE.SphereGeometry(1, ...args), p = g.attributes.position, v = new THREE.Vector3();
+  for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i); shape(v).multiplyScalar(r); p.setXYZ(i, v.x, v.y, v.z); }
+  g.computeVertexNormals();
+  return g;
+}
+const surf = (theta, phi, r = 1) => shape(new THREE.Vector3(-Math.cos(phi) * Math.sin(theta), Math.cos(theta), Math.sin(phi) * Math.sin(theta))).multiplyScalar(r);
+const HALF = Math.PI / 2;
+const arc = (n, f) => Array.from({ length: n }, (_, i) => f(i / (n - 1)));
+const tube = (pts, r, mat, closed = false) => new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, closed), Math.max(48, pts.length * 3), r, 10, closed), mat);
+function onSurface(obj, theta, phi, lift = 0) {
+  const p = surf(theta, phi), n = p.clone().normalize();
+  obj.position.copy(p).addScaledVector(n, lift);
+  obj.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), n);
+  return obj;
+}
+
+const M = {
+  shell: new THREE.MeshPhysicalMaterial({ color: 0xe9edf2, roughness: .26, metalness: .05, clearcoat: 1, clearcoatRoughness: .06 }),
+  visor: new THREE.MeshPhysicalMaterial({ color: 0x04060a, roughness: .05, metalness: .6, clearcoat: 1, clearcoatRoughness: .02 }),
+  metal: new THREE.MeshStandardMaterial({ color: 0x1b1f26, roughness: .32, metalness: .85 }),
+  rubber: new THREE.MeshStandardMaterial({ color: 0x101216, roughness: .55, metalness: .2 }),
+  copper: new THREE.MeshStandardMaterial({ color: 0xb36b3c, roughness: .28, metalness: 1 }),
+  seam: new THREE.MeshStandardMaterial({ color: 0x2a3038, roughness: .5, metalness: .3 }),
+  glow: new THREE.MeshBasicMaterial({ color: 0x30c1f8, toneMapped: false }),
+  eye: new THREE.MeshBasicMaterial({ color: 0x30c1f8, toneMapped: false }),
+};
+
+const robot = new THREE.Group(); scene.add(robot);
+const head = new THREE.Group(); robot.add(head);
+head.rotation.order = 'YXZ';
+
+// shell and visor
+head.add(new THREE.Mesh(shaped(1, 160, 120), M.shell));
+const V = { p0: HALF - 1.2, pl: 2.4, t0: 1.25, tl: .6 };
+head.add(new THREE.Mesh(shaped(1.012, 140, 50, V.p0, V.pl, V.t0, V.tl), M.visor));
+// visor bezel (top) and the light line along its lower edge
+head.add(tube(arc(40, (u) => surf(V.t0, V.p0 + .05 + u * (V.pl - .1), 1.016)), .012, M.metal));
+const glowLines = [];
+glowLines.push(tube(arc(40, (u) => surf(V.t0 + V.tl, V.p0 + .12 + u * (V.pl - .24), 1.018)), .011, M.glow));
+// the eye: a slit of light behind the glass
+const eye = tube(arc(24, (u) => surf(1.52, HALF - .12 + u * .95, 1.02)), .016, M.eye);
+head.add(eye);
+
+// panel seams (dark grooves on the light version, lit lines on the dark one)
+const seams = [];
+seams.push(tube(arc(60, (u) => { const s = -1.12 + u * 3.45; return shape(new THREE.Vector3(0, Math.cos(s), -Math.sin(s))).multiplyScalar(1.004); }), .006, M.seam));
+for (const sgn of [1, -1]) {
+  seams.push(tube(arc(40, (u) => surf(1.16, HALF + sgn * (1.25 + u * 1.5), 1.004)), .006, M.seam));
+  seams.push(tube(arc(40, (u) => surf(.75 + u * 1.55, HALF + sgn * 2.05, 1.004)), .006, M.seam));
+  seams.push(tube(arc(30, (u) => surf(2.2, HALF + sgn * (.25 + u * 1.35), 1.004)), .006, M.seam));
+}
+seams.forEach((m) => head.add(m));
+glowLines.forEach((m) => head.add(m));
+
+// ear module on both sides
+const ears = [];
+for (const sgn of [1, -1]) {
+  const g = onSurface(new THREE.Group(), 1.62, HALF + sgn * 1.5);
+  const disc = new THREE.Mesh(new THREE.CylinderGeometry(.22, .25, .08, 64), M.metal); disc.position.y = .02; g.add(disc);
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(.13, .15, .06, 48), M.shell); cap.position.y = .07; g.add(cap);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(.18, .011, 12, 80), M.glow); ring.rotation.x = HALF; ring.position.y = .065; g.add(ring);
+  head.add(g); ears.push(g);
+}
+// bolts
+const bolt = new THREE.CylinderGeometry(.016, .018, .014, 20);
+[[.95, HALF + 1.95], [1.1, HALF + 2.0], [1.95, HALF + 1.05], [2.05, HALF + 1.2]].forEach(([t, p]) => head.add(onSurface(new THREE.Mesh(bolt, M.metal), t, p, .004)));
+
+// neck: stacked rings round a core, with cables
+const neck = new THREE.Group(); neck.position.set(0, -.82, -.16); neck.rotation.x = .12; robot.add(neck);
+const core = new THREE.Mesh(new THREE.CylinderGeometry(.19, .21, 1.1, 40), M.rubber); core.position.y = -.48; neck.add(core);
+for (let i = 0; i < 7; i++) { const r = .3 - i * .006, m = new THREE.Mesh(new THREE.CylinderGeometry(r, r + .02, .065, 56), M.metal); m.position.y = -.08 - i * .13; neck.add(m); }
+[[.16, M.rubber, .03], [-.14, M.rubber, .03], [.04, M.copper, .022], [.24, M.copper, .016]].forEach(([x, mat, r]) => {
+  robot.add(tube([new THREE.Vector3(x * .8, -.55, .42), new THREE.Vector3(x * 1.1, -.95, .38), new THREE.Vector3(x * 1.5, -1.45, .45), new THREE.Vector3(x * 1.9, -1.85, .62)], r, mat));
+});
+
+// collar and shoulders
+const collar = new THREE.Mesh(new THREE.SphereGeometry(1, 160, 60, 0, Math.PI * 2, .5, .72), M.shell);
+collar.scale.set(1.75, 1.15, 1.2); collar.position.set(0, -2.32, -.12); robot.add(collar);
+const gorget = new THREE.Mesh(new THREE.CylinderGeometry(.42, .78, .42, 64, 1, true), M.metal); gorget.position.set(0, -1.62, -.12); robot.add(gorget);
+const collarPt = (t, p, r = 1.008) => new THREE.Vector3(-Math.cos(p) * Math.sin(t) * 1.75 * r, Math.cos(t) * 1.15 * r - 2.32, Math.sin(p) * Math.sin(t) * 1.2 * r - .12);
+const chestLine = tube(arc(40, (u) => collarPt(.86, HALF - .75 + u * 1.5)), .013, M.glow); robot.add(chestLine); glowLines.push(chestLine);
+const chestSeam = tube(arc(40, (u) => collarPt(.62 + u * .55, HALF + .9)), .006, M.seam); robot.add(chestSeam); seams.push(chestSeam);
+const chestSeam2 = tube(arc(40, (u) => collarPt(.62 + u * .55, HALF - .9)), .006, M.seam); robot.add(chestSeam2); seams.push(chestSeam2);
+
+// soft glow sprites on the eye
+const glowTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d'); const g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.3, 'rgba(255,255,255,.35)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
+const spriteMat = new THREE.SpriteMaterial({ map: glowTex, color: 0x30c1f8, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: .0 });
+for (let i = 0; i < 5; i++) { const s = new THREE.Sprite(spriteMat); s.position.copy(surf(1.52, HALF - .05 + i * .2, 1.06)); s.scale.setScalar(.32); head.add(s); }
+
+/* ------------------------------------------------------------------ lights and the two looks */
+const key = new THREE.DirectionalLight(0xffffff, 2); key.position.set(-3, 4, 5); scene.add(key);
+const fill = new THREE.HemisphereLight(0xffffff, 0x7d8a99, .6); scene.add(fill);
+const rimC = new THREE.DirectionalLight(0x30c1f8, .6); rimC.position.set(-4, 2, -4); scene.add(rimC);
+const rimP = new THREE.DirectionalLight(0xfb4994, 0); rimP.position.set(4, -1, -3); scene.add(rimP);
+
+function theme(name) {
+  document.body.dataset.theme = name;
+  document.querySelectorAll('[data-theme-btn]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.themeBtn === name)));
+  const dark = name === 'dark';
+  M.shell.color.set(dark ? 0x0c0f14 : 0xe9edf2); M.shell.roughness = dark ? .2 : .26; M.shell.envMapIntensity = dark ? .4 : 1;
+  M.visor.envMapIntensity = dark ? .8 : 1.2;
+  seams.forEach((m) => (m.material = dark ? M.glow : M.seam));
+  key.intensity = dark ? .7 : 2; fill.intensity = dark ? .15 : .6; rimC.intensity = dark ? 3.2 : .6; rimP.intensity = dark ? 1.6 : 0;
+  spriteMat.opacity = dark ? .9 : .35;
+  renderer.toneMappingExposure = dark ? 1.15 : 1;
+}
+document.querySelectorAll('[data-theme-btn]').forEach((b) => b.addEventListener('click', () => theme(b.dataset.themeBtn)));
+theme(new URLSearchParams(location.search).get('theme') === 'dark' ? 'dark' : 'light');
+
+/* ------------------------------------------------------------------ framing */
+let W = 0, H = 0, baseY = 0;
+function layout() {
+  W = innerWidth; H = Math.max(innerHeight, 620);
+  renderer.setSize(W, H, false);
+  camera.aspect = W / H; camera.updateProjectionMatrix();
+  const halfH = 9 * Math.tan(THREE.MathUtils.degToRad(14)), halfW = halfH * camera.aspect, narrow = W < 860;
+  const sx = narrow ? .56 : .7, sy = narrow ? .5 : .43;
+  baseY = (1 - 2 * sy) * halfH;
+  robot.position.set((sx * 2 - 1) * halfW, baseY, 0);
+  robot.scale.setScalar(Math.min(.38 * halfH, (narrow ? .5 : .28) * halfW));
+}
+layout(); addEventListener('resize', layout);
+
+/* ------------------------------------------------------------------ callouts */
+const anchor = (parent, pos) => { const o = new THREE.Object3D(); o.position.copy(pos); parent.add(o); return o; };
+const CALLS = [
+  { id: 'ai', a: anchor(head, surf(1.52, HALF + .3, 1.03)), dx: -.11, dy: .22 },
+  { id: 'cloud', a: anchor(head, surf(.4, HALF + 1.1, 1.0)), dx: .1, dy: -.05 },
+  { id: 'data', a: anchor(head, surf(1.62, HALF + 1.5, 1.09)), dx: .1, dy: .02 },
+  { id: 'sec', a: anchor(robot, collarPt(.72, HALF - .5)), dx: -.1, dy: .05 },
+];
+const svg = document.getElementById('calls');
+for (const c of CALLS) {
+  c.el = document.querySelector(`[data-call="${c.id}"]`);
+  c.path = document.createElementNS('http://www.w3.org/2000/svg', 'path'); svg.appendChild(c.path);
+  c.dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); c.dot.setAttribute('r', 4); svg.appendChild(c.dot);
+}
+const tmp = new THREE.Vector3();
+function updateCalls(alpha) {
+  for (const c of CALLS) {
+    c.a.getWorldPosition(tmp); tmp.project(camera);
+    const x = (tmp.x * .5 + .5) * W, y = (-tmp.y * .5 + .5) * H, lx = x + c.dx * W, ly = y + c.dy * H, right = c.dx < 0;
+    c.path.setAttribute('d', `M${x.toFixed(1)} ${y.toFixed(1)} L${(x + (lx - x) * .35).toFixed(1)} ${ly.toFixed(1)} L${lx.toFixed(1)} ${ly.toFixed(1)}`);
+    c.dot.setAttribute('cx', x.toFixed(1)); c.dot.setAttribute('cy', y.toFixed(1));
+    c.el.classList.toggle('r', right);
+    c.el.style.transform = `translate(${(right ? lx - 8 : lx + 8).toFixed(1)}px, ${(ly - 22).toFixed(1)}px) translateX(${right ? '-100%' : '0'})`;
+    c.el.style.opacity = alpha; c.path.style.opacity = alpha; c.dot.style.opacity = alpha;
+  }
+}
+
+/* ------------------------------------------------------------------ motion */
+const pointer = { x: 0, y: 0 };
+addEventListener('pointermove', (e) => { pointer.x = e.clientX / innerWidth * 2 - 1; pointer.y = e.clientY / innerHeight * 2 - 1; });
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const ease = (t) => 1 - Math.pow(1 - t, 3);
+let yaw = 0, pitch = 0, start = null;
+document.getElementById('loading').remove();
+function tick(now) {
+  if (start === null) start = now;
+  const t = reduce ? 4 : (now - start) / 1000, k = ease(Math.min(1, t / 1.8));
+  yaw += (pointer.x * .3 - yaw) * .04; pitch += (pointer.y * .14 - pitch) * .04;
+  robot.rotation.y = -.62 + yaw * .35 + Math.sin(t * .3) * .03 + (1 - k) * .5;
+  robot.position.y = baseY - (1 - k) * .5 + Math.sin(t * .9) * .015;
+  head.rotation.set(.08 + pitch, yaw * .55, 0);
+  const pulse = .75 + .25 * Math.sin(t * 2.2);
+  M.eye.color.setRGB(.19 * pulse * 1.6, .76 * pulse * 1.3, .97 * pulse * 1.2);
+  renderer.render(scene, camera);
+  updateCalls(Math.max(0, Math.min(1, (t - 1.2) / .8)));
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
