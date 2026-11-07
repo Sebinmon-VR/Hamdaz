@@ -505,6 +505,52 @@
       el.addEventListener('pointerenter', () => { hovered = true; });
       el.addEventListener('pointerleave', () => { hovered = false; });
     });
+    // Scrolling the rows by hand: drag or swipe sideways, or scroll sideways (a trackpad, or Shift + wheel).
+    // A row follows the hand, glides on a little after letting go, then carries on moving by itself.
+    const shift = (r, d) => {
+      if (!r.w) return;
+      r.x = (((r.x + d) % r.w) + r.w) % r.w;
+      r.track.style.transform = `translate3d(${-r.x}px, 0, 0)`;
+    };
+    rows.forEach((r) => {
+      r.v = 0;
+      r.el.setAttribute('data-cursor', 'Drag');
+      let lastX = 0;
+      r.el.addEventListener('pointerdown', (e) => {
+        if (e.button !== 0) return;
+        r.drag = true; r.v = 0; lastX = e.clientX;
+        r.el.classList.add('is-dragging');
+        r.el.setPointerCapture?.(e.pointerId);
+      });
+      r.el.addEventListener('pointermove', (e) => {
+        if (!r.drag) return;
+        const dx = e.clientX - lastX;
+        lastX = e.clientX;
+        shift(r, -dx);
+        r.v = -dx;
+      });
+      const end = () => { if (!r.drag) return; r.drag = false; r.el.classList.remove('is-dragging'); };
+      r.el.addEventListener('pointerup', end);
+      r.el.addEventListener('pointercancel', end);
+      r.el.addEventListener('lostpointercapture', end);
+      r.el.addEventListener('wheel', (e) => {
+        const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.shiftKey ? e.deltaY : 0;
+        if (!d) return;
+        e.preventDefault();
+        e.stopPropagation();
+        shift(r, d);
+        r.v = d * 0.25;
+      }, { passive: false });
+    });
+    gsap.ticker.add((time, deltaMs) => {
+      const k = Math.min(deltaMs, 50) / 16.7;
+      rows.forEach((r) => {
+        if (r.drag || !r.v) return;
+        shift(r, r.v * k);
+        r.v *= Math.pow(0.92, k);
+        if (Math.abs(r.v) < 0.05) r.v = 0;
+      });
+    });
     $$('[data-marquee-toggle]').forEach((btn) => btn.addEventListener('click', () => {
       paused = !paused;
       $$('[data-marquee-toggle]').forEach((b) => {
@@ -520,7 +566,7 @@
       if (run < 0.002 && (paused || hovered)) return;
       const step = (BASE + boost * 9) * run * (Math.min(deltaMs, 50) / 1000) * sign;
       rows.forEach((r) => {
-        if (!r.on || !r.w) return;
+        if (!r.on || !r.w || r.drag) return;
         r.x = (((r.x + step * r.dir) % r.w) + r.w) % r.w;
         r.track.style.transform = `translate3d(${-r.x}px, 0, 0)`;
       });
