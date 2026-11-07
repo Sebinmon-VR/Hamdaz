@@ -28,7 +28,7 @@
   // wheel smoothing, so without this every wheel notch is a hard 100px jump.
   let lenis = null;
   if (window.Lenis) {
-    lenis = new window.Lenis({ lerp: 0.085 });
+    lenis = new window.Lenis({ lerp: 0.075, wheelMultiplier: 1, touchMultiplier: 1.2 });
     if (ok) {
       lenis.on('scroll', ST.update);
       gsap.ticker.add((t) => lenis.raf(t * 1000));
@@ -434,71 +434,55 @@
   }
 
   /* ---------------------------------------------------------------- Home hero frames (the glass hero) */
-  // The hero plays like cut scenes: each scroll gesture (wheel, swipe, arrow keys) glides to the next frame
-  // and stops there, instead of stopping somewhere between two (for everyone: like the smooth scroll, it
-  // only moves when the visitor scrolls). Frames, as shares of the hero's scroll, matching heroes/glass.js
-  // FRAMES: the headline, then AI, Cloud, Data, Infrastructure and Security with their details; the last
-  // stop is the people network beside "Who we are" (the particles have landed). Below that the page
-  // scrolls freely again.
+  // The hero scrolls at the visitor's own speed (the smooth scroll), passing through its frames: the
+  // headline, then AI, Cloud, Data, Infrastructure and Security with their details (heroes/glass.js FRAMES).
+  // Only when the visitor stops between two frames does the page settle softly onto one: the next frame
+  // in the direction they were going once they are a little past the last one, otherwise back. Any new
+  // scroll takes over at once, so the settle never holds anyone back.
   function heroFrames(heroEl) {
     const FRAMES = [0, 0.2, 0.4, 0.6, 0.8, 1];
-    const sheet = $('.content');
-    const easeFrame = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    const settleEase = (t) => 1 - Math.pow(1 - t, 3);
+    let timer = 0;
+    let settling = false;
+    let dir = 1;
     const stops = () => {
       const top = heroEl.getBoundingClientRect().top + window.scrollY;
       const range = heroEl.offsetHeight - innerHeight;
-      const out = FRAMES.map((f) => Math.round(top + f * range));
-      if (sheet) out.push(Math.round(sheet.getBoundingClientRect().top + window.scrollY - innerHeight * 0.1));
-      return out;
+      return FRAMES.map((f) => top + f * range);
     };
-    let busy = false;
-    let quietUntil = 0;
-    const at = () => (lenis.isScrolling ? lenis.targetScroll : window.scrollY);
-    // inside the frames: from the top of the page down to the last frame
-    const inFrames = (dir) => { const s = stops(), y = at(); return y < s[s.length - 1] - 2 || (dir < 0 && y <= s[s.length - 1] + 2); };
-    const go = (dir) => {
-      const s = stops(), y = at();
-      let i = s.findIndex((v) => v > y + 2);
-      if (dir > 0) { if (i === -1) return false; }
-      else { i = -1; for (let k = s.length - 1; k >= 0; k--) if (s[k] < y - 2) { i = k; break; } if (i === -1) i = 0; }
-      busy = true;
-      lenis.scrollTo(s[i], {
-        duration: Math.min(2, 1.1 + Math.abs(s[i] - y) / innerHeight * 0.35),
-        easing: easeFrame, lock: true, force: true,
-        onComplete: () => { busy = false; quietUntil = performance.now() + 220; },
+    const settle = () => {
+      timer = 0;
+      if (settling) return;
+      if (Math.abs(lenis.velocity) > 0.08) { timer = setTimeout(settle, 90); return; }
+      const s = stops(), y = window.scrollY;
+      if (y <= s[0] + 1 || y >= s[s.length - 1] - 1) return; // above the hero, or past its last frame: free
+      let i = 0;
+      while (i < s.length - 2 && y > s[i + 1]) i++;
+      const step = s[i + 1] - s[i], u = (y - s[i]) / step;
+      // a little past a frame in the scroll's direction carries on to the next; otherwise it eases back
+      const to = dir > 0 ? (u > 0.12 ? s[i + 1] : s[i]) : (u < 0.88 ? s[i] : s[i + 1]);
+      const dist = Math.abs(to - y);
+      if (dist < 2) return;
+      settling = true;
+      lenis.scrollTo(to, {
+        duration: 0.55 + (dist / step) * 0.6,
+        easing: settleEase,
+        onComplete: () => { settling = false; },
       });
-      return true;
     };
-    // one frame per gesture: the trailing momentum of a trackpad or wheel flick is swallowed until it stops
-    const onWheel = (e) => {
-      const dir = Math.sign(e.deltaY);
-      if (!dir || !inFrames(dir) || e.ctrlKey) return;
-      e.preventDefault();
-      e.stopPropagation();
-      const now = performance.now();
-      if (busy || now < quietUntil) { quietUntil = Math.max(quietUntil, now + 180); return; }
-      if (Math.abs(e.deltaY) < 4) return;
-      go(dir);
-      quietUntil = now + 180;
-    };
-    window.addEventListener('wheel', onWheel, { passive: false, capture: true });
-    let touchY = null;
-    window.addEventListener('touchstart', (e) => { touchY = e.touches[0].clientY; }, { passive: true });
-    window.addEventListener('touchmove', (e) => { if (touchY !== null && inFrames(touchY - e.touches[0].clientY)) e.preventDefault(); }, { passive: false });
-    window.addEventListener('touchend', (e) => {
-      if (touchY === null) return;
-      const d = touchY - e.changedTouches[0].clientY;
-      touchY = null;
-      if (Math.abs(d) > 30 && !busy && inFrames(Math.sign(d))) go(Math.sign(d));
-    }, { passive: true });
-    window.addEventListener('keydown', (e) => {
-      const dir = { ArrowDown: 1, PageDown: 1, ' ': e.shiftKey ? -1 : 1, ArrowUp: -1, PageUp: -1 }[e.key];
-      if (!dir || e.target.closest('input, textarea, select, [contenteditable]') || !inFrames(dir)) return;
-      e.preventDefault();
-      if (!busy) go(dir);
+    lenis.on('scroll', (l) => {
+      if (l.direction) dir = l.direction;
+      if (settling) return;
+      clearTimeout(timer);
+      timer = setTimeout(settle, 140);
     });
-    // the "Scroll to explore" hint takes you to the next frame too
-    $('.hero-scroll')?.addEventListener('click', () => go(1));
+    // any new scroll input takes over from a settle straight away
+    const takeOver = () => { if (settling) { settling = false; } clearTimeout(timer); };
+    window.addEventListener('wheel', takeOver, { passive: true });
+    window.addEventListener('touchstart', takeOver, { passive: true });
+    window.addEventListener('keydown', takeOver);
+    // the "Scroll to explore" hint takes you to the next frame
+    $('.hero-scroll')?.addEventListener('click', () => { const s = stops(); const next = s.find((v) => v > window.scrollY + 2); if (next !== undefined) lenis.scrollTo(next, { duration: 1.1, easing: settleEase }); });
   }
   // the scan horizon hero: while the header sits over its light side, the header's button turns dark
   if ($('.hero--scan')) {

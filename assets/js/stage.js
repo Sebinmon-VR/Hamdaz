@@ -293,7 +293,7 @@ async function init(host) {
       // each service panel shows around its own frame and glides with the scroll (style.css .hero-frame)
       for (const fp of framePanels) {
         const d = el3d.frame - fp.n;
-        const v = 1 - smooth(0.16, 0.48, Math.abs(d));
+        const v = 1 - smooth(0.24, 0.5, Math.abs(d));
         const key = `${v.toFixed(3)}|${d.toFixed(3)}`;
         if (key === fp.key) continue;
         fp.key = key;

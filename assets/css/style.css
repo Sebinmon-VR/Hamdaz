@@ -327,7 +327,7 @@ html.hero-scan-top .header:not(.is-scrolled):not(.is-light) .header-end .pill { 
 
 /* the glass hero (stage.js, heroes/glass.js): a longer scroll so its five moments play out calmly, and shade
    on the left and bottom so the words read over the photo */
-.hero.hero--glass { height: 560vh; }
+.hero.hero--glass { height: 440vh; }
 .hero--glass .hero-b { display: none; }
 /* each frame's service details, beside the object; stage.js sets --v (0 hidden .. 1 shown) and --d (where
    the frame is: -0.5 arriving from below .. 0.5 leaving upwards) from the scroll, so they glide with it */
@@ -366,7 +366,7 @@ html.hero-scan-top .header:not(.is-scrolled):not(.is-light) .header-end .pill { 
     linear-gradient(0deg, rgba(6, 20, 35, 0.88) 0%, rgba(6, 20, 35, 0.4) 28%, rgba(6, 20, 35, 0) 55%),
     linear-gradient(180deg, rgba(6, 20, 35, 0.6) 0%, rgba(6, 20, 35, 0) 20%);
 }
-@media (max-width: 760px) { .hero.hero--glass { height: 480vh; } }
+@media (max-width: 760px) { .hero.hero--glass { height: 380vh; } }
 /* hovering the glass object: the cursor ring opens into a soft lens */
 html:has(.earth.is-hover) .cursor-ring { width: 92px; height: 92px; margin: -46px 0 0 -46px; border-color: rgba(255, 255, 255, 0.7); background: radial-gradient(circle, rgba(48, 193, 248, 0.16), rgba(48, 193, 248, 0) 70%); }
 html:has(.earth.is-hover) .cursor-dot { opacity: 0; }
