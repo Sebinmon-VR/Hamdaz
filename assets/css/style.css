@@ -329,18 +329,54 @@ html.hero-scan-top .header:not(.is-scrolled):not(.is-light) .header-end .pill { 
    on the left and bottom so the words read over the photo */
 .hero.hero--glass { height: 440vh; }
 .hero--glass .hero-b { display: none; }
+/* one clear layout: the words in a left column (vertically centred, buttons right under the line they
+   belong to), the object in its own space on the right, a frame rail at the right edge */
+.hero--glass .hero-a { top: 50%; bottom: auto; right: auto; width: min(660px, 46vw); translate: 0 -50%; display: grid; gap: 22px; }
+.hero--glass .display--hero { font-size: clamp(44px, 5vw, 88px); line-height: 0.95; }
+.hero--glass .hero-a-foot { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 28px; margin-top: 4px; }
+.hero--glass .hero-sub { max-width: 40ch; color: var(--fg-2); font-size: clamp(16px, 1.15vw, 18px); }
+.hero-eyebrow { color: var(--accent); letter-spacing: 0.14em; }
+.hero--glass .hero-scroll { top: auto; bottom: clamp(24px, 4vh, 40px); }
+.hero--glass .hero-shade {
+  background:
+    linear-gradient(90deg, rgba(6, 20, 35, 0.86) 0%, rgba(6, 20, 35, 0.6) 30%, rgba(6, 20, 35, 0.12) 52%, rgba(6, 20, 35, 0) 64%),
+    linear-gradient(0deg, rgba(6, 20, 35, 0.7) 0%, rgba(6, 20, 35, 0) 30%),
+    linear-gradient(180deg, rgba(6, 20, 35, 0.65) 0%, rgba(6, 20, 35, 0) 22%) !important;
+}
+.hero-rail { position: absolute; z-index: 3; right: var(--pad); top: 50%; translate: 0 -50%; display: grid; gap: 4px; }
+.hero-rail-item {
+  position: relative; display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+  padding: 6px 0; background: none; border: 0; color: var(--fg-2); cursor: pointer; font: inherit; text-align: right;
+}
+.hero-rail-item b { position: absolute; right: 64px; white-space: nowrap; }
+.hero-rail-item .mono { font-size: 10.5px; opacity: 0.7; }
+.hero-rail-item b { font-weight: 500; font-size: 13px; opacity: 0; transform: translateX(6px); transition: opacity 0.35s var(--ease), transform 0.35s var(--ease); }
+.hero-rail-item i { display: block; height: 1px; width: 14px; margin-left: 14px; background: currentColor; opacity: 0.5; transition: width 0.45s var(--ease), opacity 0.3s, background-color 0.3s; }
+.hero-rail-item:hover, .hero-rail-item:focus-visible, .hero-rail-item.is-on { color: var(--fg); }
+.hero-rail-item:hover b, .hero-rail-item:focus-visible b, .hero-rail-item.is-on b { opacity: 1; transform: none; }
+.hero-rail-item.is-on i { width: 28px; margin-left: 0; opacity: 1; background: var(--accent); }
+.hero-rail-item:focus-visible { outline: 1px solid var(--accent); outline-offset: 4px; }
+@media (max-width: 760px) {
+  .hero--glass .hero-a { top: auto; bottom: 96px; right: var(--pad); width: auto; translate: none; gap: 16px; }
+  .hero--glass .display--hero { font-size: clamp(40px, 11vw, 60px); }
+  .hero--glass .hero-scroll { display: none; }
+  .hero-rail { display: none; }
+}
 /* each frame's service details, beside the object; stage.js sets --v (0 hidden .. 1 shown) and --d (where
    the frame is: -0.5 arriving from below .. 0.5 leaving upwards) from the scroll, so they glide with it */
 .hero-frames { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 .hero-frame {
   --v: 0; --d: 0;
-  position: absolute; left: var(--pad); top: 50%; width: min(560px, 42vw); display: grid; gap: 18px;
+  position: absolute; left: var(--pad); top: 50%; width: min(580px, 42vw); display: grid; gap: 16px;
+  padding: clamp(24px, 2.4vw, 36px); border-radius: 20px; border: 1px solid rgba(238, 246, 251, 0.1);
+  background: linear-gradient(160deg, rgba(10, 26, 44, 0.72), rgba(6, 20, 35, 0.55)); backdrop-filter: blur(18px) saturate(1.2); -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.6);
   opacity: var(--v); visibility: hidden; transform: translate3d(0, calc(-50% - var(--d) * 90px), 0); will-change: transform, opacity;
 }
 .hero-frame.is-on { visibility: visible; pointer-events: auto; }
 .hf-idx { color: var(--accent); display: flex; gap: 8px; }
 .hf-idx span { color: var(--fg); }
-.hf-title { font-family: var(--display); font-weight: 600; font-stretch: 112%; text-transform: uppercase; font-size: clamp(34px, 3.8vw, 62px); line-height: 0.96; letter-spacing: -0.02em; }
+.hf-title { font-family: var(--display); font-weight: 600; font-stretch: 112%; text-transform: uppercase; font-size: clamp(30px, 3.1vw, 52px); line-height: 0.98; letter-spacing: -0.02em; overflow-wrap: anywhere; }
 .hf-text { color: var(--fg-2); max-width: 46ch; font-size: 16px; }
 .hf-list { list-style: none; margin: 4px 0 0; padding: 0; border-top: 1px solid var(--line-2); }
 .hf-list li {
@@ -355,7 +391,7 @@ html.hero-scan-top .header:not(.is-scrolled):not(.is-light) .header-end .pill { 
 .hf-go:hover { border-color: var(--accent); gap: 12px; }
 .hf-go .i { width: 16px; height: 16px; }
 @media (max-width: 760px) {
-  .hero-frame { top: auto; bottom: clamp(20px, 5vh, 40px); right: var(--pad); width: auto; gap: 12px; transform: translate3d(0, calc(var(--d) * -60px), 0); }
+  .hero-frame { top: auto; bottom: 92px; right: var(--pad); width: auto; gap: 10px; padding: 20px; border-radius: 16px; transform: translate3d(0, calc(var(--d) * -60px), 0); }
   .hf-title { font-size: clamp(28px, 8vw, 40px); }
   .hf-text, .hf-list .hf-d { display: none; }
   .hf-list li { padding: 8px 0; }

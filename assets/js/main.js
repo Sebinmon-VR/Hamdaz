@@ -422,7 +422,7 @@
       // the glass hero plays as frames: the headline leaves through the first glide, and each service
       // area's details come in with its own frame (stage.js)
       gsap.timeline({ scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom bottom', scrub: 0.4 } })
-        .to([a, $('[data-ticker]'), $('.hero-scroll')], { autoAlpha: 0, y: -90, duration: 0.11, ease: 'power1.in' }, 0.015)
+        .to([a, $('.hero-scroll')].filter(Boolean), { autoAlpha: 0, y: -90, duration: 0.11, ease: 'power1.in' }, 0.015)
         .to({}, { duration: 0.875 });
       if (lenis) heroFrames(hero);
     } else {
@@ -470,7 +470,26 @@
         onComplete: () => { settling = false; },
       });
     };
+    // the frame rail: which frame you are on, and a way to jump to any of them
+    const rail = $$('[data-rail]');
+    let railOn = -1;
+    const markRail = () => {
+      if (!rail.length) return;
+      const s = stops(), step = s[1] - s[0];
+      const i = Math.max(0, Math.min(s.length - 1, Math.round((window.scrollY - s[0]) / step)));
+      if (i === railOn) return;
+      railOn = i;
+      rail.forEach((btn, k) => { btn.classList.toggle('is-on', k === i); if (k === i) btn.setAttribute('aria-current', 'step'); else btn.removeAttribute('aria-current'); });
+    };
+    rail.forEach((btn) => btn.addEventListener('click', () => {
+      const s = stops(), to = s[Number(btn.dataset.rail)], step = s[1] - s[0];
+      clearTimeout(timer);
+      settling = true;
+      lenis.scrollTo(to, { duration: Math.min(2, 0.9 + (Math.abs(to - window.scrollY) / step) * 0.22), easing: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2), onComplete: () => { settling = false; } });
+    }));
+    markRail();
     lenis.on('scroll', (l) => {
+      markRail();
       if (l.direction) dir = l.direction;
       if (settling) return;
       clearTimeout(timer);

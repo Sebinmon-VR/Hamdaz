@@ -12,18 +12,18 @@ import * as THREE from '../../vendor/three.module.min.js';
 // the photos (with how much each is dimmed so the words read over it)
 const BG = [
   { src: 'assets/img/hero/c6.jpg', tint: 0.85 }, // light curves on black
-  { src: 'assets/img/hero/c8.jpg', tint: 0.6 }, // swirling chrome
+  { src: 'assets/img/hero/c8.jpg', tint: 0.46 }, // swirling chrome
   { src: 'assets/img/hero/c15.jpg', tint: 0.42 }, // rainbow liquid metal
-  { src: 'assets/img/hero/c7.jpg', tint: 0.55 }, // liquid metal
+  { src: 'assets/img/hero/c7.jpg', tint: 0.44 }, // liquid metal
 ];
 // the frames: the headline, then one per service area (the page shows each one's details beside it)
 const FRAMES = [
-  { obj: 'spark', bg: 0, pos: [0.5, -0.12, 1.05] },
-  { obj: 'spark', bg: 1, pos: [0.42, 0, 1.05] },
-  { obj: 'cloud', bg: 2, pos: [0.42, 0, 1.05] },
-  { obj: 'data', bg: 3, pos: [0.42, 0, 1.0] },
-  { obj: 'chip', bg: 1, pos: [0.42, 0, 1.0] },
-  { obj: 'shield', bg: 0, pos: [0.42, 0, 1.0] },
+  { obj: 'spark', bg: 0, pos: [0.47, 0.02, 0.9] },
+  { obj: 'spark', bg: 1, pos: [0.42, 0.02, 0.9] },
+  { obj: 'cloud', bg: 2, pos: [0.42, 0.02, 0.92] },
+  { obj: 'data', bg: 3, pos: [0.42, 0.02, 0.88] },
+  { obj: 'chip', bg: 1, pos: [0.42, 0.02, 0.88] },
+  { obj: 'shield', bg: 0, pos: [0.42, 0.02, 0.88] },
 ];
 const BG_Z = -6;
 const clamp01 = (x) => Math.min(1, Math.max(0, x));
@@ -112,9 +112,6 @@ function makeObjects(glass, chrome, neon) {
     spark() {
       const g = new THREE.Group();
       g.add(mesh(new THREE.ExtrudeGeometry(sparkShape(0.24), bevel(0.5, 0.16, 0.07))));
-      const small = new THREE.ExtrudeGeometry(sparkShape(0.24), bevel(0.45, 0.14, 0.06));
-      const s2 = mesh(small); s2.scale.setScalar(0.36); s2.position.set(1.0, 0.95, 0.05); g.add(s2);
-      const s3 = mesh(small); s3.scale.setScalar(0.22); s3.position.set(-0.95, -0.9, 0.05); g.add(s3);
       return fit(g);
     },
     chip() {

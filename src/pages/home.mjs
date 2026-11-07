@@ -18,6 +18,10 @@ const FRAME_SERVICES = [
   ['Infrastructure', 'data-center-infrastructure-services'],
   ['Security', 'information-security-services'],
 ];
+// where you are in the frames, and a way to jump to any of them (main.js heroFrames)
+const frameRail = () => `<nav class="hero-rail" aria-label="Hero sections" data-intro>
+      ${[['00', 'Intro'], ...FRAME_SERVICES.map(([area], i) => [String(i + 1).padStart(2, '0'), area])].map(([n, label], i) => `<button type="button" class="hero-rail-item${i === 0 ? ' is-on' : ''}" data-rail="${i}"${i === 0 ? ' aria-current="step"' : ''}><span class="mono">${n}</span><b>${label}</b><i aria-hidden="true"></i></button>`).join('\n')}
+    </nav>`;
 const framePanels = () => `<div class="hero-frames">
       ${FRAME_SERVICES.map(([area, slug], i) => {
         const s = services.find((x) => x.slug === slug);
@@ -36,9 +40,9 @@ const hero = `<section class="hero${HERO === 'scan' || HERO === 'glass' ? ` hero
     ${HERO === 'scan' ? '<svg class="hero-scan" data-scan viewBox="0 0 1680 944" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>\n    ' : ''}<div class="hero-shade" aria-hidden="true"></div>
 
     <div class="hero-a" data-hero-a>
-      <h1 class="display display--hero" data-split data-split-load><span class="line">${first.title.split(' ').slice(0, 2).join(' ')}</span> <span class="line">${first.title.split(' ').slice(2).join(' ')}</span></h1>
+      ${HERO === 'glass' ? '<p class="mono hero-eyebrow" data-intro>AI · Cloud · Data · Security</p>\n      ' : ''}<h1 class="display display--hero" data-split data-split-load><span class="line">${first.title.split(' ').slice(0, 2).join(' ')}</span> <span class="line">${first.title.split(' ').slice(2).join(' ')}</span></h1>
       <div class="hero-a-foot">
-        <p class="hero-sub" data-intro>+ ${first.text}</p>
+        <p class="hero-sub" data-intro>${HERO === 'glass' ? '' : '+ '}${first.text}</p>
         <div class="hero-actions" data-intro>
           <a class="pill" href="contact.html" data-magnetic>Contact Now ${icon('arrow-up-right')}</a>
           <a class="pill pill--ghost" href="services.html" data-magnetic>What We Do</a>
@@ -46,11 +50,11 @@ const hero = `<section class="hero${HERO === 'scan' || HERO === 'glass' ? ` hero
       </div>
     </div>
 
-    <div class="hero-ticker" data-ticker data-intro aria-label="Highlights">
+    ${HERO === 'glass' ? frameRail() : `<div class="hero-ticker" data-ticker data-intro aria-label="Highlights">
       <p class="mono"><span data-ticker-index>01</span> / 0${rest.length}</p>
       <div class="hero-ticker-items">${rest.map((s, i) => `<div class="hero-ticker-item${i === 0 ? ' is-active' : ''}"><strong>${s.title}</strong><span>${s.text}</span></div>`).join('')}</div>
       <div class="hero-ticker-bar"><i></i></div>
-    </div>
+    </div>`}
 
     <p class="hero-scroll mono" data-intro aria-hidden="true">Scroll to explore <span>↓</span></p>
 
