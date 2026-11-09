@@ -1384,3 +1384,7 @@ button.tlink { border: 0; padding: 0 0 4px; border-radius: 0; font: inherit; fon
 /* a client whose only logo is white sits on navy */
 .lw-tile--dark, .lw-tile--dark:hover { background: var(--deep); }
 .lw-tile--dark .lw-name, .lw-tile--dark:hover .lw-name { color: rgba(255, 255, 255, 0.72); }
+/* home: the clients row, as logos (a little taller than the partner rows); a white logo sits on navy */
+.mq--client-logos li { height: 80px; }
+.mq--logos .mq-logo--dark { height: auto; margin: 0 clamp(10px, 1.2vw, 18px); padding: 12px 18px; border-radius: 10px; background: var(--deep); }
+@media (max-width: 760px) { .mq--client-logos li { height: 64px; } }
