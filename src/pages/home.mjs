@@ -3,10 +3,14 @@ import { ldScript, orgNode, officeNodes, websiteNode } from '../blocks.mjs';
 import { icon } from '../icons.mjs';
 import { earth, content, intro, servicesIndex, productsGrid, serviceFinder, techStrip, contactSection, clientsPartners } from '../components.mjs';
 
-// The hero's artwork: 'glass' (frames of glass tech objects over dissolving photos, heroes/glass.js),
-// 'scan' (the scan horizon, assets/js/scan.js) or 'chip' (the AI chip, heroes/chip.js).
+// The hero's layout: 'glass' (frames: the headline, then one frame per service area with its panel, played
+// by stage.js with the 3D ELEMENT below), 'scan' (the scan horizon, assets/js/scan.js) or 'chip' (the AI chip,
+// heroes/chip.js).
 // The previous design (the chip) is kept on the local branch backup/chip-hero-2026-11-07.
 const HERO = 'glass';
+// the 3D element the frames play: 'circuit' (parts on a circuit board that fly as data from one to the next,
+// heroes/circuit.js) or 'glass' (glass objects over photos, heroes/glass.js)
+const ELEMENT = 'circuit';
 
 const [first, ...rest] = heroSlides;
 
@@ -78,7 +82,7 @@ const hero = `<section class="hero${HERO === 'scan' || HERO === 'glass' ? ` hero
 
 // The home page's 3D (assets/js/stage.js): the hero's 3D element on a dark layer behind the page (the scan horizon is SVG in the hero itself), and a clear
 // layer above the page where its particles fly down and form the network beside "Who we are"
-const stage = `<div class="stage" aria-hidden="true">${earth('stage', HERO).replace('data-earth="stage"', 'data-earth="stage" data-stage')}</div>
+const stage = `<div class="stage" aria-hidden="true">${earth('stage', ELEMENT).replace('data-earth="stage"', 'data-earth="stage" data-stage')}</div>
 <div class="stage-light" aria-hidden="true"><canvas data-stage-light></canvas></div>`;
 
 // A dark section before Contact: the network's light streams down into a galaxy here (stage.js)

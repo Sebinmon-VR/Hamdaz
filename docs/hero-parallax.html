@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parallax hero options</title>
+<meta name="robots" content="noindex">
+<!--
+  Four home-hero options built on hover and parallax (no glass objects, no abstract backgrounds). Switch with the
+  tabs; move the mouse and scroll to try each. The photos are free Pexels placeholders until the final images are
+  chosen. Nothing here changes the site.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg:#061423; --surface:#0e2639; --fg:#eef6fb; --mute:rgba(238,246,251,.66); --line:rgba(238,246,251,.12);
+  --accent:#30c1f8; --pink:#fb4994; --ease:cubic-bezier(.16,1,.3,1);
+  --display:'Archivo','Inter',system-ui,sans-serif; --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  --pad:clamp(16px,3.4vw,56px);
+  --mx:0; --my:0; --sy:0;
+}
+* { box-sizing:border-box; }
+html { color-scheme:dark; }
+body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 var(--sans); overflow-x:hidden; }
+img { display:block; }
+a { color:inherit; }
+
+/* the option switcher, standing in for the site header */
+.bar { position:fixed; inset:0 0 auto; z-index:50; display:flex; align-items:center; gap:10px; padding:14px var(--pad); background:linear-gradient(180deg, rgba(6,20,35,.85), rgba(6,20,35,0)); }
+.bar b { font-family:var(--display); font-weight:600; letter-spacing:-.01em; margin-right:auto; }
+.tabs { display:flex; flex-wrap:wrap; gap:6px; }
+.tabs button { font:500 13px/1 var(--sans); color:var(--fg); background:rgba(14,38,57,.7); border:1px solid var(--line); border-radius:99px; padding:9px 14px; cursor:pointer; backdrop-filter:blur(8px); }
+.tabs button[aria-selected="true"] { background:var(--fg); color:var(--bg); border-color:var(--fg); }
+
+.opt { display:none; } .opt.is-on { display:block; }
+.hero { position:relative; height:100vh; min-height:620px; overflow:hidden; isolation:isolate; }
+.eyebrow { font:500 12px/1 var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--accent); }
+.h1 { font-family:var(--display); font-weight:500; font-stretch:92%; font-size:clamp(40px,6.4vw,104px); line-height:.98; letter-spacing:-.035em; margin:18px 0 0; }
+.lede { color:var(--mute); font-size:clamp(15px,1.15vw,18px); max-width:34em; margin:22px 0 0; }
+.ctas { display:flex; flex-wrap:wrap; gap:12px; margin-top:30px; }
+.btn { display:inline-flex; align-items:center; gap:10px; padding:14px 22px; border-radius:99px; font:600 14.5px/1 var(--sans); text-decoration:none; border:1px solid var(--line); }
+.btn.solid { background:var(--fg); color:var(--bg); border-color:var(--fg); }
+.next { position:relative; z-index:2; min-height:90vh; padding:12vh var(--pad); background:#f2f1ed; color:#0b1b2b; }
+.next h2 { font-family:var(--display); font-weight:500; font-size:clamp(28px,3.4vw,52px); letter-spacing:-.03em; margin:0 0 12px; max-width:16em; }
+.next p { max-width:40em; color:#3a4b5c; }
+.note { position:absolute; z-index:5; right:var(--pad); bottom:22px; font:12px var(--mono); color:rgba(238,246,251,.45); }
+
+/* ---------------- A: tilt card ---------------- */
+.A { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); align-items:center; gap:4vw; padding:110px var(--pad) 60px; }
+.A::before { content:""; position:absolute; inset:0; z-index:-1; background:radial-gradient(60% 70% at 78% 50%, rgba(48,193,248,.16), transparent 70%), radial-gradient(40% 50% at 92% 90%, rgba(251,73,148,.10), transparent 70%); transform:translate3d(calc(var(--mx) * -20px), calc(var(--my) * -14px), 0); }
+.A .copy { transform:translate3d(calc(var(--mx) * -10px), calc(var(--sy) * .28px), 0); opacity:calc(1 - var(--sy) / 700); }
+.A .stage { perspective:1300px; transform:translate3d(0, calc(var(--sy) * -.12px), 0); }
+.A .card { position:relative; aspect-ratio:4/5; max-height:74vh; margin-left:auto; border-radius:22px; transform-style:preserve-3d;
+  transform:rotateY(calc(var(--mx) * 9deg)) rotateX(calc(var(--my) * 7deg)) scale(calc(1 - var(--sy) / 4000)); box-shadow:0 60px 120px -50px rgba(0,0,0,.8); }
+.A .ph { position:absolute; inset:0; border-radius:22px; overflow:hidden; background:#0b1f31; transform:translateZ(0); }
+.A .ph img { position:absolute; inset:-6%; width:112%; height:112%; object-fit:cover; opacity:0; transition:opacity 1.2s var(--ease), transform 1.6s var(--ease);
+  transform:translate3d(calc(var(--mx) * -18px), calc(var(--my) * -14px), 0) scale(1.04); }
+.A .ph img.on { opacity:1; }
+.A .ph::after { content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(6,20,35,0) 45%, rgba(6,20,35,.85)); }
+.A .glare { position:absolute; inset:0; border-radius:22px; pointer-events:none; transform:translateZ(1px);
+  background:radial-gradient(55% 45% at calc(50% + var(--mx) * 40%) calc(40% + var(--my) * -40%), rgba(255,255,255,.22), transparent 70%); mix-blend-mode:soft-light; }
+.A .cap { position:absolute; left:24px; right:24px; bottom:24px; transform:translateZ(70px); display:grid; gap:6px; padding:18px 20px; border-radius:14px;
+  background:rgba(10,28,44,.48); border:1px solid rgba(255,255,255,.14); backdrop-filter:blur(14px); }
+.A .cap small { font:500 11px/1 var(--mono); letter-spacing:.12em; color:var(--accent); text-transform:uppercase; }
+.A .cap b { font-family:var(--display); font-weight:500; font-size:22px; letter-spacing:-.02em; }
+.A .cap span { font-size:13.5px; color:var(--mute); }
+.A .chip { position:absolute; top:22px; left:22px; transform:translateZ(45px); font:500 11.5px/1 var(--mono); letter-spacing:.08em; padding:8px 12px; border-radius:99px; background:rgba(6,20,35,.55); border:1px solid rgba(255,255,255,.14); backdrop-filter:blur(8px); }
+.A .chip i { display:inline-block; width:7px; height:7px; border-radius:50%; background:#3ee08f; margin-right:8px; box-shadow:0 0 10px #3ee08f; }
+.A .dots { position:absolute; right:22px; top:24px; transform:translateZ(45px); display:flex; gap:6px; }
+.A .dots i { width:22px; height:3px; border-radius:2px; background:rgba(255,255,255,.3); }
+.A .dots i.on { background:#fff; }
+
+/* ---------------- B: floating gallery ---------------- */
+.B { display:grid; place-items:center; text-align:center; }
+.B .copy { position:relative; z-index:3; padding:0 var(--pad); transform:translate3d(calc(var(--mx) * -8px), calc(var(--sy) * .3px), 0); opacity:calc(1 - var(--sy) / 650); }
+.B .h1 { font-size:clamp(44px,7.4vw,124px); }
+.B .lede { margin-left:auto; margin-right:auto; }
+.B .ctas { justify-content:center; }
+.B .tile { position:absolute; z-index:var(--z,1); width:var(--w); aspect-ratio:var(--ar,4/3); left:var(--x); top:var(--y); border-radius:12px; overflow:hidden; cursor:pointer;
+  transform:translate3d(calc(var(--mx) * var(--d) * -46px), calc(var(--my) * var(--d) * -30px + var(--sy) * var(--d) * -.55px), 0);
+  transition:box-shadow .5s var(--ease); box-shadow:0 30px 60px -30px rgba(0,0,0,.7); }
+.B .tile img { width:100%; height:100%; object-fit:cover; transition:transform 1s var(--ease), filter .6s var(--ease); filter:brightness(.82) saturate(.9); }
+.B .tile span { position:absolute; left:12px; bottom:10px; font:500 11.5px/1.2 var(--mono); letter-spacing:.06em; text-transform:uppercase; opacity:0; transform:translateY(6px); transition:all .5s var(--ease); }
+.B .tile::after { content:""; position:absolute; inset:0; background:linear-gradient(180deg, transparent 50%, rgba(6,20,35,.8)); opacity:0; transition:opacity .5s var(--ease); }
+.B .tile:hover img { transform:scale(1.08); filter:none; }
+.B .tile:hover::after, .B .tile:hover span { opacity:1; transform:none; }
+.B .tile span { z-index:1; }
+.B:has(.tile:hover) .tile:not(:hover) img { filter:brightness(.45) saturate(.6); }
+.B:has(.tile:hover) .copy { opacity:calc(.35 - var(--sy) / 650); transition:opacity .5s; }
+
+/* ---------------- C: spotlight ---------------- */
+.C { --x:62%; --y:46%; }
+.C .layer { position:absolute; inset:-5%; transform:translate3d(calc(var(--mx) * -16px), calc(var(--my) * -10px + var(--sy) * .35px), 0) scale(1.04); }
+.C .layer img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:opacity .9s var(--ease); opacity:0; }
+.C .layer img.on { opacity:1; }
+.C .base img { filter:brightness(.28) saturate(.55) contrast(1.1); }
+.C .lit { -webkit-mask-image:radial-gradient(circle var(--r,300px) at var(--x) var(--y), #000 0%, rgba(0,0,0,.7) 30%, rgba(0,0,0,.25) 60%, transparent 100%); mask-image:radial-gradient(circle var(--r,300px) at var(--x) var(--y), #000 0%, rgba(0,0,0,.7) 30%, rgba(0,0,0,.25) 60%, transparent 100%); }
+.C .shade { position:absolute; inset:0; pointer-events:none; background:linear-gradient(90deg, rgba(6,20,35,.75), rgba(6,20,35,.15) 55%, transparent), linear-gradient(0deg, rgba(6,20,35,.9), transparent 45%); }
+.C .copy { position:absolute; z-index:3; left:var(--pad); bottom:clamp(110px,16vh,170px); max-width:min(46rem, 90vw); transform:translate3d(0, calc(var(--sy) * .2px), 0); opacity:calc(1 - var(--sy) / 600); }
+.C .areas { position:absolute; z-index:3; left:var(--pad); right:var(--pad); bottom:28px; display:flex; flex-wrap:wrap; gap:6px 26px; border-top:1px solid var(--line); padding-top:16px; }
+.C .areas button { font:500 14px/1.2 var(--sans); color:var(--mute); background:none; border:0; padding:4px 0; cursor:pointer; transition:color .3s; }
+.C .areas button small { font:500 11px var(--mono); color:var(--accent); margin-right:8px; }
+.C .areas button.on, .C .areas button:hover { color:var(--fg); }
+
+/* ---------------- D: expanding panels ---------------- */
+.D { display:grid; grid-template-rows:auto 1fr; gap:28px; padding:104px var(--pad) 34px; }
+.D .copy { display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:20px 40px; transform:translate3d(0, calc(var(--sy) * .22px), 0); opacity:calc(1 - var(--sy) / 600); }
+.D .h1 { font-size:clamp(38px,5.4vw,88px); margin:0; }
+.D .copy .lede { margin:0; max-width:26em; }
+.D .panels { display:flex; gap:10px; min-height:0; transform:translate3d(0, calc(var(--sy) * -.1px), 0); }
+.D .panel { position:relative; flex:1; min-width:0; border-radius:16px; overflow:hidden; cursor:pointer; transition:flex 1s var(--ease); background:#0b1f31; }
+.D .panel.on { flex:3.4; }
+.D .panel img { position:absolute; inset:-8%; width:116%; height:116%; object-fit:cover; transform:translate3d(calc(var(--mx) * -22px), calc(var(--my) * -14px), 0); filter:brightness(.6) saturate(.85); transition:filter .8s var(--ease); }
+.D .panel.on img { filter:none; }
+.D .panel::after { content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(6,20,35,.1) 30%, rgba(6,20,35,.88)); }
+.D .num { position:absolute; z-index:1; top:16px; left:18px; font:500 12px var(--mono); color:var(--accent); }
+.D .vlab { position:absolute; z-index:1; left:18px; bottom:20px; writing-mode:vertical-rl; transform:rotate(180deg); font:500 15px var(--display); letter-spacing:.01em; white-space:nowrap; transition:opacity .4s; }
+.D .panel.on .vlab { opacity:0; }
+.D .info { position:absolute; z-index:1; left:26px; right:26px; bottom:24px; opacity:0; transform:translateY(14px); transition:opacity .5s var(--ease) .15s, transform .8s var(--ease) .15s; max-width:30rem; }
+.D .panel.on .info { opacity:1; transform:none; }
+.D .info b { display:block; font-family:var(--display); font-weight:500; font-size:clamp(22px,2vw,32px); letter-spacing:-.02em; }
+.D .info span { display:block; color:var(--mute); font-size:14.5px; margin-top:6px; }
+.D .info em { display:inline-block; margin-top:14px; font:600 13.5px var(--sans); font-style:normal; color:var(--fg); border-bottom:1px solid var(--accent); padding-bottom:2px; }
+
+@media (max-width:860px) {
+  .A { grid-template-columns:1fr; padding-top:96px; gap:28px; align-content:start; }
+  .A .card { max-height:46vh; aspect-ratio:16/11; margin:0; }
+  .B .tile:nth-child(n+5) { display:none; }
+  .D .panels { flex-direction:column; } .D .panel.on { flex:2.6; } .D .vlab { writing-mode:horizontal-tb; transform:none; }
+}
+@media (prefers-reduced-motion: reduce) { :root { --mx:0 !important; --my:0 !important; } * { transition:none !important; } }
+</style>
+</head>
+<body>
+<div class="bar">
+  <b>Hamdaz · hero options</b>
+  <div class="tabs" role="tablist">
+    <button role="tab" data-tab="A" aria-selected="true">A · Tilt card</button>
+    <button role="tab" data-tab="B" aria-selected="false">B · Floating gallery</button>
+    <button role="tab" data-tab="C" aria-selected="false">C · Spotlight</button>
+    <button role="tab" data-tab="D" aria-selected="false">D · Expanding panels</button>
+  </div>
+</div>
+
+<!-- A: a large photo card that tilts toward the cursor, with layers at different depths and a moving glare -->
+<div class="opt is-on" data-opt="A">
+  <section class="hero A">
+    <div class="copy">
+      <span class="eyebrow">Hamdaz Technologies · Abu Dhabi</span>
+      <h1 class="h1">Delivering the digital future</h1>
+      <p class="lede">AI, cloud, cybersecurity, audio visual and security systems, designed, installed and supported across the UAE.</p>
+      <div class="ctas"><a class="btn solid" href="#">Talk to an expert</a><a class="btn" href="#">Our services</a></div>
+    </div>
+    <div class="stage">
+      <div class="card" data-card>
+        <div class="ph" data-ph></div>
+        <div class="glare"></div>
+        <span class="chip"><i></i>24/7 support</span>
+        <span class="dots" data-dots></span>
+        <div class="cap"><small data-cap-n></small><b data-cap-t></b><span data-cap-s></span></div>
+      </div>
+    </div>
+    <span class="note">Move the mouse · scroll</span>
+  </section>
+  <section class="next"><h2>The next section</h2><p>Scroll to see how the hero moves away (the card and the words travel at different speeds).</p></section>
+</div>
+
+<!-- B: service photos floating at different depths round a large headline -->
+<div class="opt" data-opt="B">
+  <section class="hero B" data-tiles>
+    <div class="copy">
+      <span class="eyebrow">Hamdaz Technologies · Abu Dhabi</span>
+      <h1 class="h1">Delivering the<br>digital future</h1>
+      <p class="lede">AI, cloud, cybersecurity, audio visual and security systems, designed, installed and supported across the UAE.</p>
+      <div class="ctas"><a class="btn solid" href="#">Talk to an expert</a><a class="btn" href="#">Our services</a></div>
+    </div>
+    <span class="note">Move the mouse · hover a photo · scroll</span>
+  </section>
+  <section class="next"><h2>The next section</h2><p>The photos drift away at different speeds as you scroll, nearer ones faster.</p></section>
+</div>
+
+<!-- C: the cursor is a soft light that reveals a dark tech photo; hovering a service area swaps the photo -->
+<div class="opt" data-opt="C">
+  <section class="hero C" data-spot>
+    <div class="layer base" data-base></div>
+    <div class="layer lit" data-lit></div>
+    <div class="shade"></div>
+    <div class="copy">
+      <span class="eyebrow">Hamdaz Technologies · Abu Dhabi</span>
+      <h1 class="h1">Delivering the digital future</h1>
+      <p class="lede">AI, cloud, cybersecurity, audio visual and security systems, designed, installed and supported across the UAE.</p>
+      <div class="ctas"><a class="btn solid" href="#">Talk to an expert</a><a class="btn" href="#">Our services</a></div>
+    </div>
+    <nav class="areas" data-areas></nav>
+  </section>
+  <section class="next"><h2>The next section</h2><p>The photo moves slower than the page, so it sinks away behind the next section.</p></section>
+</div>
+
+<!-- D: service-area photo panels; hovering one opens it -->
+<div class="opt" data-opt="D">
+  <section class="hero D">
+    <div class="copy">
+      <div><span class="eyebrow">Hamdaz Technologies · Abu Dhabi</span><h1 class="h1" style="margin-top:16px">Delivering the digital future</h1></div>
+      <p class="lede">AI, cloud, cybersecurity, audio visual and security systems, designed, installed and supported across the UAE.</p>
+    </div>
+    <div class="panels" data-panels></div>
+  </section>
+  <section class="next"><h2>The next section</h2><p>Hover the panels to open each service area; the photos inside shift with the mouse.</p></section>
+</div>
+
+<script>
+(() => {
+  const px = (id, w = 1600) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
+  // service areas with placeholder photos (free Pexels; final images to be chosen)
+  const AREAS = [
+    { n: '01', t: 'Data centres & cloud', s: 'Design, build, power, cooling and migration', id: 325229 },
+    { n: '02', t: 'Cybersecurity', s: '24/7 SOC, zero trust and ransomware recovery', id: 30481728 },
+    { n: '03', t: 'Security systems', s: 'MCC-certified CCTV, access control and ANPR', id: 5589597 },
+    { n: '04', t: 'Audio visual', s: 'Meeting rooms, video walls and pro audio', id: 5444180 },
+    { n: '05', t: 'Networks', s: 'Structured cabling, fibre, switching and Wi-Fi', id: 4682189 },
+  ];
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* the pointer and scroll, eased, as CSS variables (--mx, --my in -1..1; --sy in px) */
+  const root = document.documentElement;
+  let tx = 0, ty = 0, mx = 0, my = 0, idle = 0;
+  addEventListener('pointermove', (e) => { tx = (e.clientX / innerWidth) * 2 - 1; ty = (e.clientY / innerHeight) * 2 - 1; idle = 0; }, { passive: true });
+  document.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
+  let last = performance.now();
+  const loop = (now) => {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now; idle += dt;
+    const k = 1 - Math.exp(-dt * 5);
+    mx += (tx - mx) * k; my += (ty - my) * k;
+    if (!reduce) { root.style.setProperty('--mx', mx.toFixed(4)); root.style.setProperty('--my', my.toFixed(4)); }
+    root.style.setProperty('--sy', Math.min(scrollY, innerHeight * 1.2).toFixed(1));
+    spotTick(dt, now / 1000);
+    requestAnimationFrame(loop);
+  };
+
+  /* tabs */
+  const tabs = [...document.querySelectorAll('[data-tab]')];
+  const pick = (k) => { tabs.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === k))); document.querySelectorAll('[data-opt]').forEach((o) => o.classList.toggle('is-on', o.dataset.opt === k)); scrollTo(0, 0); try { localStorage.setItem('hamdaz-parallax-tab', k); } catch (e) {} };
+  tabs.forEach((b) => b.addEventListener('click', () => pick(b.dataset.tab)));
+  let saved = 'A'; try { saved = localStorage.getItem('hamdaz-parallax-tab') || 'A'; } catch (e) {}
+  pick(saved);
+
+  /* A: the card cycles through the service areas */
+  const ph = document.querySelector('[data-ph]'), dots = document.querySelector('[data-dots]');
+  ph.innerHTML = AREAS.map((a, i) => `<img src="${px(a.id)}" alt="" ${i ? 'loading="lazy"' : ''}>`).join('');
+  dots.innerHTML = AREAS.map(() => '<i></i>').join('');
+  let ai = 0;
+  const showA = (i) => {
+    ai = i;
+    ph.querySelectorAll('img').forEach((im, j) => im.classList.toggle('on', j === i));
+    dots.querySelectorAll('i').forEach((d, j) => d.classList.toggle('on', j === i));
+    const a = AREAS[i];
+    document.querySelector('[data-cap-n]').textContent = `${a.n} / ${String(AREAS.length).padStart(2, '0')}`;
+    document.querySelector('[data-cap-t]').textContent = a.t;
+    document.querySelector('[data-cap-s]').textContent = a.s;
+  };
+  showA(0);
+  setInterval(() => showA((ai + 1) % AREAS.length), 4500);
+
+  /* B: tiles at different depths (x, y, width, depth, aspect, label, photo) */
+  const TILES = [
+    ['4%', '16%', 'clamp(150px,17vw,280px)', 1.2, '4/3', 'Data centres', 325229, 4],
+    ['74%', '12%', 'clamp(140px,15vw,250px)', 0.7, '4/5', 'Security systems', 5589597, 1],
+    ['8%', '64%', 'clamp(130px,13vw,220px)', 0.55, '1/1', 'Networks', 4682189, 1],
+    ['80%', '58%', 'clamp(160px,18vw,300px)', 1.35, '4/3', 'Audio visual', 5444180, 4],
+    ['28%', '78%', 'clamp(110px,10vw,170px)', 0.4, '4/3', 'Fibre', 28286034, 1],
+    ['60%', '80%', 'clamp(120px,11vw,190px)', 0.9, '4/3', 'Cybersecurity', 30481728, 1],
+    ['56%', '4%', 'clamp(100px,9vw,150px)', 0.35, '1/1', 'Pro audio', 164907, 1],
+    ['24%', '6%', 'clamp(110px,10vw,170px)', 0.6, '4/3', 'Control rooms', 11783119, 1],
+  ];
+  document.querySelector('[data-tiles]').insertAdjacentHTML('beforeend', TILES.map(([x, y, w, d, ar, lab, id, z]) =>
+    `<a class="tile" href="#" style="--x:${x};--y:${y};--w:${w};--d:${d};--ar:${ar};--z:${z}"><img src="${px(id, 700)}" alt=""><span>${esc(lab)}</span></a>`).join(''));
+
+  /* C: spotlight */
+  const spot = document.querySelector('[data-spot]');
+  const base = spot.querySelector('[data-base]'), lit = spot.querySelector('[data-lit]'), nav = spot.querySelector('[data-areas]');
+  const imgs = AREAS.map((a, i) => `<img src="${px(a.id, 2000)}" alt="" class="${i ? '' : 'on'}">`).join('');
+  base.innerHTML = imgs; lit.innerHTML = imgs;
+  nav.innerHTML = AREAS.map((a, i) => `<button type="button" data-area="${i}" class="${i ? '' : 'on'}"><small>${a.n}</small>${esc(a.t)}</button>`).join('');
+  const showC = (i) => { [base, lit].forEach((l) => l.querySelectorAll('img').forEach((im, j) => im.classList.toggle('on', j === i))); nav.querySelectorAll('button').forEach((b, j) => b.classList.toggle('on', j === i)); };
+  nav.addEventListener('pointerover', (e) => { const b = e.target.closest('[data-area]'); if (b) showC(+b.dataset.area); });
+  nav.addEventListener('focusin', (e) => { const b = e.target.closest('[data-area]'); if (b) showC(+b.dataset.area); });
+  let sx = 0.62, sy = 0.46, gx = 0.62, gy = 0.46, inside = false;
+  spot.addEventListener('pointermove', (e) => { const r = spot.getBoundingClientRect(); gx = (e.clientX - r.left) / r.width; gy = (e.clientY - r.top) / r.height; inside = true; });
+  spot.addEventListener('pointerleave', () => { inside = false; });
+  function spotTick(dt, t) {
+    if (!inside || idle > 4) { gx = 0.66 + Math.sin(t * 0.35) * 0.16; gy = 0.42 + Math.sin(t * 0.5) * 0.12; } // drifts by itself when the mouse is away (and on touch)
+    const k = 1 - Math.exp(-dt * 6); sx += (gx - sx) * k; sy += (gy - sy) * k;
+    spot.style.setProperty('--x', `${(sx * 110 - 5).toFixed(2)}%`); spot.style.setProperty('--y', `${(sy * 110 - 5).toFixed(2)}%`);
+    spot.style.setProperty('--r', `${Math.round(Math.max(300, innerWidth * 0.34))}px`);
+  }
+
+  /* D: panels open on hover (and tap) */
+  const panels = document.querySelector('[data-panels]');
+  panels.innerHTML = AREAS.map((a, i) => `<a class="panel${i ? '' : ' on'}" href="#" data-panel>
+    <img src="${px(a.id, 1600)}" alt=""><span class="num">${a.n}</span><span class="vlab">${esc(a.t)}</span>
+    <span class="info"><b>${esc(a.t)}</b><span>${esc(a.s)}</span><em>Explore</em></span></a>`).join('');
+  const open = (p) => panels.querySelectorAll('[data-panel]').forEach((x) => x.classList.toggle('on', x === p));
+  panels.addEventListener('pointerover', (e) => { const p = e.target.closest('[data-panel]'); if (p) open(p); });
+  panels.addEventListener('focusin', (e) => { const p = e.target.closest('[data-panel]'); if (p) open(p); });
+  document.addEventListener('click', (e) => { if (e.target.closest('a[href="#"]')) e.preventDefault(); });
+
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

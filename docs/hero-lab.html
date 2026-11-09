@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hero lab</title>
+<meta name="robots" content="noindex">
+<!--
+  Hero lab: try backgrounds and glass objects for the home hero, with the same glass material, lights, glow and
+  dissolving-photo shader as assets/js/heroes/glass.js. Open it through the dev server
+  (node build.mjs --serve, then http://localhost:8080/docs/hero-lab.html), as WebGL can't load local photos
+  from a file:// page. Nothing here changes the site.
+-->
+<style>
+:root { --bg:#061423; --ink:#e8eef5; --mute:#93a4b6; --line:#1c3753; --card:#0c2440; --accent:#30c1f8; }
+* { box-sizing: border-box; }
+html { color-scheme: dark; }
+body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.wrap { max-width:1400px; margin:0 auto; padding:0 16px; }
+header.top { display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px; padding:14px 0; }
+header.top h1 { font-size:18px; margin:0 auto 0 0; }
+button { font:inherit; font-size:14px; padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer; }
+button.primary { background:var(--ink); color:var(--bg); border-color:var(--ink); }
+button[aria-pressed="true"] { border-color:var(--accent); color:var(--accent); }
+.stage { position:relative; aspect-ratio:16/9; max-height:72vh; width:100%; border-radius:14px; overflow:hidden; background:#061423; }
+.stage canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+/* the hero's own shade (style.css .hero--glass .hero-shade) */
+.stage .shade { position:absolute; inset:0; pointer-events:none; background:
+  linear-gradient(90deg, rgba(6,20,35,.88) 0%, rgba(6,20,35,.66) 30%, rgba(6,20,35,.14) 54%, rgba(6,20,35,0) 66%),
+  linear-gradient(0deg, rgba(6,20,35,.7) 0%, rgba(6,20,35,0) 30%),
+  linear-gradient(180deg, rgba(6,20,35,.65) 0%, rgba(6,20,35,0) 22%); }
+.stage .h { position:absolute; left:6%; top:50%; transform:translateY(-50%); max-width:44%; pointer-events:none; color:#fff; }
+.stage .h small { display:block; font:12px/1 ui-monospace, Consolas, monospace; letter-spacing:.14em; text-transform:uppercase; color:#30c1f8; margin-bottom:14px; }
+.stage .h b { display:block; font-weight:500; font-size:clamp(22px, 3.6vw, 56px); line-height:1.04; letter-spacing:-.025em; }
+.stage .h span { display:block; font-size:clamp(12px, 1.1vw, 16px); color:rgba(255,255,255,.72); margin-top:14px; max-width:30em; }
+.stage .tag { position:absolute; right:14px; bottom:12px; font:12px ui-monospace, Consolas, monospace; color:rgba(255,255,255,.6); }
+.frames { display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:10px; margin:14px 0 6px; }
+@media (max-width:900px) { .frames { grid-template-columns:repeat(3, minmax(0,1fr)); } }
+.frame { text-align:left; padding:0; overflow:hidden; display:grid; border-width:2px; }
+.frame.is-on { border-color:var(--accent); box-shadow:0 0 0 3px rgba(48,193,248,.22); }
+.frame img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; }
+.frame span { padding:7px 10px 9px; font-size:13px; line-height:1.3; }
+.frame span b { display:block; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); }
+.hint { color:var(--mute); font-size:14px; margin:4px 0 0; }
+h2 { font-size:17px; margin:30px 0 4px; }
+h2 + p { color:var(--mute); margin:0 0 12px; font-size:14px; }
+.objs { display:flex; flex-wrap:wrap; gap:8px; }
+.objs button { display:grid; gap:1px; text-align:left; padding:8px 12px; }
+.objs button small { color:var(--mute); font-size:12px; }
+.objs button.is-on { border-color:var(--accent); background:#0f3150; }
+.objs .new { color:var(--accent); font-size:11px; font-weight:700; letter-spacing:.06em; }
+.bgs { display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:10px; }
+.bgs button { padding:0; overflow:hidden; text-align:left; border-width:2px; }
+.bgs button.is-on { border-color:var(--accent); }
+.bgs .sw, .frame .sw { display:block; width:100%; aspect-ratio:16/9; }
+button:disabled { opacity:.4; cursor:default; }
+.bgs img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; background:#000; }
+.bgs span { display:block; padding:6px 9px 8px; font-size:12.5px; line-height:1.3; color:var(--mute); }
+.bgs span b { color:var(--ink); font-weight:600; display:block; }
+.out { margin:26px 0 60px; }
+.out textarea { width:100%; height:150px; font:12px/1.5 ui-monospace, Consolas, monospace; border:1px solid var(--line); border-radius:8px; padding:10px; background:#04101c; color:var(--ink); }
+.err { padding:40px; color:#ffb4b4; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Hero lab</h1>
+    <button type="button" data-flip aria-pressed="false">Mirror this frame's photo</button>
+    <button type="button" data-play aria-pressed="false">Play the hero</button>
+    <button type="button" class="primary" data-copy>Copy my hero</button>
+  </header>
+
+  <div class="stage" data-stage>
+    <canvas data-canvas></canvas>
+    <div class="shade"></div>
+    <div class="h"><small>Hamdaz Technologies</small><b>Delivering the Digital Future</b><span>AI, cloud, cybersecurity, audio visual and security systems, designed, installed and supported across the UAE.</span></div>
+    <div class="tag" data-tag></div>
+  </div>
+
+  <div class="frames" data-frames></div>
+  <p class="hint">The hero plays through these six frames, with the same hover and parallax as the site. Click a frame, then pick an object and a background below for it. Move the mouse over the stage to see the object and the background react. "Play the hero" runs through your six frames with the same dissolve as the site.</p>
+
+  <h2>Finish</h2>
+  <p>What the 3D objects are made of (one finish for the whole hero, so it feels like one set). Glass is today's, for comparison.</p>
+  <div class="objs" data-mats></div>
+
+  <h2>Objects</h2>
+  <p>The 3D object for the selected frame. Current ones are on the site today; the rest are new.</p>
+  <div class="objs" data-objs></div>
+
+  <h2>Backgrounds</h2>
+  <p>The background for the selected frame. The new ones are drawn live (no photo) and move with the mouse; today's photos are at the end for comparison.</p>
+  <div class="bgs" data-bgs></div>
+
+  <div class="out"><h2>Your hero</h2><p>Press "Copy my hero" and paste the text back to Claude, or copy it from here.</p><textarea readonly data-text></textarea></div>
+</div>
+
+<script type="module">
+import * as THREE from '../assets/vendor/three.module.min.js';
+
+/* ---------------------------------------------------------------- what can be picked */
+const px = (id, w = 1920) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
+const BGS = [
+  // new: drawn live by the shader (they move with the mouse for parallax)
+  { key: 'studio', mode: 1, name: 'Studio light', note: 'new', css: 'radial-gradient(60% 70% at 70% 50%, #17344f, #050d17 75%)' },
+  { key: 'stars', mode: 2, name: 'Stars and planet glow', note: 'new', css: 'radial-gradient(120% 70% at 78% 160%, #0a1d30 58%, #30c1f8 60%, rgba(48,193,248,.15) 64%, #040b14 80%)' },
+  { key: 'beams', mode: 3, name: 'Light beams', note: 'new', css: 'linear-gradient(125deg, #04101e 30%, #1d4c6e 45%, #04101e 52%, #163f5e 62%, #04101e 75%)' },
+  { key: 'bokeh', mode: 4, name: 'Soft lights (bokeh)', note: 'new', css: 'radial-gradient(circle at 30% 40%, rgba(48,193,248,.45) 0 8%, transparent 9%), radial-gradient(circle at 70% 65%, rgba(251,73,148,.35) 0 10%, transparent 11%), radial-gradient(circle at 80% 25%, rgba(107,80,246,.4) 0 6%, transparent 7%), #082036' },
+  // today's photos, for comparison
+  { key: 'c6', src: '../assets/img/hero/c6.webp', name: 'Light curves on black', note: 'current photo', tint: 0.85 },
+  { key: 'c8', src: '../assets/img/hero/c8.webp', name: 'Swirling chrome', note: 'current photo', tint: 0.46 },
+  { key: 'c15', src: '../assets/img/hero/c15.webp', name: 'Rainbow liquid metal', note: 'current photo', tint: 0.42 },
+  { key: 'c7', src: '../assets/img/hero/c7.webp', name: 'Liquid metal', note: 'current photo', tint: 0.44 },
+];
+const OBJS = [
+  ['spark', 'AI sparkle', 'current'], ['cloud', 'Cloud', 'current'], ['data', 'Data stack', 'current'], ['chip', 'Processor chip', 'current'], ['shield', 'Shield with keyhole', 'current'],
+  ['orb', 'Orb with orbit ring', 'AI / intelligence'], ['knot', 'Knot', 'integration'], ['globe', 'Globe with rings', 'cloud / connectivity'],
+  ['bars', 'Rising bars', 'data / analytics'], ['cube', 'Cube', 'data / platform'], ['server', 'Server stack', 'infrastructure'],
+  ['wifi', 'Wi-Fi arcs', 'networking'], ['hex', 'Hexagon node', 'networking'], ['lock', 'Padlock', 'security'], ['camera', 'Dome camera', 'CCTV / security'],
+  ['ripple', 'Sound rings', 'audio visual'], ['check', 'Shield with tick', 'security'],
+];
+const FRAME_NAMES = ['Intro', 'AI', 'Cloud', 'Data', 'Infrastructure', 'Security'];
+// today's hero, as the starting point
+const DEFAULT = [['spark', 'stars'], ['orb', 'studio'], ['cloud', 'beams'], ['data', 'bokeh'], ['server', 'studio'], ['shield', 'stars']];
+// the finishes: settings for the objects' main material (MeshPhysicalMaterial)
+const MATS = {
+  glass: { name: 'Glass', note: 'today', set: { color: 0xffffff, metalness: 0, roughness: 0.03, transmission: 1, iridescence: 1, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 1.1 } },
+  chrome: { name: 'Chrome', note: 'mirror metal', set: { color: 0xffffff, metalness: 1, roughness: 0.05, transmission: 0, iridescence: 0, clearcoat: 1, clearcoatRoughness: 0.03, envMapIntensity: 1.9 } },
+  black: { name: 'Glossy black', note: 'piano black, lit edges', set: { color: 0x0a0e13, metalness: 0.25, roughness: 0.16, transmission: 0, iridescence: 0, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 1.6 } },
+  ceramic: { name: 'White ceramic', note: 'soft satin white', set: { color: 0xeef2f5, metalness: 0, roughness: 0.34, transmission: 0, iridescence: 0, clearcoat: 0.6, clearcoatRoughness: 0.2, envMapIntensity: 0.9 } },
+  titanium: { name: 'Titanium', note: 'brushed grey metal', set: { color: 0x9eabb8, metalness: 1, roughness: 0.3, transmission: 0, iridescence: 0, clearcoat: 0.4, clearcoatRoughness: 0.2, envMapIntensity: 1.2 } },
+  pearl: { name: 'Pearl', note: 'white with a rainbow sheen', set: { color: 0xf4f6fa, metalness: 0.55, roughness: 0.14, transmission: 0, iridescence: 1, clearcoat: 1, clearcoatRoughness: 0.05, envMapIntensity: 1.2 } },
+  navy: { name: 'Deep navy', note: 'satin brand navy', set: { color: 0x123a5c, metalness: 0.6, roughness: 0.22, transmission: 0, iridescence: 0, clearcoat: 1, clearcoatRoughness: 0.05, envMapIntensity: 1.4 } },
+};
+const POS = [[0.47, 0.02, 0.9], [0.42, 0.02, 0.9], [0.42, 0.02, 0.92], [0.42, 0.02, 0.88], [0.42, 0.02, 0.88], [0.42, 0.02, 0.88]];
+
+const KEY = 'hamdaz-hero-lab-2';
+let frames, matKey = 'chrome';
+try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) { frames = s.frames; if (MATS[s.mat]) matKey = s.mat; } } catch (e) {}
+if (!Array.isArray(frames) || frames.length !== 6) frames = DEFAULT.map(([obj, bg]) => ({ obj, bg }));
+frames = frames.map((f, i) => ({ obj: OBJS.some((o) => o[0] === f.obj) ? f.obj : DEFAULT[i][0], bg: BGS.some((b) => b.key === f.bg) ? f.bg : DEFAULT[i][1], flip: !!f.flip }));
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify({ frames, mat: matKey })); } catch (e) {} };
+let sel = 0;
+
+/* ---------------------------------------------------------------- the scene (as heroes/glass.js) */
+const canvas = document.querySelector('[data-canvas]');
+const stageEl = document.querySelector('[data-stage]');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', stencil: false }); }
+catch (e) { stageEl.innerHTML = '<p class="err">WebGL is not available in this browser.</p>'; throw e; }
+renderer.setClearColor(0x061423, 1);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(30, 16 / 9, 0.1, 200);
+camera.position.set(0, 0, 6);
+const BG_Z = -6;
+
+function studio() {
+  const s = new THREE.Scene();
+  s.add(new THREE.Mesh(new THREE.BoxGeometry(10, 10, 10), new THREE.MeshBasicMaterial({ color: 0x0c141e, side: THREE.BackSide })));
+  const panel = (color, k, pos, w, h) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(color).multiplyScalar(k), side: THREE.DoubleSide }));
+    m.position.set(...pos); m.lookAt(0, 0, 0); s.add(m);
+  };
+  panel(0xffffff, 3, [0, 4.8, 1], 6, 2.2); panel(0xffffff, 2.2, [-4.8, 1, 2], 2, 4); panel(0x9fe6ff, 2.5, [4.8, 0, -1], 1.4, 5);
+  panel(0xff8fc0, 1.6, [0, -1.5, -4.8], 4, 1); panel(0xffffff, 1.2, [2, 2, 4.8], 2.5, 1.5);
+  const pm = new THREE.PMREMGenerator(renderer); const tex = pm.fromScene(s, 0.04).texture; pm.dispose(); return tex;
+}
+const env = studio();
+const glass = new THREE.MeshPhysicalMaterial({
+  color: 0xffffff, metalness: 0, roughness: 0.03, transmission: 1, thickness: 1.5, ior: 1.5,
+  iridescence: 1, iridescenceIOR: 1.35, iridescenceThicknessRange: [120, 720],
+  clearcoat: 1, clearcoatRoughness: 0.04, attenuationColor: new THREE.Color(0xbfe9ff), attenuationDistance: 4, envMap: env, envMapIntensity: 1.1,
+});
+const chrome = new THREE.MeshPhysicalMaterial({ color: 0xdfe6ee, metalness: 1, roughness: 0.12, clearcoat: 1, envMap: env });
+const neon = new THREE.MeshBasicMaterial({ color: 0x30c1f8, toneMapped: false });
+const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(-3, 4, 5); scene.add(key);
+const rimC = new THREE.DirectionalLight(0x30c1f8, 2); rimC.position.set(4, 1, -2); scene.add(rimC);
+const rimP = new THREE.DirectionalLight(0xfb4994, 1.4); rimP.position.set(-4, -2, -1); scene.add(rimP);
+
+/* ---------------------------------------------------------------- the objects */
+const V2 = THREE.Vector2;
+const bevel = (depth, t = 0.12, s = 0.07) => ({ depth, bevelEnabled: true, bevelThickness: t, bevelSize: s, bevelSegments: 8, curveSegments: 48 });
+const mesh = (geo, mat = glass) => new THREE.Mesh(geo, mat);
+function fit(group, target = 1.4) {
+  const box = new THREE.Box3().setFromObject(group);
+  const c = box.getCenter(new THREE.Vector3()), r = box.getBoundingSphere(new THREE.Sphere()).radius;
+  const inner = new THREE.Group(); group.children.slice().forEach((m) => inner.add(m)); inner.position.copy(c).negate();
+  const out = new THREE.Group(); out.add(inner); out.scale.setScalar(target / r); return out;
+}
+function sparkShape(k = 0.2) { const s = new THREE.Shape(); s.moveTo(0, 1); s.quadraticCurveTo(k, k, 1, 0); s.quadraticCurveTo(k, -k, 0, -1); s.quadraticCurveTo(-k, -k, -1, 0); s.quadraticCurveTo(-k, k, 0, 1); return s; }
+function roundRect(w, h, r, s = new THREE.Shape()) {
+  const x = -w / 2, y = -h / 2;
+  s.moveTo(x + r, y); s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r); s.lineTo(x + w, y + h - r); s.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  s.lineTo(x + r, y + h); s.quadraticCurveTo(x, y + h, x, y + h - r); s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y); return s;
+}
+function discGeo(r = 0.9, h = 0.34, e = 0.1) {
+  const pts = [new V2(0, -h / 2)];
+  for (let i = 0; i <= 10; i++) { const a = -Math.PI / 2 + (i / 10) * (Math.PI / 2); pts.push(new V2(r - e + Math.cos(a) * e, -h / 2 + e + Math.sin(a) * e)); }
+  for (let i = 0; i <= 10; i++) { const a = (i / 10) * (Math.PI / 2); pts.push(new V2(r - e + Math.cos(a) * e, h / 2 - e + Math.sin(a) * e)); }
+  pts.push(new V2(0, h / 2)); return new THREE.LatheGeometry(pts, 96);
+}
+function cloudGeo() {
+  const g = new THREE.SphereGeometry(1, 160, 110), p = g.attributes.position, v = new THREE.Vector3();
+  const S = [[-0.66, -0.14, 0, 0.48], [0, 0.16, 0, 0.66], [0.64, -0.1, 0, 0.52], [0.3, -0.26, 0, 0.46], [-0.3, -0.28, 0, 0.46]];
+  for (let i = 0; i < p.count; i++) {
+    v.fromBufferAttribute(p, i).normalize(); let r = 0;
+    for (const [cx, cy, cz, R] of S) { const b = v.x * cx + v.y * cy + v.z * cz, c = cx * cx + cy * cy + cz * cz - R * R, d = b * b - c; if (d >= 0) r = Math.max(r, b + Math.sqrt(d)); }
+    let y = v.y * r; if (y < -0.52) y = -0.52 + (y + 0.52) * 0.12; p.setXYZ(i, v.x * r, y, v.z * r * 0.6);
+  }
+  g.computeVertexNormals(); return g;
+}
+function shieldOutline(s = new THREE.Shape()) {
+  s.moveTo(0, 1.1); s.bezierCurveTo(0.45, 0.96, 0.78, 0.9, 0.95, 0.84); s.lineTo(0.95, 0.1); s.bezierCurveTo(0.95, -0.55, 0.42, -0.95, 0, -1.15);
+  s.bezierCurveTo(-0.42, -0.95, -0.95, -0.55, -0.95, 0.1); s.lineTo(-0.95, 0.84); s.bezierCurveTo(-0.78, 0.9, -0.45, 0.96, 0, 1.1); return s;
+}
+const keyhole = (y = 0) => { const h = new THREE.Path(); h.moveTo(-0.075, y - 0.46); h.lineTo(0.075, y - 0.46); h.lineTo(0.075, y + 0.013); h.absarc(0, y + 0.2, 0.2, -1.19, Math.PI + 1.19, false); h.lineTo(-0.075, y - 0.46); return h; };
+// a flat ring sector (for Wi-Fi arcs and sound rings)
+function arcShape(r0, r1, a0, a1) {
+  const s = new THREE.Shape(); s.absarc(0, 0, r1, a0, a1, false); s.absarc(0, 0, r0, a1, a0, true); s.closePath(); return s;
+}
+function hexShape(R, hole) {
+  const s = new THREE.Shape();
+  for (let i = 0; i < 6; i++) { const a = Math.PI / 6 + (i * Math.PI) / 3; i ? s.lineTo(Math.cos(a) * R, Math.sin(a) * R) : s.moveTo(Math.cos(a) * R, Math.sin(a) * R); }
+  s.closePath();
+  if (hole) { const h = new THREE.Path(); h.absarc(0, 0, hole, 0, Math.PI * 2, true); s.holes.push(h); }
+  return s;
+}
+const OBJ = {
+  spark() { const g = new THREE.Group(); g.add(mesh(new THREE.ExtrudeGeometry(sparkShape(0.24), bevel(0.5, 0.16, 0.07)))); return fit(g); },
+  chip() {
+    const g = new THREE.Group();
+    g.add(mesh(new THREE.ExtrudeGeometry(roundRect(1.78, 1.78, 0.14), bevel(0.14, 0.06, 0.06))));
+    const die = mesh(new THREE.ExtrudeGeometry(roundRect(0.95, 0.95, 0.1), bevel(0.12, 0.05, 0.05))); die.position.z = 0.24; g.add(die);
+    for (const [x, y, w, h] of [[0, 0.4, 0.7, 0.025], [0, -0.4, 0.7, 0.025], [0.4, 0, 0.025, 0.7], [-0.4, 0, 0.025, 0.7]]) { const m = mesh(new THREE.BoxGeometry(w, h, 0.01), neon); m.position.set(x * 1.05, y * 1.05, 0.42); g.add(m); }
+    const pin = new THREE.ExtrudeGeometry(roundRect(0.075, 0.3, 0.03), { depth: 0.05, bevelEnabled: true, bevelThickness: 0.012, bevelSize: 0.01, bevelSegments: 3 });
+    for (let s = 0; s < 4; s++) for (let i = 0; i < 7; i++) { const o = (i - 3) * 0.22, a = (s * Math.PI) / 2, m = mesh(pin, chrome); m.position.set(Math.cos(a) * 1.02 - Math.sin(a) * o, Math.sin(a) * 1.02 + Math.cos(a) * o, 0.02); m.rotation.z = a + Math.PI / 2; g.add(m); }
+    return fit(g);
+  },
+  cloud() { const g = new THREE.Group(); g.add(mesh(cloudGeo())); return fit(g, 1.45); },
+  data() {
+    const g = new THREE.Group(), d = discGeo(), led = new THREE.SphereGeometry(0.035, 16, 12);
+    for (const y of [-0.47, 0, 0.47]) { const m = mesh(d); m.position.y = y; g.add(m); const l = mesh(led, neon); l.position.set(0.45, y, 0.8); g.add(l); }
+    return fit(g, 1.35);
+  },
+  shield() { const s = shieldOutline(); s.holes.push(keyhole()); const g = new THREE.Group(); g.add(mesh(new THREE.ExtrudeGeometry(s, bevel(0.3, 0.12, 0.07)))); return fit(g, 1.4); },
+  // new
+  orb() {
+    const g = new THREE.Group(); g.add(mesh(new THREE.SphereGeometry(0.78, 96, 64)));
+    const ring = mesh(new THREE.TorusGeometry(1.22, 0.055, 32, 160)); ring.rotation.set(1.2, 0.35, 0); g.add(ring);
+    const dot = mesh(new THREE.SphereGeometry(0.07, 24, 16), neon); dot.position.set(1.18, 0.2, 0.25); g.add(dot);
+    return fit(g, 1.4);
+  },
+  knot() { const g = new THREE.Group(); g.add(mesh(new THREE.TorusKnotGeometry(0.72, 0.24, 260, 40, 2, 3))); return fit(g, 1.35); },
+  globe() {
+    const g = new THREE.Group(); g.add(mesh(new THREE.SphereGeometry(0.95, 96, 64)));
+    for (const [rx, ry] of [[Math.PI / 2, 0], [0, 0], [0, Math.PI / 2.6], [0, -Math.PI / 2.6]]) { const t = mesh(new THREE.TorusGeometry(0.985, 0.012, 12, 160), chrome); t.rotation.set(rx, ry, 0); g.add(t); }
+    return fit(g, 1.4);
+  },
+  bars() {
+    const g = new THREE.Group();
+    [[-0.62, 0.8], [0, 1.25], [0.62, 1.8]].forEach(([x, h]) => { const m = mesh(new THREE.ExtrudeGeometry(roundRect(0.44, h, 0.14), bevel(0.36, 0.08, 0.06))); m.position.set(x, h / 2 - 0.9, 0); g.add(m); });
+    return fit(g, 1.4);
+  },
+  cube() {
+    const g = new THREE.Group(); const m = mesh(new THREE.ExtrudeGeometry(roundRect(1.3, 1.3, 0.26), bevel(1.0, 0.16, 0.14))); g.add(m);
+    const core = mesh(new THREE.SphereGeometry(0.2, 32, 24), neon); core.position.z = 0.5; g.add(core);
+    return fit(g, 1.35);
+  },
+  server() {
+    const g = new THREE.Group(), slab = new THREE.ExtrudeGeometry(roundRect(1.9, 0.44, 0.12), bevel(1.0, 0.07, 0.06)), led = new THREE.SphereGeometry(0.035, 16, 12);
+    for (const y of [-0.54, 0, 0.54]) {
+      const m = mesh(slab); m.position.y = y; g.add(m);
+      for (const x of [0.62, 0.74]) { const l = mesh(led, neon); l.position.set(x, y, 1.1); g.add(l); }
+      const line = mesh(new THREE.BoxGeometry(0.8, 0.018, 0.01), neon); line.position.set(-0.3, y, 1.1); g.add(line);
+    }
+    return fit(g, 1.4);
+  },
+  wifi() {
+    const g = new THREE.Group(), a0 = Math.PI / 4, a1 = (3 * Math.PI) / 4;
+    for (const [r0, r1] of [[0.42, 0.66], [0.9, 1.14], [1.38, 1.62]]) g.add(mesh(new THREE.ExtrudeGeometry(arcShape(r0, r1, a0, a1), bevel(0.3, 0.07, 0.05))));
+    const dot = mesh(new THREE.SphereGeometry(0.19, 48, 32)); dot.position.set(0, 0.02, 0.15); g.add(dot);
+    return fit(g, 1.4);
+  },
+  hex() {
+    const g = new THREE.Group(); g.add(mesh(new THREE.ExtrudeGeometry(hexShape(1, 0.42), bevel(0.42, 0.12, 0.08))));
+    const core = mesh(new THREE.SphereGeometry(0.12, 32, 24), neon); core.position.z = 0.25; g.add(core);
+    return fit(g, 1.4);
+  },
+  lock() {
+    const g = new THREE.Group(); const body = roundRect(1.4, 1.1, 0.22); body.holes.push(keyhole(0.05));
+    const b = mesh(new THREE.ExtrudeGeometry(body, bevel(0.5, 0.12, 0.08))); b.position.y = -0.35; g.add(b);
+    const sh = mesh(new THREE.TorusGeometry(0.44, 0.1, 32, 96, Math.PI), chrome); sh.position.set(0, 0.42, 0.3); g.add(sh);
+    for (const x of [-0.44, 0.44]) { const leg = mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.45, 32), chrome); leg.position.set(x, 0.2, 0.3); g.add(leg); }
+    return fit(g, 1.4);
+  },
+  camera() {
+    const g = new THREE.Group();
+    const dome = mesh(new THREE.SphereGeometry(0.85, 96, 48, 0, Math.PI * 2, 0, Math.PI / 2)); dome.rotation.x = Math.PI / 2; dome.position.z = 0.12; g.add(dome);
+    const base = mesh(new THREE.CylinderGeometry(1.08, 1.08, 0.18, 96), chrome); base.rotation.x = Math.PI / 2; g.add(base);
+    const lens = mesh(new THREE.SphereGeometry(0.26, 48, 32), new THREE.MeshPhysicalMaterial({ color: 0x0a1a2a, metalness: 0.2, roughness: 0.08, clearcoat: 1, envMap: env })); lens.position.set(0.12, -0.1, 0.55); g.add(lens);
+    const glint = mesh(new THREE.SphereGeometry(0.045, 16, 12), neon); glint.position.set(0.2, -0.02, 0.8); g.add(glint);
+    return fit(g, 1.35);
+  },
+  ripple() {
+    const g = new THREE.Group();
+    [[0, 0.32, 0.36], [0.5, 0.66, 0.22], [0.86, 1.02, 0.08], [1.22, 1.38, -0.06]].forEach(([r0, r1, z]) => {
+      const m = r0 ? mesh(new THREE.ExtrudeGeometry(arcShape(r0, r1, 0, Math.PI * 2), bevel(0.18, 0.06, 0.04))) : mesh(new THREE.SphereGeometry(r1, 48, 32));
+      m.position.z = z; g.add(m);
+    });
+    return fit(g, 1.4);
+  },
+  check() {
+    const s = shieldOutline();
+    const t = new THREE.Path(); // a tick cut through the shield
+    t.moveTo(-0.46, 0.02); t.lineTo(-0.3, 0.18); t.lineTo(-0.1, -0.02); t.lineTo(0.36, 0.44); t.lineTo(0.52, 0.28); t.lineTo(-0.1, -0.34); t.lineTo(-0.46, 0.02);
+    s.holes.push(t);
+    const g = new THREE.Group(); g.add(mesh(new THREE.ExtrudeGeometry(s, bevel(0.3, 0.12, 0.07)))); return fit(g, 1.4);
+  },
+};
+const built = {};
+const get = (k) => built[k] || (built[k] = OBJ[k]());
+
+/* ---------------------------------------------------------------- the photos, dissolving into each other */
+const blank = new THREE.DataTexture(new Uint8Array([6, 12, 20, 255]), 1, 1); blank.needsUpdate = true;
+const bgMat = new THREE.ShaderMaterial({
+  depthWrite: false,
+  uniforms: { tA: { value: blank }, tB: { value: blank }, aA: { value: 1.78 }, aB: { value: 1.78 }, aP: { value: 1.78 }, uMix: { value: 0 }, uTime: { value: 0 }, uTintA: { value: 0.8 }, uTintB: { value: 0.8 }, uFlipA: { value: 0 }, uFlipB: { value: 0 }, uModeA: { value: 0 }, uModeB: { value: 0 }, uMouse: { value: new THREE.Vector2() } },
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: `
+    uniform sampler2D tA, tB; uniform float aA, aB, aP, uMix, uTime, uTintA, uTintB, uFlipA, uFlipB, uModeA, uModeB; uniform vec2 uMouse; varying vec2 vUv;
+    vec2 cover(vec2 uv, float a, float flip) { vec2 s = aP > a ? vec2(1.0, a / aP) : vec2(aP / a, 1.0); vec2 c = (uv - 0.5) * s + 0.5; c.x = mix(c.x, 1.0 - c.x, flip); return c; }
+    float h(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+    float n(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f); return mix(mix(h(i), h(i + vec2(1, 0)), f.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), f.x), f.y); }
+    float fbm(vec2 p) { float v = 0.0, a = 0.5; for (int i = 0; i < 5; i++) { v += a * n(p); p *= 2.03; a *= 0.5; } return v; }
+    float h1(float x) { return fract(sin(x * 91.7) * 43758.5453); }
+    const vec3 CYAN = vec3(0.188, 0.757, 0.973), PINK = vec3(0.984, 0.286, 0.58), VIOLET = vec3(0.42, 0.31, 0.96);
+    // a sparse field of small twinkling points (stars, dust)
+    float stars(vec2 p, float scale) {
+      vec2 g = p * scale, i = floor(g), f = fract(g); float r = h(i);
+      if (r < 0.9) return 0.0;
+      float d = length(f - vec2(h(i + 1.3), h(i + 7.1)) * 0.8 - 0.1);
+      return smoothstep(0.07, 0.0, d) * (0.55 + 0.45 * sin(uTime * (0.8 + r * 2.5) + r * 40.0)) * (r - 0.9) * 10.0;
+    }
+    // the drawn backgrounds, in sRGB (p: aspect-corrected position, m: the mouse, for parallax)
+    vec3 drawn(float mode, vec2 uv) {
+      vec2 p = vec2(uv.x * aP, uv.y), m = uMouse;
+      vec3 c;
+      if (mode < 1.5) { // studio: a soft light behind the object, a floor and a faint horizon
+        vec2 sc = vec2(0.71 * aP, 0.53) - m * vec2(0.04, 0.025);
+        float d = length((p - sc) * vec2(0.85, 1.0));
+        c = mix(vec3(0.016, 0.04, 0.075), vec3(0.11, 0.25, 0.38), pow(smoothstep(0.85, 0.0, d), 1.6));
+        float horizon = 0.3 - m.y * 0.01;
+        c = mix(c, c * 0.5 + vec3(0.0, 0.01, 0.02), smoothstep(horizon + 0.02, horizon - 0.12, uv.y));
+        c += vec3(0.06, 0.16, 0.24) * exp(-pow((uv.y - horizon) * 30.0, 2.0)) * smoothstep(1.2, 0.0, abs(p.x - sc.x));
+        c *= 1.0 - 0.3 * length(uv - vec2(0.6, 0.5));
+      } else if (mode < 2.5) { // stars, and the glowing edge of a planet low on the right
+        c = mix(vec3(0.008, 0.02, 0.04), vec3(0.03, 0.07, 0.12), uv.y * 0.7);
+        c += vec3(0.85, 0.92, 1.0) * (stars(p - m * 0.008, 46.0) * 0.5 + stars(p - m * 0.02 + 3.1, 26.0) * 0.8 + stars(p - m * 0.04 + 7.7, 14.0));
+        vec2 pc = vec2(0.8 * aP, -1.12) - m * vec2(0.03, 0.02);
+        float d = length(p - pc) - 1.42;
+        vec3 body = mix(vec3(0.01, 0.025, 0.045), vec3(0.035, 0.1, 0.16), smoothstep(-0.45, 0.0, d));
+        c = mix(c, body, smoothstep(0.003, -0.003, d));
+        c += CYAN * (0.6 * exp(-abs(d) * 26.0) + 0.2 * exp(-max(d, 0.0) * 5.0));
+        c += VIOLET * 0.08 * exp(-max(d, 0.0) * 2.5);
+      } else if (mode < 3.5) { // soft beams of light falling from the top right, with dust drifting in them
+        c = vec3(0.012, 0.035, 0.065);
+        vec2 q = p - m * vec2(0.05, 0.03);
+        vec2 dir = normalize(vec2(-0.75, -1.0)), nrm = vec2(-dir.y, dir.x);
+        float acc = 0.0;
+        for (int i = 0; i < 4; i++) {
+          float fi = float(i), off = (fi - 1.5) * 0.3 + 0.07 * sin(uTime * 0.12 + fi * 1.7);
+          float x = dot(q - vec2(1.0 * aP, 1.1), nrm) - off;
+          acc += exp(-x * x * (60.0 + fi * 35.0)) * (0.35 + 0.3 * h1(fi + 2.0));
+        }
+        float fade = smoothstep(-0.3, 1.2, q.y + (q.x / aP) * 0.6);
+        c += mix(CYAN, vec3(0.8, 0.9, 1.0), 0.5) * acc * 0.3 * fade;
+        c += vec3(0.7, 0.85, 1.0) * stars(q + vec2(0.0, uTime * 0.006), 34.0) * acc * 0.9;
+        c += vec3(0.02, 0.05, 0.09) * fbm(q * 2.0 + uTime * 0.02);
+      } else { // navy haze with soft out-of-focus lights at three depths
+        c = mix(vec3(0.014, 0.04, 0.075), vec3(0.04, 0.11, 0.18), fbm(p * 1.6 + vec2(uTime * 0.02, 0.0)));
+        for (int L = 0; L < 3; L++) {
+          float fl = float(L);
+          vec2 q = p * (2.6 + fl * 1.7) - m * (0.25 + fl * 0.35) + vec2(uTime * 0.025 * (fl + 1.0), 0.0) + fl * 5.3;
+          vec2 i = floor(q), fr = fract(q); float r = h(i + fl);
+          if (r > 0.55) {
+            float d = length(fr - (vec2(h(i + 2.0), h(i + 5.0)) * 0.6 + 0.2)), rad = 0.1 + 0.16 * h(i + 9.0);
+            vec3 col = r > 0.88 ? PINK : (r > 0.74 ? VIOLET : CYAN);
+            c += col * smoothstep(rad, rad * 0.55, d) * (0.11 - fl * 0.028);
+          }
+        }
+      }
+      return c;
+    }
+    vec3 layer(float mode, sampler2D t, float asp, float flip, float tint) {
+      if (mode > 0.5) return pow(max(drawn(mode, vUv), 0.0), vec3(2.2)); // sRGB to linear, as the output converts back
+      return texture2D(t, cover(vUv, asp, flip)).rgb * tint;
+    }
+    void main() {
+      vec3 a = layer(uModeA, tA, aA, uFlipA, uTintA), b = layer(uModeB, tB, aB, uFlipB, uTintB);
+      float f = fbm(vUv * vec2(1.3 * aP, 1.3) + vec2(uTime * 0.015, -uTime * 0.01)) * 0.75 + vUv.x * 0.25;
+      float e = uMix * 1.7 - 0.35, m = 1.0 - smoothstep(e - 0.35, e + 0.35, f);
+      gl_FragColor = vec4(mix(a, b, m), 1.0);
+      #include <colorspace_fragment>
+    }`,
+});
+const bgPlane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), bgMat); bgPlane.position.z = BG_Z; bgPlane.renderOrder = -1; scene.add(bgPlane);
+const loader = new THREE.TextureLoader(); loader.setCrossOrigin('anonymous');
+const texCache = {};
+const texOf = (k) => {
+  if (!texCache[k]) {
+    const b = BGS.find((x) => x.key === k);
+    texCache[k] = { t: blank, a: 1.78 };
+    if (!b.mode) loader.load(b.src, (t) => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; texCache[k] = { t, a: t.image.width / t.image.height }; });
+  }
+  return texCache[k];
+};
+const tintOf = (k) => BGS.find((x) => x.key === k).tint ?? 1;
+const modeOf = (k) => BGS.find((x) => x.key === k).mode || 0;
+// the chosen finish, applied to the objects' main material
+function applyMat(k) {
+  for (const [p, val] of Object.entries(MATS[k].set)) { if (p === 'color') glass.color.setHex(val); else glass[p] = val; }
+  glass.needsUpdate = true;
+}
+applyMat(matKey);
+
+// the glow behind the object
+const haloTex = (() => {
+  const c = document.createElement('canvas'); c.width = c.height = 128;
+  const x = c.getContext('2d'), g = x.createRadialGradient(64, 64, 0, 64, 64, 64);
+  g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.35, 'rgba(255,255,255,0.45)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+  x.fillStyle = g; x.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c);
+})();
+const root = new THREE.Group(); scene.add(root);
+const halo = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 3.6), new THREE.MeshBasicMaterial({ map: haloTex, color: 0x5fd0ff, transparent: true, opacity: 0.32, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+halo.position.z = -1.3; root.add(halo);
+
+/* ---------------------------------------------------------------- playing */
+const smooth = (a, b, x) => { const k = Math.min(1, Math.max(0, (x - a) / (b - a))); return k * k * (3 - 2 * k); };
+let playing = false, f = 0, current = null, showing = null, hover = 0;
+const pointer = { x: 0, y: 0 }, mouse = { x: 0, y: 0 };
+stageEl.addEventListener('pointermove', (e) => { const r = stageEl.getBoundingClientRect(); pointer.x = ((e.clientX - r.left) / r.width) * 2 - 1; pointer.y = -(((e.clientY - r.top) / r.height) * 2 - 1); });
+stageEl.addEventListener('pointerleave', () => { pointer.x = 0; pointer.y = 0; });
+const show = (k) => { if (k === showing) return; if (current) root.remove(current); current = get(k); showing = k; root.add(current); };
+
+function resize() {
+  const w = stageEl.clientWidth, h = stageEl.clientHeight;
+  renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(stageEl); resize();
+
+const clock = new THREE.Clock();
+function tick() {
+  const dt = Math.min(0.05, clock.getDelta()), t = clock.elapsedTime;
+  if (playing) f = (f + dt / 3.2) % 6; else f += (sel - f) * Math.min(1, dt * 8); // 3.2 s per frame while playing
+  const i = Math.floor(f) % 6, u = playing ? f - Math.floor(f) : 0, glide = playing ? smooth(0.55, 1, u) : 0;
+  const A = frames[playing ? i : sel], B = frames[playing ? (i + 1) % 6 : sel];
+  const same = A.obj === B.obj, leaving = !same && glide < 0.5;
+  show(same || glide < 0.5 ? A.obj : B.obj);
+  const vis = same ? 1 : leaving ? 1 - smooth(0.12, 0.5, glide) : smooth(0.5, 0.88, glide);
+  const turn = same ? 0 : leaving ? smooth(0.12, 0.5, glide) : -(1 - smooth(0.5, 0.88, glide));
+  const pa = POS[playing ? i : sel], pb = POS[playing ? (i + 1) % 6 : sel], k = smooth(0, 1, glide);
+  const sx = pa[0] + (pb[0] - pa[0]) * k, sy = pa[1] + (pb[1] - pa[1]) * k, sc = pa[2] + (pb[2] - pa[2]) * k;
+  const halfH = 6 * Math.tan((15 * Math.PI) / 180), halfW = halfH * camera.aspect;
+  const s = sc * halfH * 0.52 * (1 + 0.015 * Math.sin(t * 1.1));
+  const cx = sx * halfW, cy = sy * halfH, rN = (1.4 * s) / halfH;
+  const lx = ((pointer.x * halfW - cx) / halfH) / rN, ly = ((pointer.y * halfH - cy) / halfH) / rN;
+  const over = Math.hypot(lx, ly) < 1.05 && vis > 0.9 ? 1 : 0;
+  hover += (over - hover) * (1 - Math.exp(-dt * (over ? 5 : 2.5)));
+  const hx = Math.max(-1, Math.min(1, lx)) * hover, hy = Math.max(-1, Math.min(1, ly)) * hover;
+  root.position.set(cx + (pointer.x * 0.16 + hx * 0.12) * s, cy + (pointer.y * 0.12 + hy * 0.12) * s + Math.sin(t * 0.8) * 0.02, hover * 0.25);
+  const e = vis * vis * (3 - 2 * vis);
+  root.scale.setScalar(s * Math.max(0.001, e) * (1 + 0.07 * hover));
+  root.rotation.set(0.14 - pointer.y * 0.3 - hy * 0.45 + Math.sin(t * 0.4) * 0.05 + turn * 0.35, -0.3 + Math.sin(t * 0.3) * 0.18 + pointer.x * 0.5 + hx * 0.55 + turn * 2.2, Math.sin(t * 0.3) * 0.05 - turn * 0.2);
+  glass.envMapIntensity = MATS[matKey].set.envMapIntensity + 0.7 * hover;
+  mouse.x += (pointer.x - mouse.x) * Math.min(1, dt * 4); mouse.y += (pointer.y - mouse.y) * Math.min(1, dt * 4);
+  halo.material.opacity = (0.3 + 0.25 * hover) * e; halo.quaternion.copy(root.quaternion).invert();
+
+  const U = bgMat.uniforms, ta = texOf(A.bg), tb = texOf(B.bg);
+  U.tA.value = ta.t; U.tB.value = tb.t; U.aA.value = ta.a; U.aB.value = tb.a;
+  U.uTintA.value = tintOf(A.bg); U.uTintB.value = tintOf(B.bg); U.uFlipA.value = A.flip ? 1 : 0; U.uFlipB.value = B.flip ? 1 : 0;
+  U.uModeA.value = modeOf(A.bg); U.uModeB.value = modeOf(B.bg); U.uMouse.value.set(mouse.x, mouse.y);
+  U.uMix.value = A.bg === B.bg ? 0 : smooth(0.1, 0.9, glide); U.uTime.value = t;
+  const d = 6 - BG_Z, h = 2 * d * Math.tan((15 * Math.PI) / 180), w = h * camera.aspect, zoom = 1.12 + 0.03 * Math.sin(t * 0.08);
+  bgPlane.scale.set(w * zoom, h * zoom, 1); bgPlane.position.set(-pointer.x * 0.3, -pointer.y * 0.16, BG_Z); U.aP.value = w / h;
+
+  document.querySelector('[data-tag]').textContent = `${FRAME_NAMES[playing ? i : sel]} · ${OBJS.find((o) => o[0] === (playing ? A : frames[sel]).obj)[1]}`;
+  renderer.render(scene, camera);
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+/* ---------------------------------------------------------------- the pickers */
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+const bgOf = (k) => BGS.find((b) => b.key === k);
+const thumb = (b, flip) => b.css ? `<i class="sw" style="background:${esc(b.css)}"></i>` : `<img src="${esc(b.thumb || b.src)}" alt="" loading="lazy"${flip ? ' style="transform:scaleX(-1)"' : ''}>`;
+function render() {
+  $('[data-frames]').innerHTML = frames.map((fr, i) => {
+    const b = bgOf(fr.bg), o = OBJS.find((x) => x[0] === fr.obj);
+    return `<button type="button" class="frame${i === sel ? ' is-on' : ''}" data-frame="${i}">${thumb(b, fr.flip)}<span><b>${FRAME_NAMES[i]}</b>${esc(o[1])}</span></button>`;
+  }).join('');
+  $('[data-objs]').innerHTML = OBJS.map(([k, name, note]) => `<button type="button" data-obj="${k}" class="${frames[sel].obj === k ? 'is-on' : ''}"><span>${esc(name)} ${note === 'current' ? '' : '<span class="new">NEW</span>'}</span><small>${esc(note)}</small></button>`).join('');
+  $('[data-bgs]').innerHTML = BGS.map((b) => `<button type="button" data-bg="${esc(b.key)}" class="${frames[sel].bg === b.key ? 'is-on' : ''}">${thumb(b)}<span><b>${esc(b.name)}</b>${esc(b.note)}</span></button>`).join('');
+  $('[data-mats]').innerHTML = Object.entries(MATS).map(([k, m]) => `<button type="button" data-mat="${k}" class="${matKey === k ? 'is-on' : ''}"><span>${esc(m.name)}</span><small>${esc(m.note)}</small></button>`).join('');
+  $('[data-flip]').disabled = !!bgOf(frames[sel].bg).mode;
+  $('[data-text]').value = 'My hero (finish: ' + MATS[matKey].name + ')\n' + frames.map((fr, i) => `${FRAME_NAMES[i]}: object ${fr.obj}, background ${fr.bg}${fr.flip ? ' (mirrored)' : ''}`).join('\n');
+  $('[data-flip]').setAttribute('aria-pressed', String(frames[sel].flip));
+}
+document.addEventListener('click', (e) => {
+  const fr = e.target.closest('[data-frame]'), ob = e.target.closest('[data-obj]'), bg = e.target.closest('[data-bg]'), mt = e.target.closest('[data-mat]');
+  if (mt) { matKey = mt.dataset.mat; applyMat(matKey); save(); render(); return; }
+  if (fr) { sel = +fr.dataset.frame; setPlay(false); }
+  else if (ob) { frames[sel].obj = ob.dataset.obj; setPlay(false); save(); }
+  else if (bg) { frames[sel].bg = bg.dataset.bg; setPlay(false); save(); }
+  else return;
+  render();
+});
+$('[data-flip]').addEventListener('click', () => { frames[sel].flip = !frames[sel].flip; setPlay(false); save(); render(); });
+const playBtn = $('[data-play]');
+function setPlay(on) { playing = on; playBtn.setAttribute('aria-pressed', String(on)); playBtn.textContent = on ? 'Stop' : 'Play the hero'; if (!on) f = sel; else f = sel; }
+playBtn.addEventListener('click', () => setPlay(!playing));
+$('[data-copy]').addEventListener('click', async () => { render(); try { await navigator.clipboard.writeText($('[data-text]').value); $('[data-copy]').textContent = 'Copied'; setTimeout(() => ($('[data-copy]').textContent = 'Copy my hero'), 1600); } catch (e) { $('[data-text]').select(); } });
+render();
+</script>
+</body>
+</html>
