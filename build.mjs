@@ -13,7 +13,7 @@ import { layout } from './src/layout.mjs';
 import { site } from './src/data.mjs';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
-const pages = ['home', 'about', 'services', 'area', 'service', 'solutions', 'projects', 'insights', 'careers', 'contact', 'notfound'];
+const pages = ['home', 'about', 'services', 'area', 'service', 'solutions', 'projects', 'partners', 'insights', 'careers', 'contact', 'notfound'];
 
 // leave absolute URLs, root paths, anchors, queries and other schemes (mailto:, tel:, data:) alone
 const KEEP = /^(?:[a-z][a-z0-9+.-]*:|\/|#|\?|$)/i;

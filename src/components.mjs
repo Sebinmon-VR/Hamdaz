@@ -297,7 +297,7 @@ export function clientsPartners({ idx = '04' } = {}) {
   const row = (list, logos = false) => { const ul = `<ul>${(logos ? mix(list) : list).map((n) => (logos ? logo(n) : `<li>${n}</li>`)).join('')}</ul>`; return `<div class="mq-track">${ul}${ul}</div>`; };
   return `<section class="sec cp-sec" id="clients" aria-labelledby="cp-title">
   <div class="wrap">
-    ${head({ idx, label: 'Clients & partners', meta: `${clients.length} featured clients · ${total}+ partners`, title: 'Trusted across the UAE', text: 'Government, energy, education and enterprise clients, backed by the industry\u2019s leading technology brands.' }).replace('<h2 class="sh-title"', '<h2 class="sh-title" id="cp-title"')}
+    ${head({ idx, label: 'Clients & partners', meta: `${clients.length} featured clients · ${total}+ partners`, title: 'Trusted across the UAE', text: 'Government, energy, education and enterprise clients, backed by the industry\u2019s leading technology brands.', action: tlink('All partners & clients', 'partners.html') }).replace('<h2 class="sh-title"', '<h2 class="sh-title" id="cp-title"')}
   </div>
   <div class="cp-rows">
     <div class="cp-head"><p>Selected clients</p><button class="mq-toggle" type="button" aria-pressed="false" data-marquee-toggle><span class="mq-toggle-icon" aria-hidden="true"></span><span data-marquee-toggle-label>Pause</span></button></div>

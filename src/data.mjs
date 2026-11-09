@@ -747,8 +747,31 @@ export const partnerLogos = {
   'Bose Professional': ['bose.svg', 7.4], Sennheiser: ['sennheiser.svg', 1.32, true], Samsung: ['samsung.svg', 5.9], LG: ['lg.svg', 2.21],
   Hikvision: ['hikvision.svg', 6.95], Axis: ['axis.svg', 2.68], 'Hanwha Vision': ['hanwhavision.svg', 1.27],
   Crestron: ['crestron.png', 8.83], Yealink: ['yealink.png', 4.74], Milestone: ['milestone.png', 1.15], Kramer: ['kramer.png', 3.27],
+  Huawei: ['huawei.svg', 1.32, true], Logitech: ['logitech.svg', 1.44, true],
+  // from each brand's own site or Wikimedia Commons (2026); Genetec's site only has a white version, recoloured to ink
+  Halcyon: ['halcyon.svg', 4.1], 'Q-SYS': ['qsys.svg', 4.14], Barco: ['barco.svg', 1.49], Shure: ['shure.svg', 5.0],
+  Genetec: ['genetec.svg', 4.93], HID: ['hid.svg', 2.35], Suprema: ['suprema.svg', 6.38], FAAC: ['faac.svg', 3.71],
 };
 export const partners = {
-  'IT, cloud & cybersecurity': ['Microsoft', 'Cisco', 'Fortinet', 'Palo Alto Networks', 'Check Point', 'CrowdStrike', 'Netskope', 'Proofpoint', 'Qualys', 'Rubrik', 'Veeam', 'Nutanix', 'Pure Storage', 'Halcyon', 'Secureworks', 'HPE Aruba', 'Dell', 'Schneider Electric', 'Vertiv'],
+  'IT, cloud & cybersecurity': ['Microsoft', 'Cisco', 'Huawei', 'Fortinet', 'Palo Alto Networks', 'Check Point', 'CrowdStrike', 'Netskope', 'Proofpoint', 'Qualys', 'Rubrik', 'Veeam', 'Nutanix', 'Pure Storage', 'Halcyon', 'Secureworks', 'HPE Aruba', 'Dell', 'Schneider Electric', 'Vertiv'],
   'AV, ELV & security systems': ['Extron', 'Crestron', 'Q-SYS', 'Kramer', 'Barco', 'Shure', 'Sennheiser', 'Biamp', 'Bose Professional', 'Yealink', 'Logitech', 'Samsung', 'LG', 'Hikvision', 'Axis', 'Hanwha Vision', 'Milestone', 'Genetec', 'HID', 'Suprema', 'FAAC'],
+};
+
+// Clients on the Partners & Clients page (partners.html), in groups. `clients` above is the short list for the
+// home page rows. Logos in assets/img/clients/, in the same [file, width ÷ height, mark] form as partnerLogos;
+// a client without one shows as its name.
+export const clientGroups = {
+  'ADNOC Group': ['ADNOC', 'ADNOC Onshore', 'ADNOC Offshore', 'ADNOC Gas', 'ADNOC Drilling', 'ADNOC Distribution', 'ADNOC Logistics & Services', 'ADNOC Refining', 'ADNOC Sour Gas', 'ADNOC Global Trading', 'Borouge', 'Fertiglobe', 'Al Dhafra Petroleum', 'Al Yasat Petroleum', 'XRG'],
+  'Education, government & enterprise': ['Mohamed Bin Zayed University', 'Liwa University', 'Fatima College of Health Sciences', 'American International School', 'Al Jazira Institute', 'Tawazun Industrial Park', 'Donaldson', 'Al Lul Transport & General Contracting'],
+};
+// From each company's own site (2026). Most ADNOC group companies have no logo of their own and use ADNOC's,
+// so they share adnoc.svg; the listed ones (Gas, Drilling, Logistics & Services, Distribution) have their own.
+// adnoc.svg is ADNOC's file with its white backing trimmed to the falcon square.
+const adnoc = ['adnoc.svg', 0.62];
+export const clientLogos = {
+  ADNOC: adnoc, 'ADNOC Onshore': adnoc, 'ADNOC Offshore': adnoc, 'ADNOC Refining': adnoc, 'ADNOC Sour Gas': adnoc,
+  'ADNOC Global Trading': adnoc, 'Al Dhafra Petroleum': adnoc, 'Al Yasat Petroleum': adnoc,
+  'ADNOC Gas': ['adnoc-gas.svg', 3.23], 'ADNOC Drilling': ['adnoc-drilling.svg', 4.03],
+  'ADNOC Logistics & Services': ['adnoc-logistics-services.svg', 6.0], 'ADNOC Distribution': ['adnoc-distribution.svg', 2.16],
+  Borouge: ['borouge.svg', 2.23], XRG: ['xrg.svg', 4.27], Donaldson: ['donaldson.svg', 3.99],
 };

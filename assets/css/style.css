@@ -918,8 +918,7 @@ html.reduce .np:not([hidden]) { animation: none; }
    a partner without a logo yet shows its name in the same ink */
 .mq--logos li { height: 64px; padding: 0 clamp(22px, 2.6vw, 40px); }
 .mq--logos li::after { content: none; }
-.mq--logos img { display: block; width: auto; max-width: none; filter: grayscale(1) brightness(0); opacity: 0.62; transition: filter 0.4s, opacity 0.4s; pointer-events: none; }
-.mq--logos li:hover img { filter: none; opacity: 1; }
+.mq--logos img { display: block; width: auto; max-width: none; pointer-events: none; }
 .mq-logo--mark { gap: 10px; }
 .mq-logo--mark span, .mq--logos .mq-name { font-family: var(--display); font-weight: 600; font-size: clamp(17px, 1.4vw, 21px); letter-spacing: -0.02em; color: var(--ink); opacity: 0.62; transition: opacity 0.4s, color 0.3s; }
 .mq--logos li:hover span, .mq--logos .mq-name:hover { opacity: 1; color: var(--ink); }
@@ -1358,4 +1357,27 @@ button.tlink { border: 0; padding: 0 0 4px; border-radius: 0; font: inherit; fon
 @media (prefers-reduced-motion: reduce) {
   .jobs-list:not([hidden]), .job-sec.is-in .job-grid { animation: none; }
   .jobs-msg { animation: none !important; }
+}
+
+/* ---------- Partners & Clients (partners.html): logo walls ---------- */
+.lw-group + .lw-group { margin-top: clamp(48px, 7vh, 72px); }
+.lw-head { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); }
+.lw-head::before { content: ""; width: 7px; height: 7px; background: #30c1f8; }
+.lw-count { margin-left: auto; color: var(--ink-3); }
+.lw-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(208px, 1fr)); border-top: 1px solid var(--rule-2); border-left: 1px solid var(--rule); }
+.lw-tile { display: grid; grid-template-rows: 1fr auto; align-items: center; justify-items: center; gap: 14px; min-height: 164px; padding: 24px 20px 16px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); background: transparent; transition: background-color 0.4s var(--ease); }
+.lw-tile:hover { background: #fff; }
+.lw-logo { display: grid; place-items: center; width: 100%; height: 72px; }
+.lw-logo img { display: block; width: auto; height: auto; max-width: 82%; transition: transform 0.6s var(--ease); }
+.lw-tile:hover .lw-logo img { transform: scale(1.04); }
+.lw-name { font-family: var(--mono); font-size: 10.5px; line-height: 1.4; letter-spacing: 0.06em; text-transform: uppercase; text-align: center; color: var(--ink-3); transition: color 0.3s; }
+.lw-tile:hover .lw-name { color: var(--ink); }
+.lw-tile--name { grid-template-rows: 1fr; }
+.lw-word { font-family: var(--display); font-weight: 600; font-size: clamp(17px, 1.35vw, 20px); line-height: 1.2; letter-spacing: -0.02em; text-align: center; text-wrap: balance; color: var(--ink); opacity: 0.7; transition: opacity 0.3s; }
+.lw-tile--name:hover .lw-word { opacity: 1; }
+@media (max-width: 760px) {
+  .lw-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lw-tile { min-height: 132px; padding: 18px 12px 12px; gap: 10px; }
+  .lw-logo { height: 56px; }
+  .lw-logo img { transform: scale(0.82); }
 }
