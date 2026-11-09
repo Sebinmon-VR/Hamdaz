@@ -774,4 +774,9 @@ export const clientLogos = {
   'ADNOC Gas': ['adnoc-gas.svg', 3.23], 'ADNOC Drilling': ['adnoc-drilling.svg', 4.03],
   'ADNOC Logistics & Services': ['adnoc-logistics-services.svg', 6.0], 'ADNOC Distribution': ['adnoc-distribution.svg', 2.16],
   Borouge: ['borouge.svg', 2.23], XRG: ['xrg.svg', 4.27], Donaldson: ['donaldson.svg', 3.99],
+  // Fertiglobe's own site blocks downloads; this file is from companieslogo.com (2024): swap in an official one when you have it
+  Fertiglobe: ['fertiglobe.svg', 4.49],
+  'Mohamed Bin Zayed University': ['mbzuh.png', 6.37], 'Fatima College of Health Sciences': ['fchs.svg', 1.62],
+  // these two publish their logo in white only, so their tiles are navy (4th value: dark)
+  'Liwa University': ['liwa-university.png', 3.55, false, true], 'Tawazun Industrial Park': ['tawazun-industrial-park.png', 0.96, false, true],
 };
