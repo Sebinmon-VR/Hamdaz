@@ -9,7 +9,7 @@ export const NAV = [
   { href: 'about.html', label: 'Who We Are', key: 'about' },
   { href: 'services.html', label: 'What We Do', key: 'services' },
   { href: 'solutions.html', label: 'How We Do', key: 'solutions' },
-  { href: 'projects.html', label: 'Clients & Projects', key: 'clients' },
+  { href: 'partners.html', label: 'Partners & Clients', key: 'clients' },
   { href: 'careers.html', label: 'Careers', key: 'careers' },
   { href: 'contact.html', label: 'Contact Us', key: 'contact' },
 ];
@@ -118,7 +118,7 @@ function footer() {
       </div>
       <nav class="footer-col" aria-label="Footer">
         <h2>Company</h2>
-        <ul>${NAV.map((n) => `<li><a href="${n.href}">${n.label}</a></li>`).join('')}<li><a href="insights.html">Insights</a></li></ul>
+        <ul>${NAV.map((n) => `<li><a href="${n.href}">${n.label}</a></li>`).join('')}<li><a href="projects.html">Projects</a></li><li><a href="insights.html">Insights</a></li></ul>
       </nav>
       <div class="footer-col">
         <h2>Services</h2>
