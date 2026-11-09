@@ -10,6 +10,14 @@ export const site = {
     'Hamdaz redefine excellence in Managed Software Services. With a focus on innovation and efficiency, we offer a comprehensive suite of solutions tailored to meet the diverse needs of businesses across various industries.',
 };
 
+// Careers: open roles come live from the Hamdaz ERP (hamdaz-2.0, app/hr/public.py). When HR posts an
+// opening there and ticks "publicly listed", it shows on careers.html with no rebuild; its application
+// form is the one HR set up in the ERP, and applications go straight back into the ERP.
+//   api: the ERP's public address (its PUBLIC_BASE_URL). Only /careers/openings and /apply/<token> are used.
+export const careers = {
+  api: 'https://hamdaz2-h4ajc0d0a3h9fwfa.centralus-01.azurewebsites.net',
+};
+
 export const contact = {
   email: 'hello@hamdaz.com',
   whatsapp: '919207773300',

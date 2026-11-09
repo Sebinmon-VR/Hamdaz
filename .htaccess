@@ -22,6 +22,11 @@ ErrorDocument 404 /404.html
   # build.mjs), so they need no rule. Apache adds the trailing slash itself.
   # Old product pages → anchors on the products page
   RewriteRule ^product/([a-z0-9-]+)/?$ /solutions.html#$1 [R=301,NE,L]
+
+  # Careers. With CAREERS_URL=https://hamdaz.com/careers in the ERP, the share link HR copies for an
+  # opening is /careers/apply/<token>; it opens that role's page here.
+  RewriteRule ^careers/?$                        /careers.html     [R=301,L]
+  RewriteRule ^careers/apply/([A-Za-z0-9_-]+)/?$ /job.html?id=$1   [R=302,L]
 </IfModule>
 
 <IfModule mod_deflate.c>

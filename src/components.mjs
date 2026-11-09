@@ -336,7 +336,7 @@ export function contactSection({ idx = '05' } = {}) {
       <div class="cta-col" id="careers" data-reveal>
         <p class="cta-label"><span>Careers</span></p>
         <p class="cta-city">Join the Hamdaz Team</p>
-        <p class="cta-sub">${tlink('Send your CV', `mailto:${contact.email}?subject=${encodeURIComponent('Join the Hamdaz Team')}`)}</p>
+        <p class="cta-sub">${tlink('See open roles', 'careers.html')}</p>
       </div>
     </div>
   </div>
