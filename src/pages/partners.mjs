@@ -12,11 +12,12 @@ const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').repl
 // it (several ADNOC companies share the ADNOC mark, so the name is what tells them apart). No logo yet: the
 // name alone, set large.
 const tile = (name, logos, dir) => {
-  const [file, ratio] = logos[name] || [];
+  const [file, ratio, , dark] = logos[name] || [];
   if (!file) return `<li class="lw-tile lw-tile--name"><span class="lw-word">${esc(name)}</span></li>`;
   const h = Math.round(Math.min(64, Math.max(30, Math.sqrt(6400 / ratio))));
   const w = Math.round(h * ratio);
-  return `<li class="lw-tile"><span class="lw-logo"><img src="assets/img/${dir}/${file}" alt="${esc(name)}" width="${w}" height="${h}" style="max-height:${h}px" loading="lazy" decoding="async" draggable="false"></span><span class="lw-name">${esc(name)}</span></li>`;
+  // dark: the organisation only publishes a white logo, so its tile is navy
+  return `<li class="lw-tile${dark ? ' lw-tile--dark' : ''}"><span class="lw-logo"><img src="assets/img/${dir}/${file}" alt="${esc(name)}" width="${w}" height="${h}" style="max-height:${h}px" loading="lazy" decoding="async" draggable="false"></span><span class="lw-name">${esc(name)}</span></li>`;
 };
 
 const wall = (groups, logos, dir) =>
