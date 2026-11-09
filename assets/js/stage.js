@@ -4,6 +4,8 @@
 //   'chip'  the AI chip on its circuit board (heroes/chip.js), with its labels
 //   'bloom' the x-ray flower (heroes/bloom.js), annotated like an AI scan on a 2D layer
 //   'glass' a glass tech object over two dissolving photos (heroes/glass.js); the particles leave the object
+//   'circuit' parts on a circuit board (heroes/circuit.js), played in frames like 'glass': each part flies as
+//             data to the next one; the particles leave the part in view
 // Two layers share one camera: the dark stage behind the page draws the hero's 3D element and the galaxy in
 // the dark section before Contact; a transparent layer above the page draws the particles and the people
 // network beside "Who we are" on the white sheet.
@@ -19,6 +21,7 @@ import { elementPoints } from './heroes/points.js';
 import { build as buildBloom } from './heroes/bloom.js';
 import { build as buildChip } from './heroes/chip.js';
 import { build as buildGlass } from './heroes/glass.js';
+import { build as buildCircuit } from './heroes/circuit.js';
 import { drawScan, orbOnScreen } from './scan.js';
 import { build as buildInknet } from './heroes/inknet.js';
 import { build as buildGalaxy, galaxyPoints } from './heroes/galaxy.js';
@@ -108,6 +111,7 @@ async function init(host) {
   const galaxySec = document.querySelector('[data-galaxy]');
   const hero = document.querySelector('[data-hero]');
   const kind = host.dataset.element || 'chip';
+  const framesHero = kind === 'glass' || kind === 'circuit'; // heroes that play in frames, with their service panels
   const scanSvg = document.querySelector('[data-scan]');
   if (kind === 'scan' && scanSvg) drawScan(scanSvg); // drawn even without WebGL
   const probe = document.createElement('canvas');
@@ -150,6 +154,7 @@ async function init(host) {
     if (kind === 'chip') el3d = await buildChip({ root: heroRoot, scene: darkScene, camera, renderer: dark, U, host, mode: 'hero', reduceMotion });
     else if (kind === 'bloom') el3d = buildBloom({ root: heroRoot, U, reduceMotion });
     else if (kind === 'glass') el3d = await buildGlass({ root: heroRoot, scene: darkScene, renderer: dark, reduceMotion });
+    else if (kind === 'circuit') el3d = await buildCircuit({ root: heroRoot, scene: darkScene, renderer: dark, reduceMotion, U });
     net = light ? await buildInknet({ root: netRoot, U, reduceMotion }) : null;
     if (galaxySec) galaxy = await buildGalaxy({ root: galRoot, U, reduceMotion });
   } catch (e) {
@@ -180,7 +185,8 @@ async function init(host) {
     if (film.to - to > L / 2) to += L;
     if (to === film.to && film.k >= 1) return;
     film.from = film.f; film.to = to; film.k = 0; film.hold = 0;
-    film.dur = Math.min(1.8, 1.15 + Math.abs(to - film.f) * 0.15);
+    const glide = el3d?.glide || 1.15; // how long the element likes one step to take
+    film.dur = Math.min(glide + 0.65, glide + Math.abs(to - film.f) * 0.15);
   };
   rail.forEach((b) => b.addEventListener('click', () => filmGo(Number(b.dataset.rail))));
   if (playBtn) playBtn.addEventListener('click', () => {
@@ -196,7 +202,7 @@ async function init(host) {
   const heroInView = () => { const r = heroSec.getBoundingClientRect(); return r.bottom > innerHeight * 0.5 && r.top < innerHeight * 0.5; };
   const filmStep = (dir) => { const L = el3d?.frames || 6; const cur = film.on < 0 ? 0 : film.on; filmGo((cur + dir + L) % L); };
   document.querySelectorAll('[data-hero-step]').forEach((b) => b.addEventListener('click', () => filmStep(Number(b.dataset.heroStep))));
-  if (heroSec && kind === 'glass') {
+  if (heroSec && framesHero) {
     let down = null;
     heroSec.addEventListener('pointerdown', (e) => { if (e.button === 0 && !e.target.closest('a, button')) down = { x: e.clientX, y: e.clientY }; });
     window.addEventListener('pointerup', (e) => {
@@ -238,7 +244,7 @@ async function init(host) {
   pg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(PARTICLES * 3), 3));
   // every stream starts on the shape of the element it leaves, so that element breaks up into them
   const ball = () => { const out = new Float32Array(PARTICLES * 3); const v = new THREE.Vector3(); for (let i = 0; i < PARTICLES; i++) v.randomDirection().multiplyScalar(Math.cbrt(Math.random())).toArray(out, i * 3); return out; };
-  const source = kind === 'bloom' || kind === 'glass' ? el3d.points(PARTICLES) : kind === 'chip' ? elementPoints('chip', PARTICLES) : ball(); // the scan: a ball of light at its orb
+  const source = kind === 'bloom' || framesHero ? el3d.points(PARTICLES) : kind === 'chip' ? elementPoints('chip', PARTICLES) : ball(); // the scan: a ball of light at its orb
   pg.setAttribute('aA', new THREE.BufferAttribute(source, 3));
   pg.setAttribute('aB', new THREE.BufferAttribute(elementPoints('network', PARTICLES), 3));
   pg.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 3));
@@ -247,7 +253,7 @@ async function init(host) {
   const particles = new THREE.Points(pg, new THREE.ShaderMaterial({ uniforms: PU, vertexShader: particleVertex, fragmentShader: particleFragment, transparent: true, depthWrite: false }));
   particles.frustumCulled = false;
   lightScene.add(particles);
-  if (kind === 'glass') el3d.onSwap = () => { if (k1 === 0) { pg.attributes.aA.array.set(el3d.points(PARTICLES)); pg.attributes.aA.needsUpdate = true; } };
+  if (framesHero) el3d.onSwap = () => { if (k1 === 0) { pg.attributes.aA.array.set(el3d.points(PARTICLES)); pg.attributes.aA.needsUpdate = true; } };
   // the second stream: from the network down into the galaxy
   const pg2 = new THREE.BufferGeometry();
   pg2.setAttribute('position', new THREE.BufferAttribute(new Float32Array(PARTICLES * 3), 3));
@@ -337,7 +343,7 @@ async function init(host) {
     const ar = art ? art.getBoundingClientRect() : null;
     const st = sheets[0] ? sheets[0].getBoundingClientRect().top : H;
     // (the glass hero is one screen, so its stream follows how far the page has scrolled)
-    k1 = follow(k1, ar && light ? (kind === 'glass' ? clamp01(-hr.top / (H * 0.62)) : clamp01((H * 0.97 - st) / (H * 0.62))) : 0, dt);
+    k1 = follow(k1, ar && light ? (framesHero ? clamp01(-hr.top / (H * 0.62)) : clamp01((H * 0.97 - st) / (H * 0.62))) : 0, dt);
     const k = k1;
     const outK = 1 - smooth(0.02, 0.42, k);
     const inK = smooth(0.62, 1, k);
@@ -356,7 +362,7 @@ async function init(host) {
       heroRoot.updateMatrixWorld();
       PU.uMA.value.copy(heroRoot.matrixWorld);
       heroRoot.visible = false;
-    } else if (kind === 'glass') {
+    } else if (framesHero) {
       // the glass object places itself along the hero story and changes as it goes
       // the film: glide when asked to, otherwise hold the frame and move on when its time is up (not while
       // held, paused, off screen or breaking up into particles)

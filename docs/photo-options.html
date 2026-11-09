@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Photo options</title>
+<meta name="robots" content="noindex">
+<style>
+:root { --bg:#f5f7fa; --ink:#0c2a46; --mute:#5b6b7c; --line:#dde3ea; --card:#fff; --accent:#30c1f8; --deep:#0c2a46; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#071a2d; --ink:#e8eef5; --mute:#93a4b6; --line:#1c3753; --card:#0c2440; } }
+:root[data-theme="dark"] { --bg:#071a2d; --ink:#e8eef5; --mute:#93a4b6; --line:#1c3753; --card:#0c2440; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.top { position:sticky; top:0; z-index:5; background:var(--bg); border-bottom:1px solid var(--line); }
+.top .in { max-width:1320px; margin:0 auto; padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center; }
+.top h1 { font-size:18px; margin:0; margin-right:auto; }
+.top button, .top select { font:inherit; font-size:14px; padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer; }
+.top button.primary { background:var(--ink); color:var(--bg); border-color:var(--ink); }
+.count { color:var(--mute); font-size:14px; }
+main { max-width:1320px; margin:0 auto; padding:24px 16px 120px; }
+.intro { color:var(--mute); max-width:760px; margin:0 0 28px; }
+.slot { padding:22px 0; border-top:1px solid var(--line); }
+.slot header { display:flex; gap:12px; align-items:baseline; margin-bottom:12px; }
+.grp { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--mute); }
+.slot h2 { font-size:17px; margin:0; }
+.cards { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:14px; }
+@media (max-width:900px) { .cards { grid-template-columns:repeat(2, minmax(0,1fr)); } }
+.card { position:relative; display:block; cursor:pointer; border-radius:10px; background:var(--card); border:2px solid transparent; overflow:hidden; transition:border-color .2s; }
+.card input { position:absolute; opacity:0; pointer-events:none; }
+.card:has(input:checked) { border-color:var(--accent); box-shadow:0 0 0 3px rgba(48,193,248,.25); }
+.card:has(input:focus-visible) { outline:2px solid var(--accent); outline-offset:2px; }
+.ph { position:relative; display:block; aspect-ratio:3/2; background:var(--deep); isolation:isolate; overflow:hidden; }
+.ph.sq { aspect-ratio:1/1; }
+.ph img { width:100%; height:100%; object-fit:cover; display:block; transition:filter .5s; }
+.toned .ph img { filter:grayscale(1) contrast(1.06); }
+.toned .ph::after { content:""; position:absolute; inset:0; background:linear-gradient(150deg,#0c2a46 0%,#103a5e 100%); mix-blend-mode:lighten; pointer-events:none; transition:opacity .5s; }
+.toned .card:hover .ph img { filter:none; } .toned .card:hover .ph::after { opacity:0; }
+.cap { display:grid; gap:2px; padding:10px 12px 12px; font-size:13px; color:var(--mute); }
+.cap b { color:var(--ink); font-size:14px; }
+.cap a { color:var(--accent); text-decoration:none; justify-self:start; }
+.card:has(input:checked) .cap b::after { content:" ✓ chosen"; color:var(--accent); font-weight:600; }
+.custom { grid-column:span 3; align-self:stretch; display:grid; align-content:center; gap:6px; padding:18px 20px; border:1px dashed var(--line); border-radius:10px; color:var(--mute); font-size:14px; } .custom b { color:var(--ink); }
+@media (max-width:900px) { .custom { grid-column:span 2; } }
+.out { position:fixed; left:50%; bottom:16px; transform:translateX(-50%); width:min(720px, calc(100% - 32px)); background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; box-shadow:0 10px 30px rgba(0,0,0,.18); display:none; }
+.out.on { display:block; }
+.out textarea { width:100%; height:120px; font:12px/1.5 ui-monospace, Consolas, monospace; border:1px solid var(--line); border-radius:8px; padding:8px; background:var(--bg); color:var(--ink); }
+.out p { margin:0 0 8px; font-size:14px; }
+</style>
+</head>
+<body>
+<div class="top"><div class="in">
+  <h1>Photo options</h1>
+  <span class="count" data-count></span>
+  <select data-filter aria-label="Show"><option value="">All sections</option><option>Services</option><option>Industries</option><option>About</option></select>
+  <button type="button" class="primary" data-copy>Copy my picks</button>
+</div></div>
+<main>
+  <p class="intro">For each page, click the photo you want. "Current" keeps the photo the site has now. Photos show in their own colour, as they will on the site (the tint is gone). This round is one consistent dark, low-key style. Options are free Pexels photos, fine for commercial use with no credit needed. When you're done, press "Copy my picks" and paste the text back to Claude.</p>
+  <section class="slot" data-slug="generative-ai" data-group="Services">
+    <header><span class="grp">Services</span><h2>Generative AI</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="generative-ai" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/generative-ai.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      
+      <div class="custom"><b>Custom image</b><span>No free photo fits this one. Planned: Close-up of a GPU server in a dark rack, one strip of cool light across its heatsinks</span></div>
+    </div>
+  </section>
+<section class="slot" data-slug="data-analytics-predictive-services" data-group="Services">
+    <header><span class="grp">Services</span><h2>Data Analytics &amp; Predictive Services</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="data-analytics-predictive-services" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/data-analytics-predictive-services.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      
+      <div class="custom"><b>Custom image</b><span>No free photo fits this one. Planned: Analyst from behind at a dim desk, one large screen of charts softly out of focus</span></div>
+    </div>
+  </section>
+<section class="slot" data-slug="business-process-automation-and-digital-transformation-services" data-group="Services">
+    <header><span class="grp">Services</span><h2>Business Process Automation and Digital Transformation Services</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="business-process-automation-and-digital-transformation-services" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/business-process-automation-and-digital-transformation-services.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      
+      <div class="custom"><b>Custom image</b><span>No free photo fits this one. Planned: Hands on a laptop beside a document tray in a dark office, one pool of desk light</span></div>
+    </div>
+  </section>
+<section class="slot" data-slug="data-center-infrastructure-services" data-group="Services">
+    <header><span class="grp">Services</span><h2>Data Center/Infrastructure Services</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="data-center-infrastructure-services" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/data-center-infrastructure-services.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="data-center-infrastructure-services" value="37730212">
+      <span class="ph"><img src="https://images.pexels.com/photos/37730212/pexels-photo-37730212.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Dark teal rack close-up with status lights</span><a href="https://www.pexels.com/photo/37730212/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="data-center-infrastructure-services" value="17489157">
+      <span class="ph"><img src="https://images.pexels.com/photos/17489157/pexels-photo-17489157.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 2</b><span>Blue-lit blade servers, dark surroundings</span><a href="https://www.pexels.com/photo/17489157/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="cloud-services-migration" data-group="Services">
+    <header><span class="grp">Services</span><h2>Cloud Services &amp; Migration</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="cloud-services-migration" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/cloud-services-migration.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="cloud-services-migration" value="17323801">
+      <span class="ph"><img src="https://images.pexels.com/photos/17323801/pexels-photo-17323801.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Blue-lit rack row, soft focus</span><a href="https://www.pexels.com/photo/17323801/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="partner-services-msft-azure-aws-gcp-oci" data-group="Services">
+    <header><span class="grp">Services</span><h2>Partner Services – MSFT Azure, AWS, GCP, OCI</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="partner-services-msft-azure-aws-gcp-oci" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/partner-services-msft-azure-aws-gcp-oci.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      
+      <div class="custom"><b>Custom image</b><span>No free photo fits this one. Planned: Long dark data-centre aisle in one-point perspective, faint blue rack lights</span></div>
+    </div>
+  </section>
+<section class="slot" data-slug="digital-twin" data-group="Services">
+    <header><span class="grp">Services</span><h2>Digital Twin</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="digital-twin" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/digital-twin.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      
+      <div class="custom"><b>Custom image</b><span>No free photo fits this one. Planned: Engineer from behind at a plant control desk, a 3D plant model on screen</span></div>
+    </div>
+  </section>
+<section class="slot" data-slug="rpa-robotic-process-automation" data-group="Services">
+    <header><span class="grp">Services</span><h2>RPA (Robotic Process Automation)</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="rpa-robotic-process-automation" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/rpa-robotic-process-automation.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      
+      <div class="custom"><b>Custom image</b><span>No free photo fits this one. Planned: Workstation running an unattended job in the dark, soft monitor glow, no people</span></div>
+    </div>
+  </section>
+<section class="slot" data-slug="mobile-app-development" data-group="Services">
+    <header><span class="grp">Services</span><h2>Mobile App Development</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="mobile-app-development" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/mobile-app-development.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="mobile-app-development" value="19949818">
+      <span class="ph"><img src="https://images.pexels.com/photos/19949818/pexels-photo-19949818.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Hands with a glowing phone in darkness</span><a href="https://www.pexels.com/photo/19949818/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="mobile-app-development" value="16168372">
+      <span class="ph"><img src="https://images.pexels.com/photos/16168372/pexels-photo-16168372.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 2</b><span>Phone with a dark app screen, warm low light</span><a href="https://www.pexels.com/photo/16168372/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="education-services" data-group="Services">
+    <header><span class="grp">Services</span><h2>Education Services</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="education-services" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/education-services.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      
+      <div class="custom"><b>Custom image</b><span>No free photo fits this one. Planned: Empty classroom at dusk with an interactive display glowing at the front</span></div>
+    </div>
+  </section>
+<section class="slot" data-slug="healthcare-services" data-group="Services">
+    <header><span class="grp">Services</span><h2>Healthcare Services</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="healthcare-services" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/healthcare-services.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="healthcare-services" value="28782186">
+      <span class="ph"><img src="https://images.pexels.com/photos/28782186/pexels-photo-28782186.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Patient vitals monitor close-up</span><a href="https://www.pexels.com/photo/28782186/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="retail-implementation-services" data-group="Services">
+    <header><span class="grp">Services</span><h2>Retail Implementation Services</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="retail-implementation-services" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/retail-implementation-services.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="retail-implementation-services" value="8657364">
+      <span class="ph"><img src="https://images.pexels.com/photos/8657364/pexels-photo-8657364.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Hand presenting a card at a counter, dim</span><a href="https://www.pexels.com/photo/8657364/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="smart-farming" data-group="Services">
+    <header><span class="grp">Services</span><h2>Smart Farming</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="smart-farming" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/smart-farming.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="smart-farming" value="37288738">
+      <span class="ph"><img src="https://images.pexels.com/photos/37288738/pexels-photo-37288738.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Agricultural drone over a dark slope</span><a href="https://www.pexels.com/photo/37288738/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="bot-services" data-group="Services">
+    <header><span class="grp">Services</span><h2>Bot Services</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="bot-services" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/bot-services.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      
+      <div class="custom"><b>Custom image</b><span>No free photo fits this one. Planned: Hand holding a phone with a blurred chat thread, the screen the only light</span></div>
+    </div>
+  </section>
+<section class="slot" data-slug="it-ot-services" data-group="Services">
+    <header><span class="grp">Services</span><h2>IT/OT Services</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="it-ot-services" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/it-ot-services.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="it-ot-services" value="35072831">
+      <span class="ph"><img src="https://images.pexels.com/photos/35072831/pexels-photo-35072831.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Gloved hands at an industrial control panel</span><a href="https://www.pexels.com/photo/35072831/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="zoho-sap-vodoo-crm-salesforce" data-group="Services">
+    <header><span class="grp">Services</span><h2>CRM: Salesforce, Zoho, SAP &amp; Odoo</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="zoho-sap-vodoo-crm-salesforce" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/zoho-sap-vodoo-crm-salesforce.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      
+      <div class="custom"><b>Custom image</b><span>No free photo fits this one. Planned: Sales desk in the evening, laptop with a pipeline view, headset beside it</span></div>
+    </div>
+  </section>
+<section class="slot" data-slug="custom-software-web-development" data-group="Services">
+    <header><span class="grp">Services</span><h2>Custom Software &amp; Web Development</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="custom-software-web-development" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/custom-software-web-development.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="custom-software-web-development" value="5380603">
+      <span class="ph"><img src="https://images.pexels.com/photos/5380603/pexels-photo-5380603.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Dark desk with code on the monitors</span><a href="https://www.pexels.com/photo/5380603/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="erp-solutions" data-group="Services">
+    <header><span class="grp">Services</span><h2>ERP Implementation: SAP, Odoo &amp; Zoho</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="erp-solutions" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/erp-solutions.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      
+      <div class="custom"><b>Custom image</b><span>No free photo fits this one. Planned: Warehouse aisle at night with a handheld scanner on a shelf edge</span></div>
+    </div>
+  </section>
+<section class="slot" data-slug="lms-elearning-platforms" data-group="Services">
+    <header><span class="grp">Services</span><h2>LMS &amp; e-Learning Platforms</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="lms-elearning-platforms" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/lms-elearning-platforms.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      
+      <div class="custom"><b>Custom image</b><span>No free photo fits this one. Planned: Laptop and headphones on a dark desk, a blurred video lesson on screen</span></div>
+    </div>
+  </section>
+<section class="slot" data-slug="av-setup-meeting-room-solutions" data-group="Services">
+    <header><span class="grp">Services</span><h2>AV Setup, Meeting Room Solutions</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="av-setup-meeting-room-solutions" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/av-setup-meeting-room-solutions.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="av-setup-meeting-room-solutions" value="20728625">
+      <span class="ph"><img src="https://images.pexels.com/photos/20728625/pexels-photo-20728625.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Projector beam in a dark room (slightly purple)</span><a href="https://www.pexels.com/photo/20728625/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="av-setup-meeting-room-solutions" value="3709369">
+      <span class="ph"><img src="https://images.pexels.com/photos/3709369/pexels-photo-3709369.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 2</b><span>Dark auditorium seating and screen</span><a href="https://www.pexels.com/photo/3709369/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="managed-services" data-group="Services">
+    <header><span class="grp">Services</span><h2>Managed Services</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="managed-services" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/managed-services.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="managed-services" value="4384141">
+      <span class="ph"><img src="https://images.pexels.com/photos/4384141/pexels-photo-4384141.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Operator at screens late at night</span><a href="https://www.pexels.com/photo/4384141/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="information-security-services" data-group="Services">
+    <header><span class="grp">Services</span><h2>Information Security Services</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="information-security-services" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/information-security-services.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="information-security-services" value="5926370">
+      <span class="ph"><img src="https://images.pexels.com/photos/5926370/pexels-photo-5926370.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Hands on a keyboard in darkness</span><a href="https://www.pexels.com/photo/5926370/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="network-services-cabling-structured-cabling" data-group="Services">
+    <header><span class="grp">Services</span><h2>Network Services Cabling/Structured Cabling</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="network-services-cabling-structured-cabling" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/network-services-cabling-structured-cabling.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="network-services-cabling-structured-cabling" value="2881229">
+      <span class="ph"><img src="https://images.pexels.com/photos/2881229/pexels-photo-2881229.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Fibre patch cords on black</span><a href="https://www.pexels.com/photo/2881229/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="network-services-cabling-structured-cabling" value="5073493">
+      <span class="ph"><img src="https://images.pexels.com/photos/5073493/pexels-photo-5073493.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 2</b><span>Dense fibre patch panel, dark background</span><a href="https://www.pexels.com/photo/5073493/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="meeting-rooms-video-conferencing" data-group="Services">
+    <header><span class="grp">Services</span><h2>Meeting Rooms &amp; Video Conferencing</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="meeting-rooms-video-conferencing" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/meeting-rooms-video-conferencing.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="meeting-rooms-video-conferencing" value="29625510">
+      <span class="ph"><img src="https://images.pexels.com/photos/29625510/pexels-photo-29625510.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Empty dim boardroom, controlled window light</span><a href="https://www.pexels.com/photo/29625510/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="video-walls-digital-signage" data-group="Services">
+    <header><span class="grp">Services</span><h2>LED Video Walls &amp; Digital Signage</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="video-walls-digital-signage" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/video-walls-digital-signage.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      
+      <div class="custom"><b>Custom image</b><span>No free photo fits this one. Planned: Large LED video wall in a dark lobby or control room, small viewer silhouette</span></div>
+    </div>
+  </section>
+<section class="slot" data-slug="pro-audio-pa-systems" data-group="Services">
+    <header><span class="grp">Services</span><h2>Pro Audio, PA &amp; Background Music</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="pro-audio-pa-systems" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/pro-audio-pa-systems.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="pro-audio-pa-systems" value="5179401">
+      <span class="ph"><img src="https://images.pexels.com/photos/5179401/pexels-photo-5179401.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Studio microphone on black</span><a href="https://www.pexels.com/photo/5179401/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="pro-audio-pa-systems" value="352505">
+      <span class="ph"><img src="https://images.pexels.com/photos/352505/pexels-photo-352505.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 2</b><span>Condenser microphone grille on pure black</span><a href="https://www.pexels.com/photo/352505/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="immersive-smart-spaces" data-group="Services">
+    <header><span class="grp">Services</span><h2>Immersive &amp; Smart Spaces</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="immersive-smart-spaces" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/immersive-smart-spaces.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="immersive-smart-spaces" value="1669613">
+      <span class="ph"><img src="https://images.pexels.com/photos/1669613/pexels-photo-1669613.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Person in a projection-mapped dark room</span><a href="https://www.pexels.com/photo/1669613/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="cctv-video-surveillance" data-group="Services">
+    <header><span class="grp">Services</span><h2>CCTV &amp; Video Surveillance</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="cctv-video-surveillance" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/cctv-video-surveillance.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="cctv-video-surveillance" value="29866272">
+      <span class="ph"><img src="https://images.pexels.com/photos/29866272/pexels-photo-29866272.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Dome camera on a dark wall, calm and low-key</span><a href="https://www.pexels.com/photo/29866272/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="cctv-video-surveillance" value="4059469">
+      <span class="ph"><img src="https://images.pexels.com/photos/4059469/pexels-photo-4059469.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 2</b><span>Bullet camera and lamp against a deep dusk sky</span><a href="https://www.pexels.com/photo/4059469/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="access-control-gate-barriers" data-group="Services">
+    <header><span class="grp">Services</span><h2>Access Control &amp; Gate Barriers</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="access-control-gate-barriers" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/access-control-gate-barriers.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="access-control-gate-barriers" value="1990764">
+      <span class="ph"><img src="https://images.pexels.com/photos/1990764/pexels-photo-1990764.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Backlit keypad entry unit, moody close-up</span><a href="https://www.pexels.com/photo/1990764/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="access-control-gate-barriers" value="7251096">
+      <span class="ph"><img src="https://images.pexels.com/photos/7251096/pexels-photo-7251096.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 2</b><span>Steel turnstile gate, dim, red stop light</span><a href="https://www.pexels.com/photo/7251096/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="anpr-intercom-car-parks" data-group="Services">
+    <header><span class="grp">Services</span><h2>ANPR, Intercom &amp; Car Parks</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="anpr-intercom-car-parks" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/anpr-intercom-car-parks.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="anpr-intercom-car-parks" value="16343569">
+      <span class="ph"><img src="https://images.pexels.com/photos/16343569/pexels-photo-16343569.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Single car in a dark underground car park</span><a href="https://www.pexels.com/photo/16343569/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="anpr-intercom-car-parks" value="29113387">
+      <span class="ph"><img src="https://images.pexels.com/photos/29113387/pexels-photo-29113387.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 2</b><span>Very dark garage lane with strip lights</span><a href="https://www.pexels.com/photo/29113387/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="data-centre-power-cooling" data-group="Services">
+    <header><span class="grp">Services</span><h2>Data Centre Build, Power &amp; Cooling</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="data-centre-power-cooling" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/data-centre-power-cooling.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="data-centre-power-cooling" value="12380628">
+      <span class="ph"><img src="https://images.pexels.com/photos/12380628/pexels-photo-12380628.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Dark plant room, ducts and pipework</span><a href="https://www.pexels.com/photo/12380628/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="data-centre-power-cooling" value="38217230">
+      <span class="ph"><img src="https://images.pexels.com/photos/38217230/pexels-photo-38217230.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 2</b><span>Switchgear corridor (brighter, a backup)</span><a href="https://www.pexels.com/photo/38217230/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="managed-ai-secops" data-group="Services">
+    <header><span class="grp">Services</span><h2>Managed AI SecOps (24/7 SOC)</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="managed-ai-secops" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/managed-ai-secops.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="managed-ai-secops" value="7534101">
+      <span class="ph"><img src="https://images.pexels.com/photos/7534101/pexels-photo-7534101.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Analyst from behind facing monitors, dark room</span><a href="https://www.pexels.com/photo/7534101/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="managed-ai-secops" value="5380594">
+      <span class="ph"><img src="https://images.pexels.com/photos/5380594/pexels-photo-5380594.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 2</b><span>Dark monitoring desk with glowing screens</span><a href="https://www.pexels.com/photo/5380594/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="cyber-assessment-audit" data-group="Services">
+    <header><span class="grp">Services</span><h2>Cybersecurity Assessment &amp; Audit</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="cyber-assessment-audit" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/cyber-assessment-audit.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="cyber-assessment-audit" value="735911">
+      <span class="ph"><img src="https://images.pexels.com/photos/735911/pexels-photo-735911.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Hands typing under cool blue light</span><a href="https://www.pexels.com/photo/735911/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="zero-trust-identity-data-security" data-group="Services">
+    <header><span class="grp">Services</span><h2>Zero Trust, Identity &amp; Data Security</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="zero-trust-identity-data-security" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/zero-trust-identity-data-security.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      
+      <div class="custom"><b>Custom image</b><span>No free photo fits this one. Planned: Finger on a biometric reader beside a door, close-up, one cool light</span></div>
+    </div>
+  </section>
+<section class="slot" data-slug="ransomware-resilience" data-group="Services">
+    <header><span class="grp">Services</span><h2>Ransomware Resilience &amp; Recovery</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="ransomware-resilience" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/ransomware-resilience.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="ransomware-resilience" value="117729">
+      <span class="ph"><img src="https://images.pexels.com/photos/117729/pexels-photo-117729.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Open hard drive on a dark surface</span><a href="https://www.pexels.com/photo/117729/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="ransomware-resilience" value="270572">
+      <span class="ph"><img src="https://images.pexels.com/photos/270572/pexels-photo-270572.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 2</b><span>Drive platter and head close-up</span><a href="https://www.pexels.com/photo/270572/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="enterprise-networking-wifi" data-group="Services">
+    <header><span class="grp">Services</span><h2>Enterprise Networking &amp; Wi-Fi</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="enterprise-networking-wifi" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/enterprise-networking-wifi.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="enterprise-networking-wifi" value="2881227">
+      <span class="ph"><img src="https://images.pexels.com/photos/2881227/pexels-photo-2881227.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Switch ports, low-key, lots of dark space</span><a href="https://www.pexels.com/photo/2881227/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="enterprise-networking-wifi" value="13963756">
+      <span class="ph"><img src="https://images.pexels.com/photos/13963756/pexels-photo-13963756.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 2</b><span>Patched switch with link lights, dim rack</span><a href="https://www.pexels.com/photo/13963756/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="it-staffing-resident-engineers" data-group="Services">
+    <header><span class="grp">Services</span><h2>IT Staffing &amp; Resident Engineers</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="it-staffing-resident-engineers" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/it-staffing-resident-engineers.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      
+      <div class="custom"><b>Custom image</b><span>No free photo fits this one. Planned: Engineer from behind with a laptop at a client's open rack, rack light only</span></div>
+    </div>
+  </section>
+<section class="slot" data-slug="it-outsourcing-managed-operations" data-group="Services">
+    <header><span class="grp">Services</span><h2>IT Outsourcing &amp; Managed Operations</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="it-outsourcing-managed-operations" value="keep" checked>
+      <span class="ph"><img src="../assets/img/svc/it-outsourcing-managed-operations.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="it-outsourcing-managed-operations" value="1334093">
+      <span class="ph"><img src="https://images.pexels.com/photos/1334093/pexels-photo-1334093.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Silhouetted operator at monitors</span><a href="https://www.pexels.com/photo/1334093/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="it-outsourcing-managed-operations" value="14386896">
+      <span class="ph"><img src="https://images.pexels.com/photos/14386896/pexels-photo-14386896.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 2</b><span>Night-shift silhouette at a workstation</span><a href="https://www.pexels.com/photo/14386896/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="oil-and-gas-industry" data-group="Industries">
+    <header><span class="grp">Industries</span><h2>Oil and Gas Industry</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="oil-and-gas-industry" value="keep" checked>
+      <span class="ph"><img src="../assets/img/products/oil-and-gas-industry.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="oil-and-gas-industry" value="6692312">
+      <span class="ph"><img src="https://images.pexels.com/photos/6692312/pexels-photo-6692312.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Gas flare stack against a dark sky</span><a href="https://www.pexels.com/photo/6692312/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="oil-and-gas-industry" value="10407689">
+      <span class="ph"><img src="https://images.pexels.com/photos/10407689/pexels-photo-10407689.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 2</b><span>Refinery lit at night, from above</span><a href="https://www.pexels.com/photo/10407689/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="small-and-medium-enterprises-smes" data-group="Industries">
+    <header><span class="grp">Industries</span><h2>Small and Medium Enterprises (SMEs)</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="small-and-medium-enterprises-smes" value="keep" checked>
+      <span class="ph"><img src="../assets/img/products/small-and-medium-enterprises-smes.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      
+      <div class="custom"><b>Custom image</b><span>No free photo fits this one. Planned: Small office after hours: a network cabinet and a laptop under a warm lamp</span></div>
+    </div>
+  </section>
+<section class="slot" data-slug="schools-and-educational-institutions" data-group="Industries">
+    <header><span class="grp">Industries</span><h2>Schools and Educational Institutions</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="schools-and-educational-institutions" value="keep" checked>
+      <span class="ph"><img src="../assets/img/products/schools-and-educational-institutions.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      
+      <div class="custom"><b>Custom image</b><span>No free photo fits this one. Planned: School classroom at dusk, interactive panel lit, no children posing</span></div>
+    </div>
+  </section>
+<section class="slot" data-slug="online-education" data-group="Industries">
+    <header><span class="grp">Industries</span><h2>Online Education</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="online-education" value="keep" checked>
+      <span class="ph"><img src="../assets/img/products/online-education.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="online-education" value="9580577">
+      <span class="ph"><img src="https://images.pexels.com/photos/9580577/pexels-photo-9580577.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Learner on a laptop at night</span><a href="https://www.pexels.com/photo/9580577/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="online-education" value="4384147">
+      <span class="ph"><img src="https://images.pexels.com/photos/4384147/pexels-photo-4384147.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 2</b><span>Student at a lamp-lit desk</span><a href="https://www.pexels.com/photo/4384147/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="sports" data-group="Industries">
+    <header><span class="grp">Industries</span><h2>Sports</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="sports" value="keep" checked>
+      <span class="ph"><img src="../assets/img/products/sports.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="sports" value="14963646">
+      <span class="ph"><img src="https://images.pexels.com/photos/14963646/pexels-photo-14963646.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Floodlit stadium at night</span><a href="https://www.pexels.com/photo/14963646/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+<section class="slot" data-slug="about-inner" data-group="About">
+    <header><span class="grp">About</span><h2>About page (square)</h2></header>
+    <div class="cards">
+      <label class="card">
+      <input type="radio" name="about-inner" value="keep" checked>
+      <span class="ph sq"><img src="../assets/img/about-inner.webp" alt="" loading="lazy"></span>
+      <span class="cap"><b>Current</b><span>keep this photo</span></span>
+    </label>
+      <label class="card">
+      <input type="radio" name="about-inner" value="37688150">
+      <span class="ph sq"><img src="https://images.pexels.com/photos/37688150/pexels-photo-37688150.jpeg?auto=compress&cs=tinysrgb&w=800" alt="" loading="lazy"></span>
+      <span class="cap"><b>Option 1</b><span>Engineer working on hardware, not posing</span><a href="https://www.pexels.com/photo/37688150/" target="_blank" rel="noopener">Pexels ↗</a></span>
+    </label>
+      
+    </div>
+  </section>
+</main>
+<div class="out" data-out><p>Your picks are copied. If nothing was copied, select the text below and copy it:</p><textarea readonly data-text></textarea></div>
+<script>
+(() => {
+  const KEY = 'hamdaz-photo-picks';
+  const store = { get() { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } }, set(v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) {} } };
+  const saved = store.get();
+  for (const [slug, val] of Object.entries(saved)) { const r = document.querySelector('input[name="' + slug + '"][value="' + val + '"]'); if (r) r.checked = true; }
+  const count = () => { const c = [...document.querySelectorAll('.card input:checked')].filter((i) => i.value !== 'keep').length; document.querySelector('[data-count]').textContent = c + ' of ' + document.querySelectorAll('.slot').length + ' changed'; };
+  document.addEventListener('change', (e) => { if (e.target.matches('.card input')) { const v = store.get(); v[e.target.name] = e.target.value; store.set(v); count(); } });
+  count();
+  document.querySelector('[data-filter]').addEventListener('change', (e) => { for (const s of document.querySelectorAll('.slot')) s.hidden = !!e.target.value && s.dataset.group !== e.target.value; });
+  document.querySelector('[data-copy]').addEventListener('click', async () => {
+    const lines = [...document.querySelectorAll('.slot')].map((s) => { const i = s.querySelector('input:checked'); return s.dataset.slug + ': ' + (i && i.value !== 'keep' ? 'pexels ' + i.value : 'keep'); });
+    const text = 'Photo picks\n' + lines.join('\n');
+    const out = document.querySelector('[data-out]'); document.querySelector('[data-text]').value = text; out.classList.add('on');
+    try { await navigator.clipboard.writeText(text); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>

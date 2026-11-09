@@ -616,12 +616,10 @@ html:has(.earth.is-hover) .cursor-dot { opacity: 0; }
 }
 .ix-go .i { width: 16px; height: 16px; }
 
-/* ---------- Brand duotone images: navy shadows, colour on hover ---------- */
+/* ---------- Photos: shown in their own colour (no tint), a slow zoom on hover ---------- */
 .tone { position: relative; display: block; overflow: hidden; border-radius: 6px; background: var(--deep); isolation: isolate; }
-.tone img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.06); transition: filter 0.9s var(--ease), transform 1.4s var(--ease); }
-.tone::after { content: ""; position: absolute; inset: 0; background: linear-gradient(150deg, #0c2a46 0%, #103a5e 100%); mix-blend-mode: lighten; pointer-events: none; transition: opacity 0.9s var(--ease); }
-a:hover .tone img, .feat:hover .tone img, .about-media:hover .tone img { filter: none; transform: scale(1.035); }
-a:hover .tone::after, .feat:hover .tone::after, .about-media:hover .tone::after { opacity: 0; }
+.tone img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.4s var(--ease); }
+a:hover .tone img, .feat:hover .tone img, .about-media:hover .tone img { transform: scale(1.035); }
 
 /* ---------- Statement + facts ---------- */
 .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.5fr); border-top: 1px solid var(--rule); }
@@ -739,8 +737,6 @@ a:hover .tone::after, .feat:hover .tone::after, .about-media:hover .tone::after 
 .svx-panel.is-on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
 .svx-media { aspect-ratio: 16 / 8; }
 .svx-media .tone { height: 100%; border-radius: 0; }
-.svx-panel.is-on .tone img { filter: none; }
-.svx-panel.is-on .tone::after { opacity: 0; }
 .svx-body { display: grid; gap: 10px; padding: 24px 26px 26px; }
 .svx-p-title { font-family: var(--display); font-weight: 500; font-size: clamp(21px, 1.8vw, 26px); line-height: 1.2; letter-spacing: -0.02em; }
 .svx-p-text { font-size: 15px; line-height: 1.6; color: var(--ink-2); }

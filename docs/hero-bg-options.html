@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hero background options</title>
+<meta name="robots" content="noindex">
+<style>
+:root { --bg:#061423; --ink:#e8eef5; --mute:#93a4b6; --line:#1c3753; --card:#0c2440; --accent:#30c1f8; }
+:root[data-theme="light"] { --bg:#f5f7fa; --ink:#0c2a46; --mute:#5b6b7c; --line:#dde3ea; --card:#fff; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.top { position:sticky; top:0; z-index:5; background:var(--bg); border-bottom:1px solid var(--line); }
+.top .in { max-width:1320px; margin:0 auto; padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center; }
+.top h1 { font-size:18px; margin:0; margin-right:auto; }
+.top button { font:inherit; font-size:14px; padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer; }
+.top button.primary { background:var(--ink); color:var(--bg); border-color:var(--ink); }
+.count { color:var(--mute); font-size:14px; }
+main { max-width:1320px; margin:0 auto; padding:24px 16px 140px; }
+h2 { font-size:20px; margin:40px 0 6px; }
+.lead { color:var(--mute); max-width:780px; margin:0 0 22px; }
+.cur { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; }
+.cur figure { margin:0; } .cur img { width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:8px; display:block; }
+.cur figcaption { font-size:13px; color:var(--mute); padding-top:6px; }
+.grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:18px; }
+@media (max-width:860px) { .grid { grid-template-columns:1fr; } .cur { grid-template-columns:repeat(2, minmax(0,1fr)); } }
+.opt { position:relative; display:block; cursor:pointer; border-radius:12px; overflow:hidden; border:2px solid transparent; background:#000; }
+.opt input { position:absolute; opacity:0; pointer-events:none; }
+.opt:has(input:checked) { border-color:var(--accent); box-shadow:0 0 0 3px rgba(48,193,248,.25); }
+.opt:has(input:focus-visible) { outline:2px solid var(--accent); outline-offset:2px; }
+.mock { position:relative; aspect-ratio:16/9; overflow:hidden; }
+.mock img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.mock::before { content:""; position:absolute; inset:0; z-index:1; background:linear-gradient(90deg, rgba(4,10,18,.88) 0%, rgba(4,10,18,.55) 42%, rgba(4,10,18,.2) 75%), rgba(4,10,18,.25); }
+.mock .h { position:absolute; z-index:2; left:6%; top:50%; transform:translateY(-50%); max-width:52%; color:#fff; }
+.mock .h small { display:block; font:11px/1 ui-monospace, Consolas, monospace; letter-spacing:.12em; text-transform:uppercase; color:#30c1f8; margin-bottom:10px; }
+.mock .h b { display:block; font-weight:500; font-size:clamp(18px, 2.4vw, 34px); line-height:1.08; letter-spacing:-.02em; }
+.mock .h span { display:block; font-size:clamp(11px, .95vw, 14px); color:rgba(255,255,255,.72); margin-top:10px; }
+.mock .badge { position:absolute; z-index:2; right:12px; top:12px; display:none; padding:4px 10px; border-radius:99px; background:var(--accent); color:#04121f; font-weight:700; font-size:13px; }
+.opt:has(input:checked) .badge { display:block; }
+.cap { display:flex; justify-content:space-between; gap:12px; padding:10px 14px 12px; background:var(--card); font-size:13.5px; color:var(--mute); }
+.cap b { color:var(--ink); display:block; font-size:14.5px; }
+.cap a { color:var(--accent); text-decoration:none; white-space:nowrap; align-self:start; }
+.svc { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:16px; }
+@media (max-width:860px) { .svc { grid-template-columns:repeat(2, minmax(0,1fr)); } }
+@media (max-width:520px) { .svc { grid-template-columns:1fr; } }
+.svc article { border-radius:14px; overflow:hidden; background:#fff; color:#0c2a46; }
+.svc img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; }
+.svc p { margin:0; padding:14px 16px 16px; font-weight:600; }
+.out { position:fixed; left:50%; bottom:16px; transform:translateX(-50%); width:min(720px, calc(100% - 32px)); background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; box-shadow:0 10px 30px rgba(0,0,0,.35); display:none; }
+.out.on { display:block; }
+.out textarea { width:100%; height:110px; font:12px/1.5 ui-monospace, Consolas, monospace; border:1px solid var(--line); border-radius:8px; padding:8px; background:var(--bg); color:var(--ink); }
+.out p { margin:0 0 8px; font-size:14px; }
+</style>
+</head>
+<body>
+<div class="top"><div class="in">
+  <h1>Hero background options</h1>
+  <span class="count" data-count></span>
+  <button type="button" class="primary" data-copy>Copy my picks</button>
+</div></div>
+<main>
+  <h2>Today's backgrounds</h2>
+  <p class="lead">The home hero dissolves through four dark photos behind the glass objects. These are the four it uses now: abstract art, not tech.</p>
+  <div class="cur"><figure><img src="../assets/img/hero/c6.webp" alt=""><figcaption>Light curves on black</figcaption></figure><figure><img src="../assets/img/hero/c8.webp" alt=""><figcaption>Swirling chrome</figcaption></figure><figure><img src="../assets/img/hero/c15.webp" alt=""><figcaption>Rainbow liquid metal</figcaption></figure><figure><img src="../assets/img/hero/c7.webp" alt=""><figcaption>Liquid metal</figcaption></figure></div>
+
+  <h2>Tech backgrounds in the same style</h2>
+  <p class="lead">Each one is shown roughly as it would sit in the hero: darkened, with the headline on the left (the glass objects will float on the right). Click up to four, in the order you want them to appear; the number in the corner is the order. All are free Pexels photos, fine for commercial use with no credit needed.</p>
+  <div class="grid">
+  <label class="opt">
+    <input type="checkbox" value="18100557">
+    <div class="mock"><img src="https://images.pexels.com/photos/18100557/pexels-photo-18100557.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="" loading="lazy"><div class="h"><small>Hamdaz Technologies</small><b>Delivering the Digital Future</b><span>AI, cloud, security and infrastructure for the UAE</span></div><span class="badge" data-n></span></div>
+    <div class="cap"><span><b>Rainbow light on a data disc</b>closest to today's light curves, but it is tech</span><a href="https://www.pexels.com/photo/18100557/" target="_blank" rel="noopener">Pexels ↗</a></div>
+  </label>
+  <label class="opt">
+    <input type="checkbox" value="3520683">
+    <div class="mock"><img src="https://images.pexels.com/photos/3520683/pexels-photo-3520683.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="" loading="lazy"><div class="h"><small>Hamdaz Technologies</small><b>Delivering the Digital Future</b><span>AI, cloud, security and infrastructure for the UAE</span></div><span class="badge" data-n></span></div>
+    <div class="cap"><span><b>Circuit board on pure black</b>glossy board edge, lots of black for the words</span><a href="https://www.pexels.com/photo/3520683/" target="_blank" rel="noopener">Pexels ↗</a></div>
+  </label>
+  <label class="opt">
+    <input type="checkbox" value="28286034">
+    <div class="mock"><img src="https://images.pexels.com/photos/28286034/pexels-photo-28286034.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="" loading="lazy"><div class="h"><small>Hamdaz Technologies</small><b>Delivering the Digital Future</b><span>AI, cloud, security and infrastructure for the UAE</span></div><span class="badge" data-n></span></div>
+    <div class="cap"><span><b>Fibre-optic bundle</b>iridescent fibres fanning out on black</span><a href="https://www.pexels.com/photo/28286034/" target="_blank" rel="noopener">Pexels ↗</a></div>
+  </label>
+  <label class="opt">
+    <input type="checkbox" value="17194840">
+    <div class="mock"><img src="https://images.pexels.com/photos/17194840/pexels-photo-17194840.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="" loading="lazy"><div class="h"><small>Hamdaz Technologies</small><b>Delivering the Digital Future</b><span>AI, cloud, security and infrastructure for the UAE</span></div><span class="badge" data-n></span></div>
+    <div class="cap"><span><b>Fibre strands with soft light</b>calm, falling light lines</span><a href="https://www.pexels.com/photo/17194840/" target="_blank" rel="noopener">Pexels ↗</a></div>
+  </label>
+  <label class="opt">
+    <input type="checkbox" value="17194838">
+    <div class="mock"><img src="https://images.pexels.com/photos/17194838/pexels-photo-17194838.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="" loading="lazy"><div class="h"><small>Hamdaz Technologies</small><b>Delivering the Digital Future</b><span>AI, cloud, security and infrastructure for the UAE</span></div><span class="badge" data-n></span></div>
+    <div class="cap"><span><b>Fibre strands, cool blue</b>same set, cooler colour</span><a href="https://www.pexels.com/photo/17194838/" target="_blank" rel="noopener">Pexels ↗</a></div>
+  </label>
+  <label class="opt">
+    <input type="checkbox" value="3363556">
+    <div class="mock"><img src="https://images.pexels.com/photos/3363556/pexels-photo-3363556.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="" loading="lazy"><div class="h"><small>Hamdaz Technologies</small><b>Delivering the Digital Future</b><span>AI, cloud, security and infrastructure for the UAE</span></div><span class="badge" data-n></span></div>
+    <div class="cap"><span><b>Fibre-optic light points</b>warm points of light on dark</span><a href="https://www.pexels.com/photo/3363556/" target="_blank" rel="noopener">Pexels ↗</a></div>
+  </label>
+  <label class="opt">
+    <input type="checkbox" value="270572">
+    <div class="mock"><img src="https://images.pexels.com/photos/270572/pexels-photo-270572.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="" loading="lazy"><div class="h"><small>Hamdaz Technologies</small><b>Delivering the Digital Future</b><span>AI, cloud, security and infrastructure for the UAE</span></div><span class="badge" data-n></span></div>
+    <div class="cap"><span><b>Hard-drive platter</b>mirror-like metal, like the liquid chrome</span><a href="https://www.pexels.com/photo/270572/" target="_blank" rel="noopener">Pexels ↗</a></div>
+  </label>
+  <label class="opt">
+    <input type="checkbox" value="37389795">
+    <div class="mock"><img src="https://images.pexels.com/photos/37389795/pexels-photo-37389795.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="" loading="lazy"><div class="h"><small>Hamdaz Technologies</small><b>Delivering the Digital Future</b><span>AI, cloud, security and infrastructure for the UAE</span></div><span class="badge" data-n></span></div>
+    <div class="cap"><span><b>Light ribbon</b>a single twisted ribbon of light on black</span><a href="https://www.pexels.com/photo/37389795/" target="_blank" rel="noopener">Pexels ↗</a></div>
+  </label>
+  <label class="opt">
+    <input type="checkbox" value="920631">
+    <div class="mock"><img src="https://images.pexels.com/photos/920631/pexels-photo-920631.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="" loading="lazy"><div class="h"><small>Hamdaz Technologies</small><b>Delivering the Digital Future</b><span>AI, cloud, security and infrastructure for the UAE</span></div><span class="badge" data-n></span></div>
+    <div class="cap"><span><b>Backlit keyboard</b>black-and-white keys with light</span><a href="https://www.pexels.com/photo/920631/" target="_blank" rel="noopener">Pexels ↗</a></div>
+  </label>
+  <label class="opt">
+    <input type="checkbox" value="1448561">
+    <div class="mock"><img src="https://images.pexels.com/photos/1448561/pexels-photo-1448561.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="" loading="lazy"><div class="h"><small>Hamdaz Technologies</small><b>Delivering the Digital Future</b><span>AI, cloud, security and infrastructure for the UAE</span></div><span class="badge" data-n></span></div>
+    <div class="cap"><span><b>Circuit board close-up</b>warm board detail, shallow focus</span><a href="https://www.pexels.com/photo/1448561/" target="_blank" rel="noopener">Pexels ↗</a></div>
+  </label>
+  <label class="opt">
+    <input type="checkbox" value="37605913">
+    <div class="mock"><img src="https://images.pexels.com/photos/37605913/pexels-photo-37605913.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="" loading="lazy"><div class="h"><small>Hamdaz Technologies</small><b>Delivering the Digital Future</b><span>AI, cloud, security and infrastructure for the UAE</span></div><span class="badge" data-n></span></div>
+    <div class="cap"><span><b>Server front with status lights</b>blue data-centre hardware</span><a href="https://www.pexels.com/photo/37605913/" target="_blank" rel="noopener">Pexels ↗</a></div>
+  </label>
+  <label class="opt">
+    <input type="checkbox" value="14482085">
+    <div class="mock"><img src="https://images.pexels.com/photos/14482085/pexels-photo-14482085.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="" loading="lazy"><div class="h"><small>Hamdaz Technologies</small><b>Delivering the Digital Future</b><span>AI, cloud, security and infrastructure for the UAE</span></div><span class="badge" data-n></span></div>
+    <div class="cap"><span><b>Fibre-optic bursts</b>red fibre bursts on black</span><a href="https://www.pexels.com/photo/14482085/" target="_blank" rel="noopener">Pexels ↗</a></div>
+  </label>
+  </div>
+
+  <h2>A look for the service photos (sample only)</h2>
+  <p class="lead">One idea for the service photos: the same dark, low-key style as the hero, close-ups of real equipment on dark backgrounds, shown in their own colour with no tint. Free photos in this style only exist for some services, so this is just to see whether you like the direction.</p>
+  <div class="svc"><article><img src="https://images.pexels.com/photos/352505/pexels-photo-352505.jpeg?auto=compress&cs=tinysrgb&w=900" alt="" loading="lazy"><p>Pro Audio, PA & Background Music</p></article><article><img src="https://images.pexels.com/photos/28286034/pexels-photo-28286034.jpeg?auto=compress&cs=tinysrgb&w=900" alt="" loading="lazy"><p>Network Services & Structured Cabling</p></article><article><img src="https://images.pexels.com/photos/37605913/pexels-photo-37605913.jpeg?auto=compress&cs=tinysrgb&w=900" alt="" loading="lazy"><p>Data Center & Infrastructure</p></article><article><img src="https://images.pexels.com/photos/6429140/pexels-photo-6429140.jpeg?auto=compress&cs=tinysrgb&w=900" alt="" loading="lazy"><p>Ransomware Resilience & Recovery</p></article><article><img src="https://images.pexels.com/photos/920631/pexels-photo-920631.jpeg?auto=compress&cs=tinysrgb&w=900" alt="" loading="lazy"><p>Custom Software & Web Development</p></article><article><img src="https://images.pexels.com/photos/3520683/pexels-photo-3520683.jpeg?auto=compress&cs=tinysrgb&w=900" alt="" loading="lazy"><p>IT/OT Services</p></article></div>
+</main>
+<div class="out" data-out><p>Your picks are copied. If nothing was copied, select the text below and copy it:</p><textarea readonly data-text></textarea></div>
+<script>
+(() => {
+  const KEY = 'hamdaz-hero-bg-picks';
+  let order = [];
+  try { order = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) {}
+  const boxes = [...document.querySelectorAll('.opt input')];
+  const sync = () => {
+    for (const b of boxes) { b.checked = order.includes(b.value); b.closest('.opt').querySelector('[data-n]').textContent = order.indexOf(b.value) + 1; }
+    document.querySelector('[data-count]').textContent = order.length + ' of 4 chosen';
+    try { localStorage.setItem(KEY, JSON.stringify(order)); } catch (e) {}
+  };
+  order = order.filter((v) => boxes.some((b) => b.value === v)).slice(0, 4);
+  for (const b of boxes) b.addEventListener('change', () => {
+    if (b.checked) { if (order.length >= 4) { b.checked = false; return; } order.push(b.value); } else order = order.filter((v) => v !== b.value);
+    sync();
+  });
+  sync();
+  document.querySelector('[data-copy]').addEventListener('click', async () => {
+    const text = 'Hero backgrounds, in order: ' + (order.length ? order.map((v) => 'pexels ' + v).join(', ') : 'none chosen');
+    document.querySelector('[data-text]').value = text; document.querySelector('[data-out]').classList.add('on');
+    try { await navigator.clipboard.writeText(text); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>
