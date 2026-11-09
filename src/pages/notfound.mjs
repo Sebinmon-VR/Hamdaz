@@ -15,6 +15,10 @@ export default {
   // Served at arbitrary URLs by the host, so resolve assets from the site root.
   base: '/',
   earth: true,
+  // The ERP's share link for a job is <CAREERS_URL>/apply/<token>, e.g. .../careers/apply/<token>. Apache
+  // redirects it (.htaccess), but hosts without it (GitHub Pages) land here, so forward it to the role's page
+  // before anything draws. It keeps whatever folder the site lives in (/Hamdaz/ on GitHub Pages).
+  jsonld: `<script>(function(l){var p=l.pathname,m=p.match(/^(.*?)\\/careers\\/apply\\/([A-Za-z0-9_-]+)\\/?$/);if(m){l.replace(m[1]+'/job.html?id='+m[2])}else if(/\\/careers\\/?$/.test(p)){l.replace(p.replace(/\\/careers\\/?$/,'/careers.html'))}})(location)</script>\n`,
   title: 'Page not found',
   description: 'The page you were looking for could not be found.',
   body: `${pageHero({ crumb: '404', eyebrow: 'Error 404', title: 'Lost in orbit', text: 'This page has moved or no longer exists. Everything from the old site now lives on the pages below.', hero: 'spark' })}

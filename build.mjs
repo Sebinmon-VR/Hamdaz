@@ -13,7 +13,7 @@ import { layout } from './src/layout.mjs';
 import { site } from './src/data.mjs';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
-const pages = ['home', 'about', 'services', 'area', 'service', 'solutions', 'projects', 'insights', 'contact', 'notfound'];
+const pages = ['home', 'about', 'services', 'area', 'service', 'solutions', 'projects', 'insights', 'careers', 'contact', 'notfound'];
 
 // leave absolute URLs, root paths, anchors, queries and other schemes (mailto:, tel:, data:) alone
 const KEEP = /^(?:[a-z][a-z0-9+.-]*:|\/|#|\?|$)/i;
@@ -53,6 +53,12 @@ if (process.argv.includes('--serve')) {
   };
   createServer((req, res) => {
     let path = decodeURIComponent(new URL(req.url, 'http://x').pathname);
+    // like .htaccess: the ERP's share links (/careers/apply/<token>) open the role's page
+    const share = path.match(/^\/careers(?:\/apply\/([A-Za-z0-9_-]+))?\/?$/);
+    if (share) {
+      res.writeHead(share[1] ? 302 : 301, { location: share[1] ? `/job.html?id=${share[1]}` : '/careers.html' });
+      return res.end();
+    }
     if (path.endsWith('/')) path += 'index.html';
     let file = normalize(join(root, path));
     // like Apache: a folder without its trailing slash redirects to it

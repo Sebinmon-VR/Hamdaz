@@ -11,6 +11,7 @@ The design pairs a dark, cinematic 3D scene at the top of every page with a ligh
 - **A page for every service and area (SEO):** each service has its own page at its old WordPress address, `/service/<slug>/` (overview, what's included, how we deliver it, brands and sectors, FAQs, related services, contact), and each area has one at `/services/<area>/`. Their text (search titles and descriptions, H1s, overviews, benefits, process, brands, sectors and FAQs) is in `src/content/*.mjs`, written from the 2026 company profiles; `src/content/index.mjs` stops the build if a service or area has none. Pages carry structured data (Organization, the two offices as ProfessionalService, WebSite, Service, BreadcrumbList, FAQPage, Article) built in `src/blocks.mjs`.
 - **Clients & projects** (`projects.html`): selected projects from the ELV profile (`src/content/projects.mjs`), the client and partner rows, sectors and credentials.
 - **Insights** (`insights.html`, `/insights/<slug>/`): practical guides for buyers in the UAE (`articles` in `src/content/*.mjs`).
+- **Careers** (`careers.html`, `job.html?id=<token>`): open roles and their application forms, live from the Hamdaz ERP. See [Careers](#careers) below.
 - **Clients & partners:** moving rows of client names and partner brands on the home page (`clients` and `partners` in `src/data.mjs`); names only, so logo files can be added later.
 - **Light theme below the hero:** the page content sits on a light sheet that overlaps the hero and the navy footer. The header turns white automatically whenever it is over the light sheet.
 - **Colours:** the hero, one panel per page (Custom ChatGPT) and the footer use the logo's navy. Photos get a navy duotone so they match each other, and show full colour on hover.
@@ -35,6 +36,7 @@ The design pairs a dark, cinematic 3D scene at the top of every page with a ligh
 | `contact.html` | Contact Us |
 | `projects.html` | Clients & Projects (new) |
 | `insights.html`, `insights/<slug>/` | Insights (new) |
+| `careers.html`, `job.html?id=<token>` | Careers: open roles and one role with its application form (new) |
 | `service/<slug>/` | One page per service (the old service pages) |
 | `services/<area>/` | One page per service area (new) |
 | `404.html` | Not found |
@@ -75,6 +77,16 @@ Upload everything except `src/`, `docs/`, `build.mjs`, `package.json` and `READM
 On Apache hosting (cPanel and most shared hosts), the included `.htaccess` file:
 - 301-redirects the old WordPress URLs (`/about-us`, `/services`, `/products`, `/contact-us`, `/product/<slug>/`) to the new pages; the old `/service/<slug>/` addresses are real pages again
 - forces HTTPS, sets up the 404 page, and turns on compression and caching
+
+## Careers
+
+The open roles come live from the Hamdaz ERP (`hamdaz-2.0`, `app/hr/public.py`), so nothing is rebuilt when a job is posted. `assets/js/careers.js` fills both pages in the visitor's browser:
+
+- `careers.html` lists `GET <ERP>/careers/openings`: every opening that is **open** and marked **publicly listed** in the ERP, and still before its closing date.
+- `job.html?id=<token>` shows `GET <ERP>/apply/<token>/form`: the advert and the application questions HR set up for that role in the ERP (text, email, phone, number, date, choice, tick box and file questions, in the ERP's sections). The application is posted straight to the ERP (`POST <ERP>/apply/<token>`, files up to 15 MB each, at most 5) and lands in the ERP with the candidate's answers and score. Nothing is stored on this site and no cookies are sent.
+- The ERP's address is `careers.api` in `src/data.mjs` (the ERP's `PUBLIC_BASE_URL`).
+- **Share links:** set `CAREERS_URL=https://hamdaz.com/careers` on the ERP. The link HR copies for an opening then reads `https://hamdaz.com/careers/apply/<token>`, which `.htaccess` (and the dev server) redirects to `job.html?id=<token>`. Without it the ERP's link opens the ERP's own plain form page, which also works.
+- If the ERP cannot be reached, both pages say so and offer the visitor to email their CV instead. `job.html` is `noindex`, since it is empty without a role.
 
 ## Contact form
 

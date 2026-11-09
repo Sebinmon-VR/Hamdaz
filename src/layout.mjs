@@ -10,6 +10,7 @@ export const NAV = [
   { href: 'services.html', label: 'What We Do', key: 'services' },
   { href: 'solutions.html', label: 'How We Do', key: 'solutions' },
   { href: 'projects.html', label: 'Clients & Projects', key: 'clients' },
+  { href: 'careers.html', label: 'Careers', key: 'careers' },
   { href: 'contact.html', label: 'Contact Us', key: 'contact' },
 ];
 
@@ -168,7 +169,8 @@ const V = Date.now().toString(36);
 
 // SEO head: `title` gets " – Hamdaz" added (or pass `fullTitle` to set it exactly), `description` is the
 // meta description, `image` an absolute social-card image, `ogType` 'website' or 'article'.
-export function layout({ path = '', title, fullTitle: ft = '', description = site.description, active = '', body, earth = false, scene = false, stage = false, jsonld = '', base = '', bodyClass = '', image = `${site.url}/assets/img/og.png`, ogType = 'website', noindex = false }) {
+// `scripts`: extra scripts for this page only (paths from the site root, loaded deferred after main.js).
+export function layout({ path = '', title, fullTitle: ft = '', description = site.description, active = '', body, earth = false, scene = false, stage = false, jsonld = '', base = '', bodyClass = '', image = `${site.url}/assets/img/og.png`, ogType = 'website', noindex = false, scripts = [] }) {
   const three = earth || scene || stage;
   const fullTitle = ft || (title ? `${title} – Hamdaz` : 'Hamdaz – Delivering the Digital Future');
   const url = `${site.url}/${path}`;
@@ -202,7 +204,7 @@ ${three ? '<link rel="modulepreload" href="assets/vendor/three.module.min.js">\n
 <script src="assets/vendor/ScrollTrigger.min.js" defer></script>
 <script src="assets/vendor/lenis.min.js" defer></script>
 <script src="assets/js/main.js?v=${V}" defer></script>
-${stage ? `<script type="module" src="assets/js/stage.js?v=${V}"></script>\n` : earth ? `<script type="module" src="assets/js/earth.js?v=${V}"></script>\n` : ''}${scene ? `<script type="module" src="assets/js/scenes.js?v=${V}"></script>\n` : ''}${jsonld}</head>
+${scripts.map((s) => `<script src="${s}?v=${V}" defer></script>\n`).join('')}${stage ? `<script type="module" src="assets/js/stage.js?v=${V}"></script>\n` : earth ? `<script type="module" src="assets/js/earth.js?v=${V}"></script>\n` : ''}${scene ? `<script type="module" src="assets/js/scenes.js?v=${V}"></script>\n` : ''}${jsonld}</head>
 <body id="top" class="${bodyClass}">
 ${header(active)}
 <main id="main">
