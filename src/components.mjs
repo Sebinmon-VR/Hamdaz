@@ -1,4 +1,4 @@
-import { site, contact, heroNodes, helpCta, gpt, technologies, services, serviceBySlug, featuredServices, products, industries, whoWeAre, needs, waLink, clients, partners, partnerLogos, svcUrl } from './data.mjs';
+import { site, contact, heroNodes, helpCta, gpt, technologies, services, serviceBySlug, featuredServices, products, industries, whoWeAre, needs, waLink, clientGroups, clientLogos, partners, partnerLogos, svcUrl } from './data.mjs';
 import { icon } from './icons.mjs';
 import { clock } from './layout.mjs';
 
@@ -279,32 +279,47 @@ export function techStrip() {
 export function clientsPartners({ idx = '04' } = {}) {
   const groups = Object.entries(partners);
   const total = groups.reduce((n, [, list]) => n + list.length, 0);
-  // a partner as its logo, all logos about equally heavy: wide wordmarks shorter, square marks taller
-  const logo = (n) => {
-    const [file, ratio, mark] = partnerLogos[n] || [];
+  // every client, but a logo several ADNOC group companies share shows once (as ADNOC's)
+  const seen = new Set();
+  const allClients = Object.values(clientGroups).flat().filter((n) => {
+    const file = clientLogos[n]?.[0];
+    if (!file) return true;
+    if (seen.has(file)) return false;
+    seen.add(file);
+    return true;
+  });
+  // an organisation as its logo, all logos about equally heavy: wide wordmarks shorter, square marks taller.
+  // dark: the logo is white, so it sits on a navy backing.
+  const logo = (n, logos, dir, big = false) => {
+    const [file, ratio, mark, dark] = logos[n] || [];
     if (!file) return `<li class="mq-name">${n}</li>`;
-    const h = mark ? 26 : Math.round(Math.min(38, Math.max(22, Math.sqrt(3000 / ratio))));
-    const img = `<img src="assets/img/logos/${file}" alt="${mark ? '' : n}" width="${Math.round(h * ratio)}" height="${h}" style="height:${h}px" loading="lazy" decoding="async" draggable="false">`;
-    return mark ? `<li class="mq-logo mq-logo--mark">${img}<span>${n}</span></li>` : `<li class="mq-logo">${img}</li>`;
+    const h = mark ? 26 : Math.round(Math.min(big ? 46 : 38, Math.max(22, Math.sqrt((big ? 4200 : 3000) / ratio))));
+    const img = `<img src="assets/img/${dir}/${file}" alt="${mark ? '' : n}" width="${Math.round(h * ratio)}" height="${h}" style="height:${h}px" loading="lazy" decoding="async" draggable="false">`;
+    return mark ? `<li class="mq-logo mq-logo--mark">${img}<span>${n}</span></li>` : `<li class="mq-logo${dark ? ' mq-logo--dark' : ''}">${img}</li>`;
   };
-  // logo rows alternate logos with the names that have none yet, so no stretch reads as a plain list
-  const mix = (list) => {
-    const [withLogo, without] = [list.filter((n) => partnerLogos[n]), list.filter((n) => !partnerLogos[n])];
+  // the names that have no logo yet are spread evenly between the logos, so no stretch reads as a plain list
+  const mix = (list, logos) => {
+    const [withLogo, without] = [list.filter((n) => logos[n]), list.filter((n) => !logos[n])];
+    const step = (withLogo.length + 1) / (without.length + 1);
     const out = [];
-    while (withLogo.length || without.length) { if (withLogo.length) out.push(withLogo.shift()); if (without.length) out.push(without.shift()); }
-    return out;
+    let next = step;
+    withLogo.forEach((n, i) => {
+      out.push(n);
+      while (without.length && i + 1 >= Math.round(next)) { out.push(without.shift()); next += step; }
+    });
+    return out.concat(without);
   };
-  const row = (list, logos = false) => { const ul = `<ul>${(logos ? mix(list) : list).map((n) => (logos ? logo(n) : `<li>${n}</li>`)).join('')}</ul>`; return `<div class="mq-track">${ul}${ul}</div>`; };
+  const row = (list, logos, dir, big) => { const ul = `<ul>${mix(list, logos).map((n) => logo(n, logos, dir, big)).join('')}</ul>`; return `<div class="mq-track">${ul}${ul}</div>`; };
   return `<section class="sec cp-sec" id="clients" aria-labelledby="cp-title">
   <div class="wrap">
-    ${head({ idx, label: 'Clients & partners', meta: `${clients.length} featured clients · ${total}+ partners`, title: 'Trusted across the UAE', text: 'Government, energy, education and enterprise clients, backed by the industry\u2019s leading technology brands.', action: tlink('All partners & clients', 'partners.html') }).replace('<h2 class="sh-title"', '<h2 class="sh-title" id="cp-title"')}
+    ${head({ idx, label: 'Clients & partners', meta: `${Object.values(clientGroups).flat().length} clients · ${total}+ partners`, title: 'Trusted across the UAE', text: 'Government, energy, education and enterprise clients, backed by the industry\u2019s leading technology brands.', action: tlink('All partners & clients', 'partners.html') }).replace('<h2 class="sh-title"', '<h2 class="sh-title" id="cp-title"')}
   </div>
   <div class="cp-rows">
     <div class="cp-head"><p>Selected clients</p><button class="mq-toggle" type="button" aria-pressed="false" data-marquee-toggle><span class="mq-toggle-icon" aria-hidden="true"></span><span data-marquee-toggle-label>Pause</span></button></div>
-    <div class="mq mq--clients" data-marquee="1" aria-hidden="true">${row(clients)}</div>
+    <div class="mq mq--client-logos mq--logos" data-marquee="1" aria-hidden="true">${row(allClients, clientLogos, 'clients', true)}</div>
     ${groups.map(([label, list], i) => `<div class="cp-head"><p>${label}</p></div>
-    <div class="mq mq--partners mq--logos" data-marquee="${i % 2 ? 1 : -1}" aria-hidden="true">${row(list, true)}</div>`).join('\n    ')}
-    <p class="sr-only">Clients: ${clients.join(', ')}. Partners: ${groups.map(([, l]) => l.join(', ')).join(', ')}.</p>
+    <div class="mq mq--partners mq--logos" data-marquee="${i % 2 ? 1 : -1}" aria-hidden="true">${row(list, partnerLogos, 'logos')}</div>`).join('\n    ')}
+    <p class="sr-only">Clients: ${Object.values(clientGroups).flat().join(', ')}. Partners: ${groups.map(([, l]) => l.join(', ')).join(', ')}.</p>
   </div>
 </section>`;
 }
