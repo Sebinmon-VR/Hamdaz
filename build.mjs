@@ -13,7 +13,7 @@ import { layout } from './src/layout.mjs';
 import { site } from './src/data.mjs';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
-const pages = ['home', 'about', 'services', 'area', 'service', 'solutions', 'projects', 'partners', 'insights', 'careers', 'contact', 'notfound'];
+const pages = ['home', 'about', 'services', 'area', 'service', 'solutions', 'projects', 'partners', 'quality', 'certifications', 'insights', 'careers', 'contact', 'notfound'];
 
 // leave absolute URLs, root paths, anchors, queries and other schemes (mailto:, tel:, data:) alone
 const KEEP = /^(?:[a-z][a-z0-9+.-]*:|\/|#|\?|$)/i;
@@ -49,7 +49,7 @@ if (process.argv.includes('--serve')) {
   const types = {
     '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.mjs': 'text/javascript',
     '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.xml': 'application/xml',
-    '.txt': 'text/plain', '.ico': 'image/x-icon', '.webp': 'image/webp',
+    '.txt': 'text/plain', '.pdf': 'application/pdf', '.ico': 'image/x-icon', '.webp': 'image/webp',
   };
   createServer((req, res) => {
     let path = decodeURIComponent(new URL(req.url, 'http://x').pathname);

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Title size options</title>
+<meta name="robots" content="noindex">
+<style>
+:root { --bg:#f5f7fa; --ink:#0c2a46; --mute:#5b6b7c; --line:#dde3ea; --card:#fff; --accent:#30c1f8; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#071a2d; --ink:#e8eef5; --mute:#93a4b6; --line:#1c3753; --card:#0c2440; } }
+:root[data-theme="dark"] { --bg:#071a2d; --ink:#e8eef5; --mute:#93a4b6; --line:#1c3753; --card:#0c2440; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.top { position:sticky; top:0; z-index:5; background:var(--bg); border-bottom:1px solid var(--line); }
+.top .in { max-width:1440px; margin:0 auto; padding:12px 16px; display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; }
+.top h1 { font-size:17px; margin:0 8px 0 0; }
+.group { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+.group > span { font-size:12px; color:var(--mute); margin-right:2px; }
+.group button { font:inherit; font-size:14px; padding:7px 13px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer; }
+.group button[aria-pressed="true"] { background:var(--ink); color:var(--bg); border-color:var(--ink); }
+.spacer { flex:1; }
+.pick { font:inherit; font-size:14px; padding:7px 13px; border-radius:999px; border:1px solid var(--accent); background:transparent; color:var(--ink); cursor:pointer; }
+.ok { color:var(--accent); font-size:14px; }
+main { max-width:1440px; margin:0 auto; padding:14px 16px 40px; }
+.desc { margin:2px 0 12px; color:var(--mute); max-width:900px; }
+.desc b { color:var(--ink); }
+.frame { position:relative; width:100%; height:calc(100vh - 150px); min-height:480px; border-radius:12px; overflow:hidden; border:1px solid var(--line); background:#061423; }
+.frame iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+.note { color:var(--mute); font-size:13px; margin-top:10px; }
+</style>
+</head>
+<body>
+<div class="top"><div class="in">
+  <h1>Title sizes</h1>
+  <div class="group" role="group" aria-label="Size"><span>Size</span>
+    <button type="button" data-opt="now">Now</button>
+    <button type="button" data-opt="A">A · A little smaller</button>
+    <button type="button" data-opt="B">B · Smaller</button>
+    <button type="button" data-opt="C">C · Compact</button>
+  </div>
+  <div class="group" role="group" aria-label="Page"><span>Page</span>
+    <button type="button" data-page="index.html">Home</button>
+    <button type="button" data-page="about.html">Who We Are</button>
+    <button type="button" data-page="quality.html">Quality</button>
+    <button type="button" data-page="services/elv-security/index.html">A service area</button>
+    <button type="button" data-page="contact.html">Contact</button>
+  </div>
+  <span class="spacer"></span>
+  <button type="button" class="pick" data-copy>Copy my pick</button><span class="ok" data-ok hidden>Copied</span>
+</div></div>
+<main>
+  <p class="desc" data-desc></p>
+  <div class="frame"><iframe data-frame title="Page preview"></iframe></div>
+  <p class="note">This is the real site. Only the sizes of the titles change. Scroll inside the preview to see the section titles and the "How can we help your business?" title at the bottom. On phones every option keeps titles readable. Open this page through the dev server (http://127.0.0.1:3000/docs/title-size-options.html or http://localhost:8080/docs/title-size-options.html), not as a file.</p>
+</main>
+<script>
+// [page hero title, home hero headline, home hero frame titles, section titles, contact "How can we help", dark
+// band titles, service and article page titles, big numbers]; each a CSS clamp(min, preferred, max)
+const SIZES = {
+  A: ['clamp(40px, 5.2vw, 96px)', 'clamp(40px, 4.3vw, 76px)', 'clamp(32px, 3.4vw, 58px)', 'clamp(28px, 2.8vw, 44px)', 'clamp(32px, 3.9vw, 62px)', 'clamp(30px, 3.1vw, 50px)', 'clamp(34px, 3.6vw, 62px)', 'clamp(40px, 3.5vw, 56px)'],
+  B: ['clamp(38px, 4.4vw, 80px)', 'clamp(38px, 3.8vw, 66px)', 'clamp(30px, 3vw, 50px)', 'clamp(26px, 2.4vw, 40px)', 'clamp(30px, 3.4vw, 54px)', 'clamp(28px, 2.7vw, 44px)', 'clamp(32px, 3.2vw, 54px)', 'clamp(36px, 3.1vw, 50px)'],
+  C: ['clamp(34px, 3.6vw, 64px)', 'clamp(34px, 3.2vw, 56px)', 'clamp(28px, 2.6vw, 44px)', 'clamp(24px, 2.1vw, 34px)', 'clamp(28px, 2.8vw, 46px)', 'clamp(26px, 2.3vw, 38px)', 'clamp(30px, 2.8vw, 46px)', 'clamp(32px, 2.7vw, 44px)'],
+};
+const css = (s) => `
+.page-hero .display, .display:not(.display--hero):not(.display--md) { font-size: ${s[0]} !important; }
+.hero--glass .display--hero { font-size: ${s[1]} !important; }
+.hf-title { font-size: ${s[2]} !important; }
+.sh-title, .gpt-title, .finder-title { font-size: ${s[3]} !important; }
+.cta-title { font-size: ${s[4]} !important; }
+.display--md, .galaxy-sec .display--md { font-size: ${s[5]} !important; }
+.page-detail .page-hero .display { font-size: ${s[6]} !important; }
+.page-article .page-hero .display { font-size: ${s[3]} !important; }
+.fact-num, .qh-num, .cx-num { font-size: ${s[7]} !important; }
+.about-copy .fact-num { font-size: ${s[7]} !important; }`;
+
+const OPTIONS = {
+  now: { title: 'Now', text: 'The titles as they are today, for comparison.', css: '' },
+  A: { title: 'A · A little smaller', text: 'About 15% smaller. Still bold and editorial, just less loud.', css: css(SIZES.A) },
+  B: { title: 'B · Smaller', text: 'About 25–30% smaller. Page titles, section titles and the contact title all come down a clear step. Titles stop wrapping onto extra lines, so more of each section fits on screen.', css: css(SIZES.B) },
+  C: { title: 'C · Compact', text: 'About 40% smaller. Quiet and corporate; the titles become headings rather than statements.', css: css(SIZES.C) },
+};
+
+const params = new URLSearchParams(location.search);
+const frame = document.querySelector('[data-frame]');
+let opt = params.get('opt') in OPTIONS ? params.get('opt') : 'B';
+let page = params.get('page') || 'index.html';
+
+function inject() {
+  try {
+    const doc = frame.contentDocument;
+    let s = doc.getElementById('size-option');
+    if (!s) { s = doc.createElement('style'); s.id = 'size-option'; doc.head.append(s); }
+    s.textContent = OPTIONS[opt].css;
+  } catch (e) { /* opened as a file: the frame can't be styled */ }
+}
+frame.addEventListener('load', inject);
+
+function render() {
+  document.querySelectorAll('[data-opt]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.opt === opt)));
+  document.querySelectorAll('[data-page]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.page === page)));
+  document.querySelector('[data-desc]').innerHTML = `<b>${OPTIONS[opt].title}</b> · ${OPTIONS[opt].text}`;
+  history.replaceState(null, '', `?opt=${opt}&page=${encodeURIComponent(page)}`);
+  const want = new URL(`../${page}`, location.href).href;
+  if (frame.src !== want) frame.src = want; else inject();
+}
+document.querySelectorAll('[data-opt]').forEach((b) => b.addEventListener('click', () => { opt = b.dataset.opt; render(); }));
+document.querySelectorAll('[data-page]').forEach((b) => b.addEventListener('click', () => { page = b.dataset.page; render(); }));
+render();
+
+document.querySelector('[data-copy]').addEventListener('click', async () => {
+  const text = `Title size option: ${OPTIONS[opt].title}`;
+  try { await navigator.clipboard.writeText(text); } catch (e) { prompt('Copy this:', text); }
+  document.querySelector('[data-ok]').hidden = false;
+});
+</script>
+</body>
+</html>

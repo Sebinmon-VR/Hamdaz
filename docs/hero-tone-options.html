@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hero tone options</title>
+<meta name="robots" content="noindex">
+<style>
+:root { --bg:#f5f7fa; --ink:#0c2a46; --mute:#5b6b7c; --line:#dde3ea; --card:#fff; --accent:#30c1f8; --pink:#fb4994; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#071a2d; --ink:#e8eef5; --mute:#93a4b6; --line:#1c3753; --card:#0c2440; } }
+:root[data-theme="dark"] { --bg:#071a2d; --ink:#e8eef5; --mute:#93a4b6; --line:#1c3753; --card:#0c2440; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.top { position:sticky; top:0; z-index:5; background:var(--bg); border-bottom:1px solid var(--line); }
+.top .in { max-width:1440px; margin:0 auto; padding:12px 16px; display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; }
+.top h1 { font-size:17px; margin:0 12px 0 0; }
+.tabs { display:flex; flex-wrap:wrap; gap:6px; margin-right:auto; }
+.tabs button { font:inherit; font-size:14px; padding:8px 14px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer; }
+.tabs button[aria-pressed="true"] { background:var(--ink); color:var(--bg); border-color:var(--ink); }
+.top a, .top .pick { font-size:14px; color:var(--ink); }
+.pick { font:inherit; padding:8px 14px; border-radius:999px; border:1px solid var(--accent); background:transparent; cursor:pointer; }
+main { max-width:1440px; margin:0 auto; padding:16px 16px 48px; }
+.desc { display:grid; gap:4px; margin:4px 0 14px; max-width:900px; }
+.desc b { font-size:16px; }
+.desc span { color:var(--mute); }
+.frame { position:relative; width:100%; aspect-ratio:16/9; max-height:calc(100vh - 190px); min-height:420px; border-radius:12px; overflow:hidden; border:1px solid var(--line); background:#061423; }
+.frame iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+.note { color:var(--mute); font-size:13px; margin-top:10px; }
+.ok { color:var(--accent); font-size:14px; }
+body.full .top, body.full .desc, body.full .note { display:none; }
+body.full main { max-width:none; padding:0; }
+body.full .frame { aspect-ratio:auto; height:100vh; max-height:none; border:0; border-radius:0; }
+</style>
+</head>
+<body>
+<div class="top"><div class="in">
+  <h1>Home hero: tone</h1>
+  <div class="tabs" role="group" aria-label="Option">
+    <button type="button" data-opt="now">Now</button>
+    <button type="button" data-opt="A">A · Dark, calmer</button>
+    <button type="button" data-opt="B">B · White, logo colours</button>
+    <button type="button" data-opt="C">C · White, softer</button>
+  </div>
+  <a href="#" data-full target="_blank" rel="noopener">Open full screen ↗</a>
+  <button type="button" class="pick" data-copy>Copy my pick</button>
+  <span class="ok" data-ok hidden>Copied</span>
+</div></div>
+<main>
+  <div class="desc"><b data-title></b><span data-text></span></div>
+  <div class="frame"><iframe data-frame title="Home page preview"></iframe></div>
+  <p class="note">These are the real home page and the real 3D circuit. Each option changes only colours and type sizes, so try the arrows on the right of the hero to see the frames too. Open the page through the dev server (http://localhost:8080/docs/hero-tone-options.html), not as a file.</p>
+</main>
+<script>
+// shared by A, B and C: smaller type, and the circuit fades out behind the words so they read cleanly
+const CALM = `
+.hero--glass .display--hero { font-size: clamp(38px, 3.9vw, 68px) !important; }
+.hf-title { font-size: clamp(30px, 3vw, 52px) !important; }
+.hero--glass .hero-sub { font-size: clamp(15px, 1.05vw, 17px) !important; }
+.hero--glass .hero-a { gap: 18px !important; }
+.page-home .stage canvas { -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,.14) 0%, rgba(0,0,0,.22) 32%, #000 60%); mask-image: linear-gradient(90deg, rgba(0,0,0,.14) 0%, rgba(0,0,0,.22) 32%, #000 60%); }`;
+
+// B and C: a white hero. The circuit's glow is inverted and its hues turned back, so the light lines on navy
+// become logo-blue and pink lines on white; the words, buttons, rail and header turn navy.
+const WHITE = (paper, shade) => `
+html, body { background: ${paper} !important; }
+.page-home .stage canvas { filter: invert(1) hue-rotate(180deg) saturate(1.5); }
+.hero { --fg: #0b1b2b; --fg-2: #4a5663; --bg: #ffffff; --line-2: rgba(11,27,43,.22); --accent: #0aa3df; color: #0b1b2b; }
+.hero--glass .hero-shade { background: ${shade} !important; }
+.hero .display--hero .line:last-child { color: #0aa3df; }
+.hero-eyebrow { color: #e0397f !important; }
+.hero-trust { border-top-color: rgba(11,27,43,.14) !important; color: #4a5663 !important; }
+.hero-trust li + li::before { background: #fb4994 !important; }
+.hero .pill { background: #0b1b2b; color: #fff; }
+.hero .pill:hover { background: #0aa3df; }
+.hero .pill--ghost { background: transparent; color: #0b1b2b; box-shadow: inset 0 0 0 1px rgba(11,27,43,.28); }
+.hero-rail-item i { background: rgba(11,27,43,.25) !important; }
+.hero-rail-step, .hero-rail-play { border-color: rgba(11,27,43,.28) !important; color: #0b1b2b !important; }
+.hero-rail-step:hover, .hero-rail-play:hover { background: rgba(11,27,43,.06) !important; border-color: #0b1b2b !important; }
+.hf-tags li { color: #0b1b2b !important; border-color: rgba(11,27,43,.2) !important; background: rgba(255,255,255,.6) !important; }
+.hf-go { border-bottom-color: rgba(11,27,43,.28) !important; }
+.header:not(.is-light) .nav a { color: #4a5663; }
+.header:not(.is-light) .nav a:hover, .header:not(.is-light) .nav a[aria-current="page"] { color: #0b1b2b; }
+.header:not(.is-light) .nav a::after { background: #0aa3df; }
+.header:not(.is-light) .nav-caret { color: #4a5663; }
+.header:not(.is-light) .brand span { color: #4a5663; }
+.header:not(.is-light) .pill { background: #0b1b2b; color: #fff; }
+.header.is-scrolled:not(.is-light) { background: rgba(255,255,255,.82); box-shadow: 0 1px 0 rgba(11,27,43,.1); }
+.header:not(.is-light) .menu-btn { color: #0b1b2b; box-shadow: inset 0 0 0 1px rgba(11,27,43,.2); }
+.header:not(.is-light) .menu-btn-lines { background: #0b1b2b; }
+.header:not(.is-light) .menu-btn-lines i { background: #fff; }`;
+
+const OPTIONS = {
+  now: { title: 'Now', text: 'The hero as it is today, for comparison.', css: '' },
+  A: {
+    title: 'A · Dark, calmer',
+    text: 'Same navy and glowing circuit, but the headline is about 25% smaller and the circuit fades out behind the words, so the text sits on clean navy and the board stays on the right.',
+    css: CALM + `
+.hero--glass .hero-shade { background: linear-gradient(90deg, rgba(6,20,35,.94) 0%, rgba(6,20,35,.8) 30%, rgba(6,20,35,.2) 54%, rgba(6,20,35,0) 64%), linear-gradient(0deg, rgba(6,20,35,.7) 0%, rgba(6,20,35,0) 30%), linear-gradient(180deg, rgba(6,20,35,.65) 0%, rgba(6,20,35,0) 22%) !important; }`,
+  },
+  B: {
+    title: 'B · White, logo colours',
+    text: 'A white hero. The same circuit, drawn in the logo blue and pink on white, with navy words and the second line in logo blue. Smaller type, and the board fades out behind the words.',
+    css: CALM + WHITE('#f7f9fc', 'linear-gradient(90deg, rgba(247,249,252,.94) 0%, rgba(247,249,252,.75) 32%, rgba(247,249,252,0) 58%), linear-gradient(0deg, rgba(247,249,252,.7) 0%, rgba(247,249,252,0) 26%)'),
+  },
+  C: {
+    title: 'C · White, softer',
+    text: 'Like B, but quieter: the circuit is lighter, and a faint wash of the logo blue and pink sits behind it. This is the calmest of the three.',
+    css: CALM + WHITE('#ffffff', 'radial-gradient(60% 70% at 82% 30%, rgba(48,193,248,.10), transparent 70%), radial-gradient(50% 60% at 70% 95%, rgba(251,73,148,.08), transparent 70%), linear-gradient(90deg, rgba(255,255,255,.96) 0%, rgba(255,255,255,.8) 34%, rgba(255,255,255,.18) 60%, rgba(255,255,255,.1) 100%), linear-gradient(0deg, rgba(255,255,255,.75) 0%, rgba(255,255,255,0) 26%)') + `
+.page-home .stage canvas { opacity: .7; }`,
+  },
+};
+
+const params = new URLSearchParams(location.search);
+const frame = document.querySelector('[data-frame]');
+let current = params.get('opt') in OPTIONS ? params.get('opt') : 'A';
+if (params.has('full')) document.body.classList.add('full');
+
+function inject() {
+  try {
+    const doc = frame.contentDocument;
+    let s = doc.getElementById('hero-option');
+    if (!s) { s = doc.createElement('style'); s.id = 'hero-option'; doc.head.append(s); }
+    s.textContent = OPTIONS[current].css;
+  } catch (e) { /* opened as a file: the frame can't be styled */ }
+}
+frame.addEventListener('load', inject);
+
+function show(opt) {
+  current = opt;
+  document.querySelectorAll('[data-opt]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.opt === opt)));
+  document.querySelector('[data-title]').textContent = OPTIONS[opt].title;
+  document.querySelector('[data-text]').textContent = OPTIONS[opt].text;
+  document.querySelector('[data-full]').href = `?opt=${opt}&full=1`;
+  history.replaceState(null, '', `?opt=${opt}${params.has('full') ? '&full=1' : ''}`);
+  if (!frame.src) frame.src = '../index.html';
+  else inject();
+}
+document.querySelectorAll('[data-opt]').forEach((b) => b.addEventListener('click', () => show(b.dataset.opt)));
+show(current);
+
+document.querySelector('[data-copy]').addEventListener('click', async () => {
+  const text = `Hero tone option: ${OPTIONS[current].title}`;
+  try { await navigator.clipboard.writeText(text); } catch (e) { prompt('Copy this:', text); }
+  document.querySelector('[data-ok]').hidden = false;
+});
+</script>
+</body>
+</html>

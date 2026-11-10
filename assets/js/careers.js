@@ -35,6 +35,13 @@
   // a posting answer as a line of the advert (a checkbox or a multi-select may reach here)
   const asText = (v) => (v === true ? 'Yes' : v === false ? 'No' : Array.isArray(v) ? v.map(asText).join(', ') : isoDate(v) ? fmtDate(v) : String(v));
   const metaOf = (j) => [j.department, j.location, cap(j.employment_type)].filter(Boolean).join(' · ');
+  // the role's LinkedIn job post, when HR saved one in the ERP (linkedin_url); only a linkedin.com https link is used
+  const linkedinOf = (j) => {
+    try {
+      const u = new URL(j.linkedin_url);
+      return u.protocol === 'https:' && /(^|\.)linkedin\.com$/.test(u.hostname) ? u.href : null;
+    } catch (e) { return null; }
+  };
   // the page grew or shrank: let the scroll animations measure again
   const refresh = () => requestAnimationFrame(() => window.ScrollTrigger && window.ScrollTrigger.refresh());
 
@@ -74,7 +81,7 @@
       $('a', li).href = `job.html?id=${encodeURIComponent(token)}`;
       $('.ix-num', li).textContent = pad2(i + 1);
       $('.ix-title', li).textContent = job.title;
-      $('.job-meta', li).textContent = [metaOf(job), job.closes_on && `Closes ${fmtDate(job.closes_on)}`].filter(Boolean).join(' · ');
+      $('.job-meta', li).textContent = [metaOf(job), job.closes_on && `Closes ${fmtDate(job.closes_on)}`, linkedinOf(job) && 'Also on LinkedIn'].filter(Boolean).join(' · ');
       $('.ix-text', li).textContent = job.summary || '';
       return li;
     };
@@ -199,6 +206,12 @@
     function renderApply(v, tok) {
       $('[data-apply-role]').textContent = v.title;
       $('[data-apply-meta]').textContent = metaOf(v);
+      const li = linkedinOf(v);
+      if (li) {
+        const p = $('[data-apply-linkedin]');
+        $('a', p).href = li;
+        p.hidden = false;
+      }
       applySec.hidden = false;
 
       if (!v.accepting) {

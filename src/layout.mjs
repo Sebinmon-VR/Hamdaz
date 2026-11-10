@@ -10,6 +10,8 @@ export const NAV = [
   { href: 'services.html', label: 'What We Do', key: 'services' },
   { href: 'solutions.html', label: 'How We Do', key: 'solutions' },
   { href: 'partners.html', label: 'Partners & Clients', key: 'clients' },
+  // bar: the top bar's label; on small desktops it shortens to "QHSE" so six links fit beside the button
+  { href: 'quality.html', label: 'Quality & QHSE', bar: '<span class="nav-long">Quality &amp;&nbsp;</span>QHSE', key: 'quality' },
   { href: 'careers.html', label: 'Careers', key: 'careers' },
   { href: 'contact.html', label: 'Contact Us', key: 'contact' },
 ];
@@ -72,7 +74,7 @@ function header(active) {
   const links = NAV.filter((n) => n.key !== 'home' && n.key !== 'contact')
     .map((n) => (n.key === 'services'
       ? `<li class="nav-mega"><a href="${n.href}"${active === n.key ? ' aria-current="page"' : ''}>${n.label}</a><button class="nav-caret" type="button" aria-expanded="false" aria-controls="mega" aria-label="Show all services" data-mega-btn>${icon('chevron-down')}</button></li>`
-      : `<li><a href="${n.href}"${active === n.key ? ' aria-current="page"' : ''}>${n.label}</a></li>`))
+      : `<li><a href="${n.href}"${active === n.key ? ' aria-current="page"' : ''}>${n.bar || n.label}</a></li>`))
     .join('');
   return `<a class="skip" href="#main">Skip to content</a>
 <header class="header" data-header>
@@ -118,7 +120,7 @@ function footer() {
       </div>
       <nav class="footer-col" aria-label="Footer">
         <h2>Company</h2>
-        <ul>${NAV.map((n) => `<li><a href="${n.href}">${n.label}</a></li>`).join('')}<li><a href="projects.html">Projects</a></li><li><a href="insights.html">Insights</a></li></ul>
+        <ul>${NAV.map((n) => `<li><a href="${n.href}">${n.label}</a></li>`).join('')}<li><a href="projects.html">Projects</a></li><li><a href="certifications.html">Certifications</a></li><li><a href="insights.html">Insights</a></li></ul>
       </nav>
       <div class="footer-col">
         <h2>Services</h2>

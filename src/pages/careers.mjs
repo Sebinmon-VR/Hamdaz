@@ -4,7 +4,7 @@
 // it appears here with no rebuild, with the application form HR set up for it, and applications go
 // straight back into the ERP. The ERP's share link for a role (/careers/apply/<token>) is redirected to
 // job.html by .htaccess.
-import { careers, contact } from '../data.mjs';
+import { careers, contact, linkedinJobs } from '../data.mjs';
 import { icon } from '../icons.mjs';
 import { pageHero, content, head, bar, btn, tlink } from '../components.mjs';
 import { ldScript, orgNode, breadcrumbNode, crumbTrail } from '../blocks.mjs';
@@ -29,6 +29,7 @@ const roles = `<section class="sec">
         <noscript><p class="jobs-msg">The open roles need JavaScript to load. You can also email your CV to <a href="${cvMail}">${contact.email}</a>.</p></noscript>
       </div>
     </div>
+    <p class="jobs-li">${icon('linkedin')}<span>We also post our openings on LinkedIn.</span>${tlink('See our jobs on LinkedIn', linkedinJobs, 'target="_blank" rel="noopener"')}${tlink('Follow Hamdaz', contact.linkedin, 'target="_blank" rel="noopener"')}</p>
     <template data-job-tpl><li><a class="ix job-row" href="job.html"><span class="ix-num"></span><span class="job-head"><span class="ix-title"></span><span class="job-meta"></span></span><span class="ix-text"></span><span class="ix-go" aria-hidden="true">${icon('arrow-up-right')}</span></a></li></template>
   </div>
 </section>`;
@@ -81,6 +82,7 @@ const apply = `<section class="sec form-sec apply-sec" data-apply-sec hidden>
       <div class="form-side apply-side">
         <p class="apply-for"><small>Applying for</small><strong data-apply-role></strong><span data-apply-meta></span></p>
         <p class="hint">Files: PDF, Word, images or text, up to 15 MB each.</p>
+        <p class="hint" data-apply-linkedin hidden>Prefer LinkedIn? <a href="${linkedinJobs}" target="_blank" rel="noopener">Apply on LinkedIn</a> instead.</p>
         <p class="hint">Questions? Write to <a href="mailto:${contact.email}">${contact.email}</a>.</p>
       </div>
       <div class="apply-main">

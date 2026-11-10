@@ -1,7 +1,7 @@
 import { site, contact, heroSlides, services, industries, svcUrl } from '../data.mjs';
 import { ldScript, orgNode, officeNodes, websiteNode } from '../blocks.mjs';
 import { icon } from '../icons.mjs';
-import { earth, content, intro, servicesIndex, productsGrid, serviceFinder, techStrip, contactSection, clientsPartners } from '../components.mjs';
+import { earth, content, intro, servicesIndex, productsGrid, serviceFinder, techStrip, contactSection, clientsPartners, certsRow, linkedinFeed } from '../components.mjs';
 
 // The hero's layout: 'glass' (frames: the headline, then one frame per service area with its panel, played
 // by stage.js with the 3D ELEMENT below), 'scan' (the scan horizon, assets/js/scan.js) or 'chip' (the AI chip,
@@ -93,6 +93,15 @@ const galaxy = `<section class="galaxy-sec" data-galaxy data-dark>
   </div>
 </section>`;
 
+// The last sheet: the certificates, the latest LinkedIn posts (left out while none are listed in data.mjs) and
+// contact, numbered on from section 05
+let n = 5;
+const num = () => String(++n).padStart(2, '0');
+const certs = certsRow({ idx: num() });
+const posts = linkedinFeed({ idx: num() });
+if (!posts) n--;
+const last = [certs, posts, contactSection({ idx: num() })].filter(Boolean);
+
 // structured data: the company, its two offices and the website
 const jsonld = ldScript(orgNode(), officeNodes(), websiteNode());
 
@@ -102,8 +111,9 @@ export default {
   active: 'home',
   stage: true,
   bodyClass: 'page-home',
+  scripts: ['assets/js/news.js'],
   fullTitle: 'Hamdaz Technologies | IT, AI, Cybersecurity & ELV in Abu Dhabi',
   description: 'Abu Dhabi system integrator for AI, cloud, cybersecurity, MCC-certified CCTV, audio visual, networking and software. ISO certified, registered ADNOC supplier.',
   jsonld,
-  body: [stage, hero, content(intro({ art: true }), clientsPartners({ idx: '02' }), servicesIndex({ idx: '03' }), productsGrid({ idx: '04' }), serviceFinder({ idx: '05' }), techStrip()), galaxy, content(contactSection({ idx: '06' }))].join('\n'),
+  body: [stage, hero, content(intro({ art: true }), clientsPartners({ idx: '02' }), servicesIndex({ idx: '03' }), productsGrid({ idx: '04' }), serviceFinder({ idx: '05' }), techStrip()), galaxy, content(...last)].join('\n'),
 };
