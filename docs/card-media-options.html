@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Service card 3D</title>
+<meta name="robots" content="noindex">
+<!--
+  The home page "Our managed services" cards (section 03) as a live, real-3D scene: solid objects with physical
+  materials (glossy white ceramic, dark brushed metal, chrome, refractive glass, glowing LEDs), lit by a studio
+  environment with a key light casting soft shadows and a cyan rim light, standing on a reflective floor that fades
+  into the dark. Fine dust behind, soft particles in front.
+  Each object answers the pointer in its own way:
+    generative AI  the glass sparkle turns to face the pointer and its core brightens; the small sparkles drift to it
+    analytics      the bar under the pointer rises and glows; the chrome trend line follows
+    automation     the robot arm reaches for the pointer; click and it grips
+    data centre    the server under the pointer slides out and its lights race
+    cloud          the puffs near the pointer swell and the upload speeds up
+    partners       the platform nearest the pointer comes forward and its link lights up
+  Click any object (except the arm) and it breaks into particles and builds again; switching service breaks it
+  into particles that fly and build the next one, as the hero does. The camera moves with the mouse and the scroll.
+  Open through the dev server: npm run dev → http://localhost:8080/docs/card-media-options.html.
+  Nothing here changes the site.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../assets/css/style.css">
+<style>
+.bar { position: sticky; top: 0; z-index: 50; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 14px var(--pad); background: rgba(6, 20, 35, 0.92); backdrop-filter: blur(10px); color: var(--fg); }
+.bar b { font-family: var(--display); font-weight: 600; letter-spacing: -0.01em; margin-right: auto; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.tabs button { font: 500 13px/1 var(--sans); color: var(--fg); background: rgba(14, 38, 57, 0.8); border: 1px solid var(--line); border-radius: 99px; padding: 9px 14px; }
+.tabs button[aria-selected="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.note { max-width: 62rem; margin: 0 auto; padding: 28px var(--pad) 0; color: var(--ink-2); font-size: 15px; }
+.note strong { color: var(--ink); font-weight: 600; }
+.note p + p { margin-top: 6px; }
+.content { margin: 0; border-radius: 0; min-height: 100vh; }
+.spacer { height: 40vh; }
+
+.svx-media { position: relative; overflow: hidden; background: #050f1a; }
+body[data-opt="P"] .svx-media .tone { display: none; }
+.svx-media .tone { height: 100%; border-radius: 0; }
+/* one canvas over every panel's picture area (the panels stack in one place), so the swarm flies between them */
+.pstage { position: absolute; left: 1px; right: 1px; top: 1px; aspect-ratio: 16 / 8; z-index: 2; overflow: hidden; border-radius: 15px 15px 0 0; cursor: pointer; background: #050f1a; touch-action: pan-y; }
+body[data-opt="cur"] .pstage { display: none; }
+.pstage canvas { width: 100%; height: 100%; }
+.chip { position: absolute; left: 20px; bottom: 20px; display: flex; align-items: center; gap: 12px; padding: 11px 16px 11px 13px; border-radius: 14px; pointer-events: none;
+  color: #eef6fb; background: rgba(8, 24, 40, 0.42); border: 1px solid rgba(238, 246, 251, 0.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  transition: opacity 0.35s var(--ease), translate 0.5s var(--ease); }
+.chip.is-out { opacity: 0; translate: 0 8px; }
+.chip .n { font: 500 11px/1 var(--mono); letter-spacing: 0.08em; color: #30c1f8; }
+.chip b { font: 500 14.5px/1.2 var(--display); letter-spacing: -0.01em; }
+.chip i { width: 7px; height: 7px; border-radius: 50%; background: #30c1f8; box-shadow: 0 0 0 4px rgba(48, 193, 248, 0.18); animation: live 2.4s ease-in-out infinite; }
+.hint { position: absolute; right: 18px; top: 16px; font: 500 10.5px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: rgba(238, 246, 251, 0.5); pointer-events: none; transition: opacity 0.4s; }
+.hint.is-out { opacity: 0; }
+@keyframes live { 50% { box-shadow: 0 0 0 7px rgba(48, 193, 248, 0); } }
+@media (prefers-reduced-motion: reduce) { .chip i { animation: none; } }
+</style>
+</head>
+<body data-opt="P">
+<div class="bar">
+  <b>Service card pictures</b>
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" data-tab="cur">Now</button>
+    <button type="button" role="tab" data-tab="P">Real 3D</button>
+  </div>
+</div>
+<div class="content" data-theme="light">
+  <div class="note" data-note></div>
+  <section class="sec svc-sec">
+    <div class="wrap">
+      <header class="sh">
+        <p class="sh-bar"><span class="sh-idx">03</span><span>What we do</span><span class="sh-meta">38 services</span></p>
+        <div class="sh-main">
+          <h2 class="sh-title">Our managed services</h2>
+          <div class="sh-side"><p>Hover a service on the left, then move the pointer over its picture: each object answers in its own way. Click it too.</p></div>
+        </div>
+      </header>
+      <div class="svx" data-svx><ol class="svx-list" data-list></ol><div class="svx-panels" data-panels></div></div>
+    </div>
+  </section>
+  <div class="spacer"></div>
+</div>
+
+<script type="module">
+import * as THREE from '../assets/vendor/three.module.min.js';
+
+const ARROW = '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
+const S = [
+  { short: 'Generative AI', hint: 'Point at what it creates', t: 'Generative AI', now: 'generative-ai', text: 'In the realm of Generative AI, our consultancy specializes in harnessing cutting-edge technologies to create intelligent and innovative solutions.',
+    inc: ['AI-driven Content Creation', 'Automated Design Generation', 'Chatbot Development', 'Deepfake Detection Services', 'Latest Technologies'] },
+  { short: 'Data & analytics', hint: 'Move across the bars', t: 'Data Analytics & Predictive Services', now: 'data-analytics-predictive-services', text: 'Our consultancy excels in Data Analytics and Predictive Services, providing insights for informed decision-making.',
+    inc: ['Data Warehousing and Integration', 'Data Visualization', 'Predictive Analytics Modeling', 'Big Data Processing', 'Latest Technologies'] },
+  { short: 'Automation', hint: 'Move over the workflow', t: 'Business Process Automation and Digital Transformation Services', now: 'business-process-automation-and-digital-transformation-services', text: 'Our consultancy focuses on driving business efficiency and innovation.',
+    inc: ['Business Process Mapping and Analysis', 'Change Management', 'Integration of Emerging Technologies', 'Continuous Improvement', 'Latest Technologies'] },
+  { short: 'Data centre', hint: 'Point at a server', t: 'Data Center/Infrastructure Services', now: 'data-center-infrastructure-services', text: 'Our consultancy excels in providing robust Data Center and Infrastructure Services, ensuring reliability and scalability.',
+    inc: ['Data Center Design and Optimization', 'Server Virtualization', 'IT Infrastructure Monitoring', 'Edge Computing Solutions', 'Latest Technologies'] },
+  { short: 'Cloud & migration', hint: 'Move over the cloud', t: 'Cloud Services & Migration', now: 'cloud-services-migration', text: 'Our consultancy excels in Cloud Services and Migration, ensuring seamless transitions and optimized cloud environments.',
+    inc: ['Cloud Strategy Consulting', 'Cloud Migration Services', 'Multi-Cloud Management', 'Serverless Architecture Implementation', 'Latest Technologies'] },
+  { short: 'Cloud partners', hint: 'Point at a platform', t: 'Partner Services – MSFT Azure, AWS, GCP, OCI', now: 'partner-services-msft-azure-aws-gcp-oci', text: 'Specializing in partner services, our consultancy ensures optimal utilization of cloud platforms.',
+    inc: ['Cloud Consultation and Adoption Planning', 'Migration and Integration Services', 'Cost Optimization', 'Managed Services for Cloud Platforms', 'Latest Technologies'] },
+];
+const NOTES = {
+  cur: '<p><strong>Now:</strong> the photos on the site today.</p>',
+  P: '<p><strong>Real 3D:</strong> solid objects with real materials (glossy white ceramic, dark brushed metal, chrome, refractive glass and glowing LEDs), lit like a studio product shot with soft shadows, a cyan rim light and reflections, on a glossy floor that fades into the dark.</p>'
+    + '<p><strong>Each one answers the pointer in its own way:</strong> the AI core turns to you and the piece it created that you point at (a chat reply, an image, a document) comes forward; the bar under the pointer rises and glows; documents ride the workflow line, turn into digital blocks at the processing station and speed up under the pointer; the server you point at slides out of the rack; the on-premises server sends its data up into the cloud, faster when you point at it; the platform you point at (Azure, AWS, Google Cloud, Oracle) comes forward and its link lights up. Click any object and it breaks into particles and builds again.</p>',
+};
+
+/* ---------------------------------------------------------------- the section */
+const list = document.querySelector('[data-list]'), panelsBox = document.querySelector('[data-panels]');
+list.innerHTML = S.map((s, i) => `<li><a class="svx-row${i ? '' : ' is-on'}" href="#" data-svx-row="${i}"><span class="svx-num">${String(i + 1).padStart(2, '0')}</span><span class="svx-name"><span class="svx-title">${s.t}</span><span class="svx-text">${s.text}</span></span><span class="svx-go" aria-hidden="true">${ARROW}</span></a></li>`).join('')
+  + `<li><a class="svx-row svx-row--more" href="#"><span class="svx-num">+32</span><span class="svx-name"><span class="svx-title">More services</span></span><span class="svx-go" aria-hidden="true">${ARROW}</span></a></li>`;
+panelsBox.innerHTML = S.map((s, i) => `<div class="svx-panel${i ? '' : ' is-on'}" data-svx-panel="${i}">
+    <div class="svx-media"><span class="tone"><img src="../assets/img/svc/${s.now}.webp" alt="" width="1000" height="667"></span></div>
+    <div class="svx-body"><p class="svx-p-title">${s.t}</p><p class="svx-p-text">${s.text}</p><p class="svx-p-label">What's included</p><ul class="svx-p-list">${s.inc.map((x) => `<li>${x}</li>`).join('')}</ul></div>
+  </div>`).join('') + `<div class="pstage" data-stage aria-hidden="true"><span class="hint" data-hint>${S[0].hint}</span><span class="chip" data-chip><i></i><span class="n" data-chip-n>01</span><b data-chip-t>Generative AI</b></span></div>`;
+
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const rows = [...document.querySelectorAll('[data-svx-row]')], panels = [...document.querySelectorAll('[data-svx-panel]')];
+const chip = document.querySelector('[data-chip]'), chipN = document.querySelector('[data-chip-n]'), chipT = document.querySelector('[data-chip-t]'), hint = document.querySelector('[data-hint]');
+let active = 0, chipTimer = 0;
+function setRow(i) {
+  i = +i; if (i === active) return; active = i;
+  rows.forEach((r) => r.classList.toggle('is-on', +r.dataset.svxRow === i)); panels.forEach((p) => p.classList.toggle('is-on', +p.dataset.svxPanel === i));
+  goTo(i);
+  chip.classList.add('is-out'); hint.classList.add('is-out'); clearTimeout(chipTimer);
+  chipTimer = setTimeout(() => { chipN.textContent = String(i + 1).padStart(2, '0'); chipT.textContent = S[i].short; hint.textContent = S[i].hint; chip.classList.remove('is-out'); hint.classList.remove('is-out'); }, 380);
+}
+rows.forEach((r) => { r.addEventListener('pointerenter', () => setRow(r.dataset.svxRow)); r.addEventListener('focus', () => setRow(r.dataset.svxRow)); r.addEventListener('click', (e) => e.preventDefault()); });
+document.querySelectorAll('.svx-row--more').forEach((a) => a.addEventListener('click', (e) => e.preventDefault()));
+const tabs = [...document.querySelectorAll('[data-tab]')], note = document.querySelector('[data-note]');
+const q = new URLSearchParams(location.search);
+const pick = (k) => { document.body.dataset.opt = k; tabs.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === k))); note.innerHTML = NOTES[k]; try { localStorage.setItem('hz-card-media-5', k); } catch (e) {} };
+tabs.forEach((b) => b.addEventListener('click', () => pick(b.dataset.tab)));
+let saved = q.get('opt'); try { saved = saved || localStorage.getItem('hz-card-media-5') || 'P'; } catch (e) {}
+pick(NOTES[saved] ? saved : 'P');
+
+/* ---------------------------------------------------------------- renderer, studio lighting, floor */
+const rng = (seed) => () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+const smooth = (x) => { x = Math.min(1, Math.max(0, x)); return x * x * (3 - 2 * x); };
+const ease = (a, b, k) => a + (b - a) * k;
+const stage = document.querySelector('[data-stage]');
+const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1));
+renderer.setClearColor(0x050f1a, 1);
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+stage.prepend(renderer.domElement);
+const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(32, 2, 0.1, 100);
+scene.fog = new THREE.Fog(0x050f1a, 7.5, 15);
+const U = { uTime: { value: 0 }, uPixel: { value: renderer.getPixelRatio() } };
+const LOOK = new THREE.Vector3(0.95, -0.12, 0), AIM = new THREE.Vector3(0.55, 0.02, 0);
+const CYAN = 0x30c1f8, PINK = 0xeb4b96, TEAL = 0x5fe0d4, FLOOR = -1.3, HS = 1.15;
+
+// a studio environment for reflections: a dark room with soft light panels (white overhead, cyan left, white right, pink low behind)
+{
+  const env = new THREE.Scene(), pm = new THREE.PMREMGenerator(renderer);
+  env.add(new THREE.Mesh(new THREE.BoxGeometry(12, 12, 12), new THREE.MeshBasicMaterial({ color: 0x0b141e, side: THREE.BackSide })));
+  const panel = (w, h, color, k, x, y, z) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(color).multiplyScalar(k), side: THREE.DoubleSide })); m.position.set(x, y, z); m.lookAt(0, 0, 0); env.add(m); };
+  panel(7, 2.4, 0xffffff, 5, 0, 5.5, 1.5); panel(2.2, 5, CYAN, 3, -5.5, 0.6, 0.5); panel(2.4, 4, 0xffffff, 2.2, 5.5, 1.2, 2.5); panel(5, 1.2, PINK, 1.4, 0, -0.6, -5.5); panel(3, 3, 0xffffff, 1.2, 0, 1, 5.5);
+  scene.environment = pm.fromScene(env, 0.035).texture;
+}
+const key = new THREE.DirectionalLight(0xffffff, 2.1); key.position.set(LOOK.x - 2.5, 4.5, 3.5); key.target.position.copy(LOOK); scene.add(key, key.target);
+key.castShadow = true; key.shadow.mapSize.set(1024, 1024); Object.assign(key.shadow.camera, { left: -3.5, right: 3.5, top: 3.5, bottom: -3.5, near: 0.5, far: 14 }); key.shadow.radius = 6; key.shadow.bias = -0.0005;
+const rim = new THREE.DirectionalLight(CYAN, 2.2); rim.position.set(LOOK.x + 3.5, 1.8, -3.5); rim.target.position.copy(LOOK); scene.add(rim, rim.target);
+const rim2 = new THREE.DirectionalLight(PINK, 0.7); rim2.position.set(LOOK.x - 4, 1, -3); rim2.target.position.copy(LOOK); scene.add(rim2, rim2.target);
+// the floor: glossy dark, fading into the dark with the fog; a ring of light under the object
+const floorY = FLOOR * HS;
+{ const f = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshStandardMaterial({ color: 0x0a1622, roughness: 0.32, metalness: 0.55 })); f.rotation.x = -Math.PI / 2; f.position.y = floorY; f.receiveShadow = true; scene.add(f);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(1.95, 0.008, 8, 160), new THREE.MeshBasicMaterial({ color: new THREE.Color(CYAN).multiplyScalar(0.55), toneMapped: false })); ring.rotation.x = Math.PI / 2; ring.position.set(LOOK.x, floorY + 0.005, 0); scene.add(ring); }
+const glowTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const x = c.getContext('2d'), gr = x.createRadialGradient(64, 64, 0, 64, 64, 64); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.3, 'rgba(255,255,255,0.28)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = gr; x.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })();
+const sprite = (color, op, sx, sy, x, y, z) => { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color, transparent: true, opacity: op, blending: THREE.AdditiveBlending, depthWrite: false, fog: false })); s.scale.set(sx, sy, 1); s.position.set(x, y, z); scene.add(s); return s; };
+sprite(0x0e3a58, 0.85, 16, 9, LOOK.x, 0.6, -7);
+const halo = sprite(CYAN, 0.12, 5.5, 3.6, LOOK.x, 0.2, -2);
+// fine dust far behind
+{
+  const n = 700, r = rng(31), pos = new Float32Array(n * 3), seed = new Float32Array(n);
+  for (let i = 0; i < n; i++) { pos.set([(r() - 0.5) * 20, (r() - 0.15) * 7, -4 - r() * 8], i * 3); seed[i] = r(); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
+  scene.add(new THREE.Points(g, new THREE.ShaderMaterial({ uniforms: U, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    vertexShader: 'attribute float aSeed; uniform float uTime, uPixel; varying float vA; void main() { vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * mv; gl_PointSize = (1.2 + aSeed * 1.6) * uPixel; vA = (0.12 + 0.3 * aSeed) * (0.5 + 0.5 * sin(uTime * (0.5 + aSeed) + aSeed * 40.0)); }',
+    fragmentShader: 'varying float vA; void main() { float d = length(gl_PointCoord - 0.5); gl_FragColor = vec4(0.6, 0.88, 1.0, smoothstep(0.5, 0.0, d) * vA); }' })));
+}
+
+/* ---------------------------------------------------------------- materials and shapes */
+const M = {
+  white: () => new THREE.MeshPhysicalMaterial({ color: 0xeef2f6, roughness: 0.3, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.12, emissive: CYAN, emissiveIntensity: 0 }),
+  dark: () => new THREE.MeshPhysicalMaterial({ color: 0x1c2733, roughness: 0.34, metalness: 0.75, clearcoat: 0.4, clearcoatRoughness: 0.3 }),
+  graphite: () => new THREE.MeshStandardMaterial({ color: 0x10171f, roughness: 0.55, metalness: 0.6 }),
+  chrome: () => new THREE.MeshStandardMaterial({ color: 0xe6ecf2, roughness: 0.1, metalness: 1 }),
+  rubber: () => new THREE.MeshStandardMaterial({ color: 0x151b22, roughness: 0.8, metalness: 0.1 }),
+  glow: (color = CYAN, k = 2.2) => new THREE.MeshStandardMaterial({ color: 0x061018, emissive: color, emissiveIntensity: k, roughness: 0.3 }),
+  glass: () => new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.06, metalness: 0, transmission: 1, thickness: 0.6, ior: 1.5, iridescence: 0.8, iridescenceIOR: 1.3, attenuationColor: new THREE.Color(0x7fd6ff), attenuationDistance: 1.4, clearcoat: 1, emissive: 0x0b3550, emissiveIntensity: 0.25 }),
+};
+const mesh = (geo, mat, { cast = true, sample = true } = {}) => { const m = new THREE.Mesh(geo, mat); m.castShadow = cast; m.receiveShadow = true; m.userData.noSample = !sample; return m; };
+const put = (o, x = 0, y = 0, z = 0) => { o.position.set(x, y, z); return o; };
+// a box with rounded edges (a rounded rectangle extruded with a round bevel)
+function rbox(w, h, d, r = 0.05) {
+  r = Math.min(r, w / 2 - 0.002, h / 2 - 0.002, d / 2 - 0.002);
+  const W = w / 2 - r, H = h / 2 - r, qq = Math.min(r, W, H) * 0.9, s = new THREE.Shape();
+  s.moveTo(-W + qq, -H); s.lineTo(W - qq, -H); s.quadraticCurveTo(W, -H, W, -H + qq); s.lineTo(W, H - qq); s.quadraticCurveTo(W, H, W - qq, H); s.lineTo(-W + qq, H); s.quadraticCurveTo(-W, H, -W, H - qq); s.lineTo(-W, -H + qq); s.quadraticCurveTo(-W, -H, -W + qq, -H);
+  const dd = Math.max(0.002, d - 2 * r), g = new THREE.ExtrudeGeometry(s, { depth: dd, bevelEnabled: true, bevelThickness: r, bevelSize: r, bevelSegments: 4, curveSegments: 6 });
+  g.translate(0, 0, -dd / 2); g.computeVertexNormals(); return g;
+}
+const cyl = (r1, r2, h, seg = 48) => new THREE.CylinderGeometry(r1, r2, h, seg, 1);
+const ledRing = (r, tube = 0.012, color = CYAN, k = 3) => mesh(new THREE.TorusGeometry(r, tube, 8, 96), M.glow(color, k), { cast: false });
+const starShape = () => { const k = 0.13, sh = new THREE.Shape(); sh.moveTo(0, 1); sh.quadraticCurveTo(k, k, 1, 0); sh.quadraticCurveTo(k, -k, 0, -1); sh.quadraticCurveTo(-k, -k, -1, 0); sh.quadraticCurveTo(-k, k, 0, 1); return sh; };
+const gemStar = (depth = 0.3) => new THREE.ExtrudeGeometry(starShape(), { depth, bevelEnabled: true, bevelThickness: 0.14, bevelSize: 0.07, bevelSegments: 4, curveSegments: 28 }).translate(0, 0, -depth / 2);
+// a cable with lights running along it (pulses: small glowing beads)
+function lightCable(curve, { r = 0.014, color = TEAL, beads = 2, speed = 0.35, k = 1.2 } = {}) {
+  const g = new THREE.Group(), tube = mesh(new THREE.TubeGeometry(curve, 64, r, 8), M.glow(color, k), { cast: false }); g.add(tube);
+  const bm = M.glow(0xffffff, 4); const bs = Array.from({ length: beads }, () => { const b = mesh(new THREE.SphereGeometry(r * 2.4, 12, 8), bm, { cast: false, sample: false }); g.add(b); return b; });
+  const seed = Math.random();
+  g.userData = { tube, speed, tick: (t) => bs.forEach((b, i) => { const u = (t * g.userData.speed + seed + i / beads) % 1; curve.getPoint(u, b.position); b.scale.setScalar(Math.sin(Math.PI * u) * 1.1 + 0.1); }) };
+  return g;
+}
+
+/* ---------------------------------------------------------------- the objects */
+// tick(t, P, dt): P = { x, y } the pointer on the object's plane (holder space), P.on 0..1 while over the picture
+const holder = new THREE.Group(); holder.position.set(LOOK.x, 0, 0); holder.scale.setScalar(HS); scene.add(holder);
+const BUILD = [
+  // generative AI: a glass AI core that creates content: a chat reply, an image and a document float round it,
+  // each fed by a beam of light from the core; the core turns to the pointer and the piece nearest it comes forward
+  () => { const root = new THREE.Group();
+    root.add(put(mesh(cyl(0.56, 0.64, 0.14), M.white()), 0, FLOOR + 0.07, 0), put(mesh(cyl(0.46, 0.5, 0.05), M.dark()), 0, FLOOR + 0.165, 0));
+    const pr = put(ledRing(0.47, 0.012), 0, FLOOR + 0.195, 0); pr.rotation.x = Math.PI / 2; root.add(pr);
+    const star = put(new THREE.Group(), 0, 0.0, 0); star.scale.setScalar(0.74); root.add(star);
+    star.add(mesh(gemStar(), M.glass()));
+    const coreM = M.glow(CYAN, 3); const core = mesh(new THREE.SphereGeometry(0.13, 32, 16), coreM, { cast: false }); star.add(core);
+    const light = new THREE.PointLight(CYAN, 5, 4, 2); star.add(light);
+    // the chat reply: a bubble with three typing dots
+    const chat = new THREE.Group(); chat.add(mesh(rbox(0.7, 0.44, 0.09, 0.14), M.white()));
+    { const tl = new THREE.Shape(); tl.moveTo(-0.22, -0.18); tl.lineTo(-0.06, -0.18); tl.lineTo(-0.3, -0.36); tl.closePath(); chat.add(mesh(new THREE.ExtrudeGeometry(tl, { depth: 0.06, bevelEnabled: false }).translate(0, 0, -0.03), M.white())); }
+    const dots = [-0.15, 0, 0.15].map((x) => { const m = M.glow(CYAN, 2.5); chat.add(put(mesh(new THREE.SphereGeometry(0.045, 20, 12), m, { cast: false }), x, 0, 0.05)); return m; });
+    // the image: a card with a picture of hills and a sun
+    const img = new THREE.Group(); img.add(mesh(rbox(0.66, 0.5, 0.07, 0.06), M.white()));
+    img.add(put(mesh(new THREE.PlaneGeometry(0.56, 0.4), new THREE.MeshStandardMaterial({ color: 0x0d2132, roughness: 0.5 }), { cast: false }), 0, 0, 0.037));
+    { const hill = (w, h, x, col, k) => { const s = new THREE.Shape(); s.moveTo(-w / 2, 0); s.lineTo(w / 2, 0); s.lineTo(0, h); s.closePath(); img.add(put(mesh(new THREE.ExtrudeGeometry(s, { depth: 0.012, bevelEnabled: false }), M.glow(col, k), { cast: false }), x, -0.19, 0.04)); };
+      hill(0.36, 0.26, -0.08, CYAN, 1.8); hill(0.3, 0.18, 0.12, TEAL, 1.4); img.add(put(mesh(cyl(0.05, 0.05, 0.012, 32).rotateX(Math.PI / 2), M.glow(PINK, 2.4), { cast: false }), 0.16, 0.1, 0.045)); }
+    // the document: a page with a heading and lines of text
+    const doc = new THREE.Group(); doc.add(mesh(rbox(0.48, 0.62, 0.06, 0.05), M.white()));
+    doc.add(put(mesh(new THREE.BoxGeometry(0.3, 0.05, 0.01), M.glow(CYAN, 2), { cast: false }), -0.03, 0.2, 0.035));
+    [0.08, -0.01, -0.1, -0.19].forEach((y, i) => doc.add(put(mesh(new THREE.BoxGeometry(i === 3 ? 0.2 : 0.34, 0.025, 0.008), new THREE.MeshStandardMaterial({ color: 0x8a96a3, roughness: 0.6 }), { cast: false }), i === 3 ? -0.07 : 0, y, 0.033)));
+    const pieces = [[chat, -1.3, 0.5, 0.1, 0.25], [img, 1.35, 0.6, -0.1, -0.3], [doc, 1.2, -0.62, 0.25, -0.2]].map(([g, x, y, z, ry]) => { put(g, x, y, z); g.rotation.y = ry; root.add(g);
+      const beam = lightCable(new THREE.QuadraticBezierCurve3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x * 0.45, y * 0.5 + 0.35, z), new THREE.Vector3(x * 0.82, y * 0.92, z)), { r: 0.008, color: CYAN, speed: 0.5, k: 1.3 }); root.add(beam);
+      return { g, beam, rest: new THREE.Vector3(x, y, z), ry }; });
+    root.userData.tick = (t, P, dt) => {
+      const near = P.on * Math.exp(-((P.x) ** 2 + (P.y) ** 2) / 1.4);
+      star.rotation.y = ease(star.rotation.y, ease(-0.45 + Math.sin(t * 0.45) * 0.5, P.x * 0.7, P.on), 0.08); star.rotation.x = ease(star.rotation.x, -P.y * 0.4 * P.on, 0.08);
+      star.position.y = Math.sin(t * 0.9) * 0.05; coreM.emissiveIntensity = 2.6 + 2.5 * near + Math.sin(t * 2.4) * 0.4; light.intensity = 5 + 6 * near;
+      dots.forEach((m, i) => { m.emissiveIntensity = 0.6 + 2.6 * Math.max(0, Math.sin(t * 5 - i * 0.9)); });
+      let best = -1, bd = 9; pieces.forEach(({ rest }, i) => { const d = Math.hypot(P.x - rest.x, P.y - rest.y); if (d < bd) { bd = d; best = i; } });
+      pieces.forEach(({ g, beam, rest, ry }, i) => { const n = i === best ? P.on * smooth(1 - (bd - 0.35) / 0.9) : 0;
+        g.position.set(rest.x, rest.y + Math.sin(t * 0.8 + i * 2) * 0.05, ease(g.position.z, rest.z + 0.45 * n, 0.12)); g.scale.setScalar(ease(g.scale.x, 1 + 0.18 * n, 0.12));
+        g.rotation.y = ease(g.rotation.y, ry * (1 - n), 0.1); g.rotation.x = ease(g.rotation.x, -0.15 * n, 0.1);
+        beam.userData.tube.material.emissiveIntensity = 1.3 + 2 * n; beam.userData.speed = 0.5 + n; beam.userData.tick(t); });
+    };
+    return root; },
+  // data & analytics: white ceramic bars on a dark metal plinth, the last a glowing glass bar; a chrome trend line with
+  // lit nodes; the bar under the pointer rises and glows, and the line follows
+  () => { const root = new THREE.Group(), H = [0.6, 1.0, 0.8, 1.35, 1.75], bars = [], nodes = [];
+    root.add(put(mesh(rbox(3.0, 0.14, 1.2, 0.05), M.dark()), 0, FLOOR + 0.07, 0));
+    const strip = put(mesh(new THREE.BoxGeometry(2.86, 0.012, 0.012), M.glow(CYAN, 2.5), { cast: false }), 0, FLOOR + 0.1, 0.6); root.add(strip);
+    H.forEach((h, i) => { const mat = i === 4 ? M.glow(CYAN, 1.2) : M.white(); const b = put(new THREE.Group(), -1 + i * 0.5, FLOOR + 0.14, 0); b.add(put(mesh(rbox(0.34, h, 0.34, 0.06), mat), 0, h / 2, 0)); b.userData.mat = mat; root.add(b); bars.push(b);
+      const n = put(mesh(new THREE.SphereGeometry(0.06, 24, 12), M.glow(i === 4 ? PINK : CYAN, 3), { cast: false }), -1 + i * 0.5, FLOOR + 0.14 + h + 0.28, 0.05); root.add(n); nodes.push(n); });
+    const curve = new THREE.CatmullRomCurve3(nodes.map((n) => n.position.clone()));
+    const lineMat = M.chrome(); let line = mesh(new THREE.TubeGeometry(curve, 80, 0.022, 10), lineMat); root.add(line); let lastKey = '';
+    root.userData.tick = (t, P) => {
+      bars.forEach((b, i) => { const x = -1 + i * 0.5, hl = P.on * Math.exp(-((P.x - x) ** 2) / 0.05);
+        b.scale.y = ease(b.scale.y, 1 + Math.sin(t * 1.1 + i) * 0.025 + hl * 0.45, 0.12);
+        if (i < 4) b.userData.mat.emissiveIntensity = hl * 0.55; else b.userData.mat.emissiveIntensity = 1.2 + hl * 1.5;
+        nodes[i].position.y = FLOOR + 0.14 + H[i] * b.scale.y + 0.28; nodes[i].scale.setScalar(ease(nodes[i].scale.x, 1 + hl * 0.9, 0.15)); curve.points[i].copy(nodes[i].position); });
+      const k = curve.points.map((p) => p.y.toFixed(3)).join();
+      if (k !== lastKey) { lastKey = k; line.geometry.dispose(); line.geometry = new THREE.TubeGeometry(curve, 80, 0.022, 10); }
+    };
+    return root; },
+  // business process automation & digital transformation: a workflow line: paper documents ride a track through three
+  // stations (intake, processing with a turning gear, approval with a check) and come out as glowing digital blocks;
+  // the pointer speeds the flow and lifts the station it is over
+  () => { const root = new THREE.Group(), Y = FLOOR + 0.14, TOP = Y + 0.95;
+    root.add(put(mesh(rbox(3.4, 0.14, 1.1, 0.05), M.dark()), 0, FLOOR + 0.07, 0));
+    root.add(put(mesh(rbox(3.2, 0.06, 0.36, 0.03), M.graphite()), 0, Y + 0.03, 0));
+    for (const z of [-0.19, 0.19]) root.add(put(mesh(new THREE.BoxGeometry(3.2, 0.012, 0.012), M.glow(CYAN, 2), { cast: false }), 0, Y + 0.05, z));
+    const gearShape = (R, n) => { const sh = new THREE.Shape(), d = R * 0.22, N = n * 4; for (let k = 0; k <= N; k++) { const a = (k / N) * Math.PI * 2, r = k % 4 === 1 || k % 4 === 2 ? R : R - d; k ? sh.lineTo(Math.cos(a) * r, Math.sin(a) * r) : sh.moveTo(Math.cos(a) * r, Math.sin(a) * r); } const h = new THREE.Path(); h.absarc(0, 0, R * 0.35, 0, Math.PI * 2, true); sh.holes.push(h); return sh; };
+    const icons = [
+      () => { const g = new THREE.Group(); g.add(mesh(rbox(0.22, 0.28, 0.04, 0.02), M.white())); [0.06, 0, -0.06].forEach((y) => g.add(put(mesh(new THREE.BoxGeometry(0.14, 0.018, 0.006), M.glow(CYAN, 1.6), { cast: false }), 0, y, 0.022))); return g; },
+      () => { const g = mesh(new THREE.ExtrudeGeometry(gearShape(0.17, 10), { depth: 0.05, bevelEnabled: true, bevelThickness: 0.012, bevelSize: 0.01, bevelSegments: 2 }).translate(0, 0, -0.025), M.chrome()); return g; },
+      () => { const s = new THREE.Shape(); s.moveTo(-0.13, 0.0); s.lineTo(-0.05, -0.09); s.lineTo(0.15, 0.12); s.lineTo(0.12, 0.15); s.lineTo(-0.05, -0.03); s.lineTo(-0.1, 0.03); s.closePath(); return mesh(new THREE.ExtrudeGeometry(s, { depth: 0.05, bevelEnabled: true, bevelThickness: 0.01, bevelSize: 0.008, bevelSegments: 2 }).translate(0, 0, -0.025), M.glow(TEAL, 2.4)); },
+    ];
+    const stations = [-1.1, 0, 1.1].map((x, i) => { const g = put(new THREE.Group(), x, 0, 0); root.add(g);
+      for (const sx of [-0.27, 0.27]) g.add(put(mesh(rbox(0.1, 0.9, 0.5, 0.04), M.white()), sx, Y + 0.45, 0));
+      g.add(put(mesh(rbox(0.66, 0.16, 0.54, 0.06), M.white()), 0, TOP, 0));
+      const ledM = M.glow(CYAN, 1.6); g.add(put(mesh(new THREE.BoxGeometry(0.44, 0.015, 0.015), ledM, { cast: false }), 0, TOP - 0.09, 0.2));
+      const icon = put(icons[i](), 0, TOP + 0.3, 0); g.add(icon);
+      return { g, icon, ledM, x }; });
+    // the documents / blocks riding the track: paper before processing, a glowing block after, teal once approved
+    const paperM = M.white(), blockM = M.glow(CYAN, 1.8), doneM = M.glow(TEAL, 1.8);
+    const items = Array.from({ length: 8 }, (_, k) => { const g = new THREE.Group(), paper = mesh(rbox(0.22, 0.03, 0.28, 0.012), paperM), block = put(mesh(rbox(0.17, 0.17, 0.17, 0.035), blockM), 0, 0.07, 0);
+      g.add(paper, block); root.add(g); return { g, paper, block, u: k / 8 }; });
+    let flow = 0;
+    root.userData.tick = (t, P, dt) => {
+      flow += dt * (0.07 + 0.12 * P.on);
+      items.forEach((it) => { const u = (it.u + flow) % 1, x = -1.65 + u * 3.3; it.g.position.set(x, Y + 0.075, 0); const digital = x > 0.05;
+        it.paper.visible = !digital; it.block.visible = digital; it.block.material = x > 1.15 ? doneM : blockM; it.block.rotation.y = digital ? (x - 0.05) * 2 : 0;
+        const s = Math.min(1, Math.min(u, 1 - u) * 14); it.g.scale.setScalar(s); });
+      stations[1].icon.rotation.z -= dt * (0.8 + 1.6 * P.on);
+      stations.forEach((s, i) => { const n = P.on * Math.exp(-((P.x - s.x) ** 2) / 0.12); s.icon.position.y = ease(s.icon.position.y, TOP + 0.3 + 0.12 * n, 0.12); s.icon.scale.setScalar(ease(s.icon.scale.x, 1 + 0.35 * n, 0.12));
+        if (i !== 1) s.icon.rotation.y = Math.sin(t * 0.8 + i) * 0.4; s.ledM.emissiveIntensity = 1.6 + 3 * n; });
+    };
+    return root; },
+  // data centre: a dark metal rack of servers with drive-bay fronts and status lights, cables rising from its top;
+  // the server under the pointer slides out and its lights race
+  () => { const root = new THREE.Group(), blades = [], top = FLOOR + 2.4;
+    // the server front: drive bays, vents and a handle, drawn once
+    const face = (() => { const c = document.createElement('canvas'); c.width = 512; c.height = 72; const x = c.getContext('2d');
+      x.fillStyle = '#121a23'; x.fillRect(0, 0, 512, 72);
+      for (let k = 0; k < 8; k++) { const bx = 14 + k * 38; x.fillStyle = '#0a1016'; x.fillRect(bx, 12, 32, 48); x.fillStyle = '#2a3642'; x.fillRect(bx + 2, 14, 28, 6); x.fillStyle = '#1b2530'; for (let j = 0; j < 5; j++) x.fillRect(bx + 4, 26 + j * 6, 24, 2); }
+      x.fillStyle = '#0b1117'; for (let yy = 14; yy < 60; yy += 7) for (let xx = 330; xx < 470; xx += 7) { x.beginPath(); x.arc(xx, yy, 2.2, 0, 7); x.fill(); }
+      x.fillStyle = '#3a4754'; x.fillRect(484, 18, 10, 36);
+      const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; })();
+    const shell = M.dark();
+    root.add(put(mesh(rbox(0.07, 2.42, 1.12, 0.025), shell), -0.79, FLOOR + 1.21, 0), put(mesh(rbox(0.07, 2.42, 1.12, 0.025), shell), 0.79, FLOOR + 1.21, 0));
+    root.add(put(mesh(rbox(1.66, 0.08, 1.12, 0.025), shell), 0, FLOOR + 0.04, 0), put(mesh(rbox(1.66, 0.08, 1.12, 0.025), shell), 0, top, 0), put(mesh(new THREE.BoxGeometry(1.52, 2.3, 0.04), M.graphite()), 0, FLOOR + 1.2, -0.52));
+    const strip = put(mesh(new THREE.BoxGeometry(1.5, 0.012, 0.012), M.glow(CYAN, 2.4), { cast: false }), 0, top - 0.05, 0.56); root.add(strip);
+    for (let i = 0; i < 7; i++) { const b = put(new THREE.Group(), 0, FLOOR + 0.28 + i * 0.3, 0), leds = [];
+      b.add(mesh(rbox(1.46, 0.25, 1.0, 0.02), M.graphite()));
+      const front = mesh(new THREE.PlaneGeometry(1.42, 0.21), new THREE.MeshStandardMaterial({ map: face, roughness: 0.5, metalness: 0.6 }), { cast: false }); front.position.z = 0.501; b.add(front);
+      for (let k = 0; k < 4; k++) { const m = M.glow(k === 3 && i % 3 === 1 ? PINK : CYAN, 2.5); const led = put(mesh(new THREE.BoxGeometry(0.03, 0.02, 0.01), m, { cast: false, sample: false }), 0.32 + k * 0.05, 0.07, 0.506); b.add(led); leds.push([m, rng(i * 9 + k)()]); }
+      root.add(b); blades.push({ b, leds }); }
+    const cables = [];
+    for (let k = 0; k < 6; k++) { const x = -0.5 + k * 0.2; const c = lightCable(new THREE.CubicBezierCurve3(new THREE.Vector3(x, top + 0.04, -0.2), new THREE.Vector3(x, top + 0.7, -0.3), new THREE.Vector3(x * 1.8, 2.4, -1.2), new THREE.Vector3(x * 2.4, 3.9, -1.8)), { speed: 0.3 }); root.add(c); cables.push(c); }
+    root.userData.tick = (t, P) => {
+      const over = P.on > 0.3 && Math.abs(P.x) < 1.0 ? Math.round((P.y - (FLOOR + 0.28)) / 0.3) : -1;
+      blades.forEach(({ b, leds }, i) => { const on = i === over; b.position.z = ease(b.position.z, on ? 0.6 : 0, 0.12);
+        leds.forEach(([m, h]) => { m.emissiveIntensity = on ? (Math.sin(t * 14 + h * 20) > -0.3 ? 5 : 0.6) : (Math.sin(t * (1 + h * 3) + h * 20) > 0.2 ? 2.6 : 0.3); }); });
+      cables.forEach((c) => { c.userData.speed = over >= 0 ? 0.8 : 0.3; c.userData.tick(t); });
+    };
+    return root; },
+  // cloud & migration: an on-premises server on the floor sends its data up lit cables into a soft white cloud with a
+  // glowing upload arrow; the cloud swells where the pointer is and the transfer speeds up
+  () => { const root = new THREE.Group(), C = [[-0.62, 0.08, 0.42], [-0.03, 0.38, 0.6], [0.58, 0.1, 0.46], [0.2, -0.15, 0.4], [-0.3, -0.16, 0.36]];
+    const cloudM = new THREE.MeshPhysicalMaterial({ color: 0xf1f6fa, roughness: 0.5, metalness: 0, clearcoat: 0.3, clearcoatRoughness: 0.4, sheen: 1, sheenColor: new THREE.Color(0x9fdcff), sheenRoughness: 0.5 });
+    const CX = 0.5, CY = 0.35, cloud = put(new THREE.Group(), CX, CY, 0); root.add(cloud);
+    const puffs = C.map(([x, y, r]) => { const p = put(mesh(new THREE.SphereGeometry(r, 64, 32).scale(1, 1, 0.8), cloudM), x, y, 0); cloud.add(p); return p; });
+    const ar = new THREE.Shape(); ar.moveTo(-0.09, -0.38); ar.lineTo(0.09, -0.38); ar.lineTo(0.09, 0.03); ar.lineTo(0.24, 0.03); ar.lineTo(0, 0.32); ar.lineTo(-0.24, 0.03); ar.lineTo(-0.09, 0.03); ar.closePath();
+    const arrowM = M.glow(CYAN, 2.4); const arrow = put(mesh(new THREE.ExtrudeGeometry(ar, { depth: 0.08, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.025, bevelSegments: 3 }).translate(0, 0, -0.04), arrowM), CX + 0.02, CY + 0.05, 0.6); root.add(arrow);
+    // the on-premises server
+    const SX = -1.3, srv = put(new THREE.Group(), SX, FLOOR, 0.3); root.add(srv); srv.rotation.y = 0.35;
+    srv.add(put(mesh(rbox(0.56, 0.92, 0.52, 0.04), M.dark()), 0, 0.46, 0));
+    const sleds = [];
+    for (let i = 0; i < 4; i++) { const y = 0.16 + i * 0.2; srv.add(put(mesh(new THREE.BoxGeometry(0.46, 0.15, 0.01), M.graphite(), { cast: false }), 0, y, 0.262));
+      for (let k = 0; k < 3; k++) { const m = M.glow(k === 2 && i === 1 ? PINK : CYAN, 2.4); srv.add(put(mesh(new THREE.BoxGeometry(0.03, 0.02, 0.01), m, { cast: false, sample: false }), 0.1 + k * 0.05, y + 0.04, 0.27)); sleds.push([m, rng(i * 7 + k)()]); } }
+    const cables = [];
+    for (let k = 0; k < 4; k++) { const dx = (k - 1.5) * 0.09; const s = new THREE.Vector3(SX + dx, FLOOR + 0.93, 0.3), e = new THREE.Vector3(CX - 0.3 + k * 0.2, CY - 0.38, 0.05);
+      const c = lightCable(new THREE.CubicBezierCurve3(s, s.clone().add(new THREE.Vector3(0, 0.8, 0)), e.clone().add(new THREE.Vector3(-0.3, -0.9, 0.1)), e), { speed: 0.45, beads: 3 }); root.add(c); cables.push(c); }
+    let ph = 0;
+    root.userData.tick = (t, P, dt) => {
+      puffs.forEach((p, i) => { const near = P.on * Math.exp(-((P.x - CX - C[i][0]) ** 2 + (P.y - CY - C[i][1]) ** 2) / 0.25); p.scale.setScalar(ease(p.scale.x, 1 + 0.2 * near + Math.sin(t * 0.8 + i) * 0.015, 0.12)); });
+      cloud.rotation.y = ease(cloud.rotation.y, ease(Math.sin(t * 0.3) * 0.25, P.x * 0.3, P.on), 0.06); cloud.position.y = CY + Math.sin(t * 0.7) * 0.04;
+      ph += dt * (0.35 + P.on * 1.1); arrow.position.y = CY + 0.05 + (ph % 1) * 0.28 - 0.12; arrowM.emissiveIntensity = 2.2 + P.on * 1.5;
+      sleds.forEach(([m, h]) => { m.emissiveIntensity = Math.sin(t * (2 + h * 6 + P.on * 6) + h * 20) > 0 ? 3 : 0.4; });
+      cables.forEach((c) => { c.userData.speed = 0.45 + P.on * 0.9; c.userData.tick(t); });
+    };
+    return root; },
+  // cloud partners: the Hamdaz hub linked by lit cables to four platform tiles, labelled Azure, AWS, Google Cloud and
+  // Oracle in their accent colours; the tile nearest the pointer comes forward and its link lights up
+  () => { const root = new THREE.Group();
+    const label = (text, col, w = 512, h = 220) => { const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d');
+      x.fillStyle = '#0b1b2b'; x.font = `600 ${text.length > 7 ? 74 : 92}px Archivo, Inter, "Segoe UI", Arial, sans-serif`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, w / 2, h / 2 - 12);
+      x.fillStyle = '#' + new THREE.Color(col).getHexString(); x.fillRect(w / 2 - 70, h - 46, 140, 12);
+      const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; };
+    const spin = new THREE.Group(); root.add(spin);
+    const hub = put(new THREE.Group(), 0, 0.05, 0); spin.add(hub);
+    hub.add(mesh(rbox(0.86, 0.86, 0.86, 0.2), M.white()));
+    hub.add(put(mesh(cyl(0.2, 0.2, 0.04, 48).rotateX(Math.PI / 2), M.glow(CYAN, 3), { cast: false }), 0, 0, 0.44), put(ledRing(0.25, 0.012), 0, 0, 0.445));
+    const N = [['Azure', -1.4, 0.64, -0.1, 0x2f8cff], ['AWS', 1.4, 0.74, -0.2, 0xff9900], ['Google Cloud', -1.25, -0.6, 0.25, 0x34a853], ['Oracle', 1.3, -0.55, 0.3, 0xe0463c]];
+    const tiles = N.map(([name, x, y, z, col]) => { const tile = put(new THREE.Group(), x, y, z); spin.add(tile);
+      tile.add(mesh(rbox(0.78, 0.42, 0.14, 0.07), M.white()));
+      tile.add(put(mesh(new THREE.PlaneGeometry(0.72, 0.31), new THREE.MeshStandardMaterial({ map: label(name, col), transparent: true, roughness: 0.4 }), { cast: false, sample: false }), 0, 0, 0.072));
+      const link = lightCable(new THREE.CubicBezierCurve3(new THREE.Vector3(x * 0.32, y * 0.32 + 0.05, z * 0.3), new THREE.Vector3(x * 0.6, y * 0.3 + 0.05, z * 0.6 + 0.2), new THREE.Vector3(x * 0.8, y * 0.85, z + 0.1), new THREE.Vector3(x - Math.sign(x) * 0.39, y, z)), { color: col, speed: 0.4, k: 1.0 });
+      spin.add(link);
+      return { tile, link, rest: new THREE.Vector3(x, y, z) }; });
+    root.userData.tick = (t, P, dt) => {
+      spin.rotation.y = ease(spin.rotation.y, Math.sin(t * 0.35) * 0.3 * (1 - P.on), 0.05); spin.position.y = Math.sin(t * 0.8) * 0.04;
+      hub.rotation.y = ease(hub.rotation.y, P.x * 0.4 * P.on + Math.sin(t * 0.5) * 0.15, 0.06); hub.rotation.x = ease(hub.rotation.x, -P.y * 0.3 * P.on, 0.06);
+      let best = -1, bd = 9; tiles.forEach(({ rest }, i) => { const d = Math.hypot(P.x - rest.x, P.y - rest.y); if (d < bd) { bd = d; best = i; } });
+      tiles.forEach(({ tile, link, rest }, i) => { const near = i === best ? P.on * smooth(1 - (bd - 0.3) / 0.9) : 0;
+        tile.position.z = ease(tile.position.z, rest.z + 0.55 * near, 0.12); tile.scale.setScalar(ease(tile.scale.x, 1 + 0.22 * near, 0.12)); tile.rotation.y = ease(tile.rotation.y, Math.sin(t * 0.6 + i) * 0.15 - rest.x * 0.1, 0.05);
+        link.userData.tube.material.emissiveIntensity = 1.0 + 2.2 * near; link.userData.speed = 0.4 + 1.0 * near; link.userData.tick(t); });
+    };
+    return root; },
+];
+// each object sits in a wrapper that scales it in as it builds
+const objs = BUILD.map((b) => { const w = new THREE.Group(), o = b(); w.add(o); w.visible = false; w.userData.o = o; holder.add(w); return w; });
+
+/* ---------------------------------------------------------------- the particles each object breaks into (sampled from its surfaces) */
+const NP = 6000;
+function samples(w, seed) {
+  holder.updateMatrixWorld(true); const inv = new THREE.Matrix4().copy(holder.matrixWorld).invert(), tris = []; let tA = 0;
+  w.traverse((x) => {
+    if (!x.isMesh || x.userData.noSample) return;
+    const Mx = new THREE.Matrix4().multiplyMatrices(inv, x.matrixWorld), g = x.geometry.index ? x.geometry.toNonIndexed() : x.geometry, p = g.attributes.position;
+    const V = (i) => new THREE.Vector3().fromBufferAttribute(p, i).applyMatrix4(Mx);
+    for (let i = 0; i + 2 < p.count; i += 3) { const a = V(i), b = V(i + 1), c = V(i + 2), ar = new THREE.Vector3().subVectors(b, a).cross(new THREE.Vector3().subVectors(c, a)).length() / 2; if (ar > 1e-8) { tA += ar; tris.push([a, b, c, tA]); } }
+  });
+  const rand = rng(seed), out = new Float32Array(NP * 3);
+  for (let i = 0; i < NP; i++) {
+    const x = rand() * tA; let lo = 0, hi = tris.length - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (tris[m][3] < x) lo = m + 1; else hi = m; }
+    const [a, b, c] = tris[lo]; let u = rand(), v = rand(); if (u + v > 1) { u = 1 - u; v = 1 - v; }
+    const P = a.clone().addScaledVector(new THREE.Vector3().subVectors(b, a), u).addScaledVector(new THREE.Vector3().subVectors(c, a), v); out.set([P.x, P.y, P.z], i * 3);
+  }
+  return out;
+}
+objs.forEach((w) => { w.visible = true; });
+const TARGETS = objs.map((w, i) => samples(w, 40 + i * 13));
+objs.forEach((w) => { w.visible = false; });
+const cur = new Float32Array(NP * 3), rnd = new Float32Array(NP * 2), delay = new Float32Array(NP), speed = new Float32Array(NP), fly = new Float32Array(NP);
+{ const r = rng(5); for (let i = 0; i < NP; i++) { rnd[i * 2] = r(); rnd[i * 2 + 1] = r(); delay[i] = r() * 0.35; speed[i] = 2.4 + r() * 2.2; cur.set([(r() - 0.5) * 8, (r() - 0.5) * 4, (r() - 0.5) * 3], i * 3); } }
+const swarmGeo = new THREE.BufferGeometry();
+swarmGeo.setAttribute('position', new THREE.BufferAttribute(cur, 3)); swarmGeo.setAttribute('aRnd', new THREE.BufferAttribute(rnd, 2)); swarmGeo.setAttribute('aFly', new THREE.BufferAttribute(fly, 1));
+const SW = { uOp: { value: 0 } };
+const swarm = new THREE.Points(swarmGeo, new THREE.ShaderMaterial({ uniforms: { ...U, ...SW }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+  vertexShader: `attribute vec2 aRnd; attribute float aFly; uniform float uTime, uPixel; varying float vA, vPink;
+    void main() { vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * mv; gl_PointSize = (1.8 + aRnd.y * 1.8 + aFly * 1.8) * uPixel * (6.0 / -mv.z);
+      vA = (0.5 + 0.5 * aFly) * (0.6 + 0.4 * sin(uTime * 3.0 + aRnd.x * 50.0)); vPink = step(0.87, aRnd.x); }`,
+  fragmentShader: 'uniform float uOp; varying float vA, vPink; void main() { float d = length(gl_PointCoord - 0.5); float a = smoothstep(0.5, 0.0, d); gl_FragColor = vec4(mix(vec3(0.6, 0.92, 1.0), vec3(0.95, 0.35, 0.65), vPink), a * a * vA * uOp); }' }));
+swarm.frustumCulled = false; holder.add(swarm);
+
+// front: big soft particles close to the camera
+{
+  const n = 24, r = rng(12), pos = new Float32Array(n * 3), seed = new Float32Array(n);
+  for (let i = 0; i < n; i++) { pos.set([(r() - 0.4) * 5.5, (r() - 0.5) * 2.8, 2.4 + r() * 1.8], i * 3); seed[i] = r(); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
+  const near = new THREE.Points(g, new THREE.ShaderMaterial({ uniforms: U, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    vertexShader: 'attribute float aSeed; uniform float uTime, uPixel; varying float vA, vPink; void main() { vec3 p = position + vec3(sin(uTime * 0.2 + aSeed * 9.0) * 0.25, cos(uTime * 0.17 + aSeed * 7.0) * 0.18, 0.0); vec4 mv = modelViewMatrix * vec4(p, 1.0); gl_Position = projectionMatrix * mv; gl_PointSize = (14.0 + aSeed * 30.0) * uPixel * (3.4 / -mv.z); vA = 0.06 + 0.08 * aSeed; vPink = step(0.82, aSeed); }',
+    fragmentShader: 'varying float vA, vPink; void main() { float d = length(gl_PointCoord - 0.5); float a = smoothstep(0.5, 0.05, d); gl_FragColor = vec4(mix(vec3(0.5, 0.9, 0.95), vec3(0.95, 0.4, 0.7), vPink), a * vA); }' }));
+  near.frustumCulled = false; scene.add(near);
+}
+
+/* ---------------------------------------------------------------- switching and clicking: the object breaks into particles and builds (again) */
+const appear = objs.map(() => 0);
+let target = TARGETS[0], switchedAt = performance.now() / 1000;
+function goTo(i) { target = TARGETS[i]; switchedAt = performance.now() / 1000; if (reduce) cur.set(target); }
+function burst() {
+  const r = rng((Math.random() * 1e9) | 0);
+  for (let i = 0; i < NP; i++) { const a = r() * Math.PI * 2, b = Math.acos(2 * r() - 1), d = 0.6 + r() * 1.4; cur[i * 3] = target[i * 3] + Math.sin(b) * Math.cos(a) * d; cur[i * 3 + 1] = target[i * 3 + 1] + Math.cos(b) * d; cur[i * 3 + 2] = target[i * 3 + 2] + Math.sin(b) * Math.sin(a) * d; fly[i] = 1; }
+  switchedAt = performance.now() / 1000;
+}
+if (q.get('row')) { const r = +q.get('row'); active = -1; setRow(r); }
+
+/* ---------------------------------------------------------------- input */
+const box = document.querySelector('[data-svx]');
+let tx = 0, ty = 0, mx = 0, my = 0, hovering = false;
+box.addEventListener('pointermove', (e) => { const r = box.getBoundingClientRect(); tx = Math.max(-1, Math.min(1, (e.clientX - r.left) / r.width * 2 - 1)); ty = Math.max(-1, Math.min(1, (e.clientY - r.top) / r.height * 2 - 1)); hovering = true; });
+box.addEventListener('pointerleave', () => { hovering = false; });
+const ndc = new THREE.Vector2(), ray = new THREE.Raycaster(), plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), hit = new THREE.Vector3();
+const P = { x: 0, y: 0, on: 0 }; let over = false, rawX = 0, rawY = 0;
+stage.addEventListener('pointermove', (e) => { const r = stage.getBoundingClientRect(); ndc.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); over = true; });
+stage.addEventListener('pointerleave', () => { over = false; });
+stage.addEventListener('pointerdown', () => { const o = objs[Math.max(0, active)].userData.o; if (o.userData.press && o.userData.press(performance.now() / 1000)) return; burst(); });
+function size() { const w = stage.clientWidth, h = stage.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+new ResizeObserver(size).observe(stage); size();
+
+let last = performance.now() / 1000;
+function frame() {
+  requestAnimationFrame(frame);
+  const now = performance.now() / 1000, dt = Math.min(0.05, now - last); last = now;
+  if (document.body.dataset.opt !== 'P') return;
+  const r = stage.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
+  const t = reduce ? 0 : now; U.uTime.value = t;
+  if (!hovering && !reduce) { tx = Math.sin(now * 0.3) * 0.35; ty = Math.cos(now * 0.23) * 0.25; }
+  mx += (tx - mx) * Math.min(1, dt * 3); my += (ty - my) * Math.min(1, dt * 3);
+  const sy = Math.max(-1, Math.min(1, (r.top + r.height / 2 - innerHeight / 2) / innerHeight));
+  const cm = over ? 0.35 : 1;
+  camera.position.set(AIM.x + mx * 0.8 * cm, 0.5 - my * 0.35 * cm + sy * 0.4, 6.3); camera.lookAt(AIM);
+  holder.rotation.y = -0.2 + mx * 0.14 * cm;
+
+  P.on = ease(P.on, over && !reduce ? 1 : 0, Math.min(1, dt * 5));
+  if (over) { ray.setFromCamera(ndc, camera); if (ray.ray.intersectPlane(plane, hit)) { holder.worldToLocal(hit); rawX = hit.x; rawY = hit.y; } }
+  P.x = ease(P.x, rawX, 0.25); P.y = ease(P.y, rawY, 0.25);
+
+  // the object in view builds (scales in) once the particles have arrived; the others go at once
+  const since = now - switchedAt;
+  objs.forEach((w, i) => { const want = i === Math.max(0, active) && (since > 1.0 || reduce) ? 1 : 0; appear[i] = want ? Math.min(1, appear[i] + dt * 2.4) : Math.max(0, appear[i] - dt * 10);
+    w.visible = appear[i] > 0.01; const a = appear[i], back = 1 + 1.6 * Math.pow(a - 1, 3) + 0.6 * Math.pow(a - 1, 2); w.scale.setScalar(0.7 + 0.3 * (want ? back : a));
+    if (w.visible && w.userData.o.userData.tick) w.userData.o.userData.tick(t, P, dt); });
+  halo.material.opacity = 0.1 + 0.06 * P.on;
+  SW.uOp.value = reduce ? 0 : smooth(since / 0.12) * (1 - smooth((since - 1.1) / 0.5));
+  for (let i = 0; i < NP; i++) {
+    const i3 = i * 3;
+    if (since < delay[i]) { fly[i] *= 0.95; continue; }
+    const ex = target[i3] - cur[i3], ey = target[i3 + 1] - cur[i3 + 1], ez = target[i3 + 2] - cur[i3 + 2], d = Math.hypot(ex, ey, ez);
+    const k = 1 - Math.exp(-dt * speed[i]), side = rnd[i * 2] > 0.5 ? 1 : -1, curl = Math.min(0.9, d * 0.35) * side;
+    cur[i3] += ex * k - ez * k * curl; cur[i3 + 1] += ey * k + d * k * 0.2; cur[i3 + 2] += ez * k + ex * k * curl;
+    fly[i] += (Math.min(1, d) - fly[i]) * 0.2;
+  }
+  swarmGeo.attributes.position.needsUpdate = swarmGeo.attributes.aFly.needsUpdate = true;
+  renderer.render(scene, camera);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

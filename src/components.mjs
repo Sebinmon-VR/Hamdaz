@@ -83,7 +83,7 @@ export const certLine = `<p class="fact-certs"><a href="quality.html">ISO 9001 �
 // art: the home page shows the people network (assets/js/stage.js) beside the text
 export function intro({ art = false } = {}) {
   const s = sentences(whoWeAre.text);
-  const body = `${head({ idx: '01', label: whoWeAre.eyebrow, meta: `${uae.city} — India`, title: 'Excellence in managed software services', text: s[2] })}
+  const body = `${head({ idx: '01', label: whoWeAre.eyebrow, meta: `${uae.city} — India`, title: 'Excellence in IT services', text: s[2] })}
     ${facts(`<div class="fact fact--text" data-reveal>${certLine}<p>We craft intelligent solutions that propel your business forward.</p>${tlink('More about Hamdaz', 'about.html')}</div>`)}`;
   return `<section class="sec intro">
   <div class="wrap">
