@@ -323,7 +323,7 @@
     return url;
   };
   let leaving = false;
-  const PAGE_NAMES = { '': 'Home', 'index.html': 'Home', 'about.html': 'Who We Are', 'services.html': 'What We Do', 'solutions.html': 'How We Do', 'projects.html': 'Clients & Projects', 'partners.html': 'Partners & Clients','insights.html': 'Insights', 'contact.html': 'Contact Us', 'careers.html': 'Careers', 'job.html': 'Careers' };
+  const PAGE_NAMES = { '': 'Home', 'index.html': 'Home', 'about.html': 'Who We Are', 'services.html': 'What We Do', 'solutions.html': 'How We Do', 'projects.html': 'Clients & Projects', 'partners.html': 'Partners & Clients', 'quality.html': 'Quality & QHSE', 'certifications.html': 'Certifications', 'insights.html': 'Insights', 'contact.html': 'Contact Us', 'careers.html': 'Careers', 'job.html': 'Careers' };
   // pages in folders take their section's name: service/<slug>/ and services/<area>/ → What We Do
   const FOLDER_NAMES = { service: 'What We Do', services: 'What We Do', insights: 'Insights' };
   const pageName = (url) => {

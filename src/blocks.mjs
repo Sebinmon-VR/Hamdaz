@@ -107,4 +107,4 @@ export function faqSection({ idx, faqs, title = 'Questions we often hear', meta 
 }
 
 // the certifications line under a page's call to action
-export const trustRow = `<ul class="sp-trust" aria-label="Credentials"><li>${icon('shield-check')}MCC certified · Abu Dhabi</li><li>${icon('award')}ISO 9001 · 14001 · 45001</li><li>${icon('check')}ICV certified · ADNOC registered supplier</li></ul>`;
+export const trustRow = `<ul class="sp-trust" aria-label="Credentials"><li>${icon('shield-check')}MCC certified · Abu Dhabi</li><li><a href="quality.html">${icon('award')}ISO 9001 · 14001 · 45001</a></li><li>${icon('check')}ICV certified · ADNOC registered supplier</li></ul>`;

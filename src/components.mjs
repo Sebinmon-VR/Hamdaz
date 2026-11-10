@@ -1,4 +1,5 @@
-import { site, contact, heroNodes, helpCta, gpt, technologies, services, serviceBySlug, featuredServices, products, industries, whoWeAre, needs, waLink, clientGroups, clientLogos, partners, partnerLogos, svcUrl } from './data.mjs';
+import { site, contact, heroNodes, helpCta, gpt, technologies, services, serviceBySlug, featuredServices, products, industries, whoWeAre, needs, waLink, clientGroups, clientLogos, partners, partnerLogos, svcUrl, isoCerts, linkedinFeature } from './data.mjs';
+import { linkedinNews } from './content/linkedin.mjs';
 import { icon } from './icons.mjs';
 import { clock } from './layout.mjs';
 
@@ -76,7 +77,7 @@ export const facts = (extra = '') => `<div class="facts">
       <div class="fact" data-reveal><span class="fact-label">Certified for security systems · Abu Dhabi</span><span class="fact-num">MCC</span></div>
       ${extra}
     </div>`;
-export const certLine = `<p class="fact-certs">ISO 9001 · 14001 · 45001 <span>·</span> ICV certified <span>·</span> Registered ADNOC supplier</p>`;
+export const certLine = `<p class="fact-certs"><a href="quality.html">ISO 9001 · 14001 · 45001</a> <span>·</span> ICV certified <span>·</span> Registered ADNOC supplier</p>`;
 
 /* ---------- Home 01: who we are ---------- */
 // art: the home page shows the people network (assets/js/stage.js) beside the text
@@ -324,6 +325,109 @@ export function clientsPartners({ idx = '04' } = {}) {
 </section>`;
 }
 
+/* ---------- Home: news from LinkedIn (src/content/linkedin.mjs; linkedinFeature in data.mjs) ---------- */
+// A featured story with a collage of its photos, and beside it every other post as a headline. The headlines drift
+// slowly upwards in a loop (pausing while pointed at or focused), like the logo rows. Every item opens the post on
+// LinkedIn. No posts: no section.
+const escHtml = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const EMOJI = /[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu;
+const plain = (t) => t.replace(EMOJI, '').replace(/\s+/g, ' ').trim();
+const clip = (t, n) => (t.length <= n ? t : `${t.slice(0, n).replace(/\s+\S*$/, '')}…`);
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const newsDate = (iso) => { const [y, m, d] = iso.split('-'); return `${Number(d)} ${MONTHS[Number(m) - 1]} ${y}`; };
+const linesOf = (p) => p.text.split('\n').map(plain).filter(Boolean);
+const titleOf = (p) => clip(linesOf(p)[0] || 'Hamdaz on LinkedIn', 90);
+const introOf = (p, n) => clip(linesOf(p).slice(1).filter((l) => !l.startsWith('#') && !/^https?:\/\//.test(l)).join(' '), n);
+// wide banners carry their headline on the left, so they are cropped from the left
+const newsImg = (im, cls = '') => `<img${cls ? ` class="${cls}"` : ''} src="${im.src}" alt="" width="${im.w}" height="${im.h}" loading="lazy" decoding="async"${im.w / im.h > 1.5 ? ' style="object-position:left center"' : ''}>`;
+const ext = 'target="_blank" rel="noopener"';
+
+export function linkedinFeed({ idx = '07' } = {}) {
+  const posts = linkedinNews;
+  if (!posts.length) return '';
+  const tag = (linkedinFeature.tag || '').toLowerCase();
+  const tagged = tag ? posts.filter((p) => p.text.toLowerCase().includes(tag)) : [];
+  const story = tagged.length ? tagged : [[...posts].sort((a, b) => b.images.length - a.images.length)[0]];
+  const lead = story[0];
+  const skip = linkedinFeature.skip || [];
+  const photos = [...story].reverse().flatMap((p) => p.images).filter((im) => !skip.some((s) => im.src.endsWith(s))).slice(0, 5);
+  const span = story.length > 1 ? `${newsDate(story[story.length - 1].date)} – ${newsDate(lead.date)}` : newsDate(lead.date);
+  const title = tagged.length && linkedinFeature.title ? linkedinFeature.title : titleOf(lead);
+  const rest = posts.filter((p) => !story.includes(p));
+  // the list: the featured story first (so a visitor can always come back to it), then every other post. Pointing at
+  // or picking one shows it in full on the left (assets/js/news.js, from the JSON below); without JavaScript each
+  // item is a plain link to the post on LinkedIn.
+  const entries = [
+    { url: lead.url, date: span, title, img: photos[0], intro: introOf(lead, 110) },
+    ...rest.map((p) => ({ url: p.url, date: newsDate(p.date), title: titleOf(p), img: p.images[0], intro: introOf(p, 110), text: linesOf(p).join('\n'), raw: p })),
+  ];
+  const item = (e, i, hidden = false) => `<a class="nw-item${i ? '' : ' is-on'}" href="${escHtml(e.url)}" ${ext} data-news-item="${i}"${hidden ? ' aria-hidden="true" tabindex="-1"' : ''}>
+          <span class="nw-img">${e.img ? newsImg(e.img) : icon('linkedin')}</span>
+          <span class="nw-body"><span class="nw-date">${escHtml(e.date)}</span><span class="nw-title">${escHtml(e.title)}</span><span class="nw-text">${escHtml(e.intro)}</span></span>
+        </a>`;
+  // the full posts for news.js: the text as LinkedIn has it, line by line (emoji kept), and the photo
+  const full = entries.map((e, i) => (i ? { url: e.url, date: e.date, title: e.title, lines: e.raw.text.split('\n'), img: e.img || null } : null));
+  // with enough headlines the list loops (the second copy is hidden from screen readers and the keyboard)
+  const loop = entries.length >= 5;
+  return `<section class="sec news" data-news>
+  <div class="wrap">
+    ${head({ idx, label: 'On LinkedIn', meta: 'Hamdaz Technologies', title: 'Latest from Hamdaz', action: btn('Follow us on LinkedIn', contact.linkedin, { ext: true, ic: 'linkedin' }) })}
+    <div class="news-grid">
+      <div class="news-feature" data-news-panel aria-live="polite" data-reveal>
+        <a class="news-collage news-collage--${photos.length >= 5 ? 5 : 1}" href="${escHtml(lead.url)}" ${ext} tabindex="-1" aria-hidden="true">${(photos.length >= 5 ? photos : photos.slice(0, 1)).map((im) => `<span>${newsImg(im)}</span>`).join('')}</a>
+        <p class="news-kicker">${escHtml(tagged.length ? linkedinFeature.kicker || 'News' : 'Latest')} · ${span}</p>
+        <h3 class="news-title">${escHtml(title)}</h3>
+        <div class="news-text" data-lenis-prevent><p>${escHtml(introOf(lead, 190))}</p></div>
+        <a class="news-go" href="${escHtml(lead.url)}" ${ext}>Read on LinkedIn${icon('arrow-up-right')}</a>
+      </div>
+      <div class="nw-col">
+        <div class="nw-list${loop ? ' nw-list--loop' : ''}" data-reveal>
+          <div class="nw-track">
+          ${entries.map((e, i) => item(e, i)).join('\n          ')}${loop ? `\n          ${entries.map((e, i) => item(e, i, true)).join('\n          ')}` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="application/json" data-news-json>${JSON.stringify(full).replace(/</g, '\\u003c')}</script>
+  </div>
+</section>`;
+}
+
+/* ---------- Certifications ---------- */
+// The approved ICV and ADNOC lockup (ADNOC ICV guidelines 2026): blue artwork on white, at least 120px tall, with clear
+// space around it equal to the height of the falcon. Never redraw, recolour or rearrange it.
+export const icvLockup = `<div class="icv-lockup"><img src="assets/img/logos/adnoc-icv-lockup.svg" alt="ICV, ADNOC In-Country Value Program" width="257" height="120"></div>`;
+// one ISO certificate: its preview, which opens the PDF
+export const certCard = (c, { meta = '' } = {}) => `<a class="cert-card" href="assets/docs/hamdaz-${c.file}-certificate.pdf" target="_blank" rel="noopener" data-reveal>
+        <span class="cert-img"><img src="assets/img/certs/${c.file}.webp" alt="${c.std} certificate, Bureau Veritas" width="800" height="1131" loading="lazy" decoding="async"></span>
+        <span class="cert-std">${c.std}</span>
+        <span class="cert-name">${c.name}</span>${meta ? `
+        <span class="cert-meta">${meta}</span>` : ''}
+        <span class="cert-go">View PDF${icon('arrow-up-right')}</span>
+      </a>`;
+
+// Home: the certificates near the bottom of the page. The three papers sit in one stack that fans out when you point
+// at it; beside it, one quiet band of the standards' numbers (pointing at a number lifts its paper out of the stack,
+// with CSS :has) and the ICV lockup. Each paper and number opens its PDF.
+const SHORT = { '9001': 'Quality', '45001': 'Health &amp; safety', '14001': 'Environment' };
+const pdf = (c) => `href="assets/docs/hamdaz-${c.file}-certificate.pdf" target="_blank" rel="noopener"`;
+export const certsRow = ({ idx = '06' } = {}) => `<section class="sec certs-row">
+  <div class="wrap">
+    ${head({ idx, label: 'Certifications', meta: 'Bureau Veritas · UKAS · ADNOC ICV', title: 'Certified, and audited independently', action: `<div class="cx-links">${tlink('All certifications', 'certifications.html')}${tlink('Quality &amp; QHSE', 'quality.html')}</div>` })}
+    <div class="cx">
+      <div class="cx-stack" data-reveal>
+        ${isoCerts.map((c, i) => `<a class="cx-paper" data-i="${i}" ${pdf(c)} tabindex="-1" aria-hidden="true"><img src="assets/img/certs/${c.file}.webp" alt="" width="800" height="1131" loading="lazy" decoding="async"></a>`).join('\n        ')}
+      </div>
+      <div class="cx-side">
+        <ul class="cx-band" data-reveal>
+          ${isoCerts.map((c, i) => `<li><a class="cx-item" data-i="${i}" ${pdf(c)}><span class="cx-std">${c.std}</span><span class="cx-num">${c.num}</span><span class="cx-name">${SHORT[c.num]}</span><span class="cx-go">View certificate${icon('arrow-up-right')}</span></a></li>`).join('\n          ')}
+        </ul>
+        <div class="cx-icv" data-reveal><img src="assets/img/logos/adnoc-icv-lockup.svg" alt="ICV, ADNOC In-Country Value Program" width="257" height="120"><p>ICV certified under the ADNOC In-Country Value Program, and a registered ADNOC supplier.</p></div>
+      </div>
+    </div>
+  </div>
+</section>`;
+
 /* ---------- Closing call to action, offices and careers ---------- */
 export function contactSection({ idx = '05' } = {}) {
   const [first, second] = helpCta.title.replace('Business', 'business').split(/(?=your)/);
@@ -357,3 +461,4 @@ export function contactSection({ idx = '05' } = {}) {
   </div>
 </section>`;
 }
+

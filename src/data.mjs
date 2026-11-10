@@ -780,3 +780,30 @@ export const clientLogos = {
   // these two publish their logo in white only, so their tiles are navy (4th value: dark)
   'Liwa University': ['liwa-university.png', 3.55, false, true], 'Tawazun Industrial Park': ['tawazun-industrial-park.png', 0.96, false, true],
 };
+
+/* ---------- Certifications (certifications.html, the home page's certificates row) ---------- */
+// The ISO certificates: Bureau Veritas (UKAS), issued 02 January 2026, valid to 01 January 2029. The PDFs are in
+// assets/docs (hamdaz-<file>-certificate.pdf), the previews in assets/img/certs (<file>.webp).
+export const isoCerts = [
+  { file: 'iso-9001-2015', num: '9001', std: 'ISO 9001:2015', name: 'Quality management', no: 'AB005347' },
+  { file: 'iso-45001-2018', num: '45001', std: 'ISO 45001:2018', name: 'Occupational health & safety', no: 'AB005348' },
+  { file: 'iso-14001-2015', num: '14001', std: 'ISO 14001:2015', name: 'Environmental management', no: 'AB005349' },
+];
+export const isoValidTo = '01 Jan 2029';
+// the scope of certification, as written on the certificates
+export const isoScope = 'Provision of innovation and artificial intelligence research and consultancies, IT services, cybersecurity, security and surveillance systems installation and maintenance, and telecommunication systems installation and maintenance. Trading in computer systems and software, tools and accessories, extensions of computer networks, and electronic and security devices.';
+
+/* ---------- LinkedIn ---------- */
+// The home page's "News from Hamdaz" shows the posts in src/content/linkedin.mjs (refresh them with
+// tools/linkedin_sync.py). The featured story is every post whose text has `tag` (its photos make the collage, its
+// newest post is the link); set `title` and `kicker` for it. With no tag, or no post carrying it, the newest post
+// with the most photos is featured under its own first line. Every other post scrolls beside it as a headline.
+export const linkedinFeature = {
+  tag: 'ADIPEC',
+  kicker: 'Event',
+  title: 'ADIPEC 2026: four days of customers, partners and reunions in Abu Dhabi',
+  // a post photo that crops badly in the collage (text-heavy banners), by file name
+  skip: ['7524112786323300352-1.webp'],
+};
+// the company page's job listings, linked from the careers page
+export const linkedinJobs = 'https://www.linkedin.com/company/hamdaz-technologies/jobs/';

@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QHSE section options</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../assets/css/style.css">
+<style>
+/* picker chrome (not part of the site design) */
+.pk-top { position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid var(--line); }
+.pk-top .in { max-width: 1320px; margin: 0 auto; padding: 14px 16px; display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; }
+.pk-top h1 { font: 600 18px/1.2 var(--sans); margin-right: auto; }
+.pk-btn { font: 500 14px var(--sans); padding: 9px 16px; border-radius: 999px; background: var(--fg); color: var(--bg); }
+.pk-intro { max-width: 1320px; margin: 0 auto; padding: 28px 16px 8px; color: var(--fg-2); }
+.pk-intro p { max-width: 760px; margin-bottom: 10px; }
+.pk-opt { max-width: 1400px; margin: 40px auto 0; padding: 0 16px; }
+.pk-head { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; padding: 0 4px 14px; }
+.pk-head h2 { font: 600 20px/1.2 var(--sans); }
+.pk-where { font: 400 12px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.pk-head p { flex-basis: 100%; color: var(--fg-2); max-width: 780px; }
+.pk-pick { margin-left: auto; display: inline-flex; gap: 8px; align-items: center; font-size: 14px; cursor: pointer; padding: 7px 14px; border: 1px solid var(--line-2); border-radius: 999px; }
+.pk-pick:has(input:checked) { border-color: var(--accent); background: rgba(48,193,248,.12); }
+.pk-frame { border-radius: 20px; overflow: hidden; }
+.pk-frame .content { margin: 0; border-radius: 20px; }
+.pk-frame .content > :last-child { padding-bottom: clamp(64px, 9vh, 104px); }
+.pk-note { display: inline-block; margin-left: 6px; padding: 2px 8px; border-radius: 4px; background: #fff3c4; color: #6b5200; font: 500 10.5px var(--mono); letter-spacing: .04em; text-transform: uppercase; vertical-align: middle; }
+.pk-out { max-width: 1320px; margin: 48px auto 120px; padding: 0 16px; display: grid; gap: 12px; }
+.pk-out label { font-weight: 600; }
+.pk-out textarea { width: 100%; min-height: 90px; padding: 12px; border-radius: 10px; border: 1px solid var(--line-2); background: var(--surface); color: var(--fg); font: 14px/1.5 var(--sans); }
+.pk-out .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.pk-out .ok { color: var(--accent); font-size: 14px; }
+
+/* ---------- A: three standards as columns ---------- */
+.q-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(24px, 3vw, 48px); }
+.q-col { display: grid; align-content: start; gap: 14px; padding-top: 18px; border-top: 1px solid var(--rule-2); }
+.q-std { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; color: var(--cyan-ink); }
+.q-col h3 { font-family: var(--display); font-weight: 500; font-size: clamp(22px, 1.8vw, 28px); letter-spacing: -0.03em; line-height: 1.1; }
+.q-col p { color: var(--ink-2); font-size: 15px; line-height: 1.6; }
+.q-by { margin-top: clamp(32px, 4vw, 48px); padding-top: 18px; border-top: 1px solid var(--rule); display: flex; flex-wrap: wrap; gap: 10px 28px; font-family: var(--mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink); }
+.q-by span:first-child { color: var(--ink-3); }
+
+/* ---------- B: own page ---------- */
+.q-hero { padding: clamp(56px, 9vh, 96px) var(--pad) 0; }
+.q-hero .crumb { font: 400 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.q-hero h1 { margin-top: 18px; font-family: var(--display); font-weight: 600; font-stretch: 118%; text-transform: uppercase; letter-spacing: -0.035em; line-height: .9; font-size: clamp(40px, 5.4vw, 92px); }
+.q-hero p { margin-top: 24px; max-width: 38rem; font-size: 18px; line-height: 1.55; color: var(--ink-2); }
+.q-ledger { border-top: 1px solid var(--rule-2); }
+.q-row { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 4fr) minmax(0, 2fr); gap: 16px 40px; align-items: baseline; padding: 26px 0; border-bottom: 1px solid var(--rule); }
+.q-row .n { font-family: var(--display); font-weight: 500; font-size: clamp(36px, 3.4vw, 56px); letter-spacing: -0.05em; line-height: .9; }
+.q-row .n small { display: block; margin-top: 10px; font: 400 11.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+.q-row p { color: var(--ink-2); font-size: 15px; line-height: 1.6; max-width: 34rem; }
+.q-row p b { display: block; margin-bottom: 4px; color: var(--ink); font-weight: 600; }
+.q-row .by { font: 400 11.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink); }
+.q-policy { max-width: 46rem; font-family: var(--display); font-weight: 400; font-size: clamp(22px, 2.1vw, 32px); line-height: 1.3; letter-spacing: -0.02em; text-wrap: pretty; }
+.q-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 48px; border-top: 1px solid var(--rule-2); }
+.q-list li { display: flex; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--rule); color: var(--ink-2); }
+.q-list li span { font: 400 12px var(--mono); color: var(--cyan-ink); padding-top: 3px; }
+.q-mini { margin-top: 28px; padding: 22px 0 0; border-top: 1px solid var(--rule); display: grid; gap: 6px; }
+.q-mini b { font: 600 13px var(--sans); }
+.q-mini span { color: var(--ink-2); font-size: 14px; }
+
+/* ---------- C: home band ---------- */
+.q-band .facts { grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.5fr); }
+
+@media (max-width: 860px) {
+  .q-cols, .q-list { grid-template-columns: 1fr; }
+  .q-row { grid-template-columns: 1fr; gap: 10px; }
+  .q-band .facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .q-band .fact--text { grid-column: 1 / -1; border-left: 0; padding: 22px 0 0; border-top: 1px solid var(--rule); margin-top: 8px; min-height: 0; }
+  .pk-pick { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<div class="pk-top"><div class="in">
+  <h1>Quality / QHSE: options</h1>
+  <a class="pk-btn" href="#pick">Choose →</a>
+</div></div>
+
+<div class="pk-intro">
+  <p>There are three ways to add Quality / QHSE. Each one uses only facts the site already states: ISO 9001:2015, 14001:2015 and 45001:2018, certified by Bureau Veritas (UKAS), plus MCC, ICV and ADNOC. Yellow tags mark text that I need from you before it can go live.</p>
+  <p>Each preview uses the real site stylesheet. You can also combine options, for example B as the full page plus C as a short band on the home page that links to it.</p>
+</div>
+
+<!-- ================= A ================= -->
+<section class="pk-opt" id="a">
+  <div class="pk-head">
+    <span class="pk-where">Option A · New section on Who We Are</span>
+    <h2>A short section, no new page</h2>
+    <label class="pk-pick"><input type="radio" name="opt" value="A"> Pick A</label>
+    <p>Goes on about.html between "Why Hamdaz" and the technology strip. One heading and three standards side by side, with the certifying body underneath. This is the smallest change and needs nothing new from you.</p>
+  </div>
+  <div class="pk-frame"><div class="content" data-theme="light">
+    <section class="sec">
+      <div class="wrap">
+        <header class="sh">
+          <p class="sh-bar"><span class="sh-idx">03</span><span>Quality · QHSE</span><span class="sh-meta">3 certified systems</span></p>
+          <div class="sh-main">
+            <h2 class="sh-title">Quality, health, safety and environment in every project</h2>
+            <div class="sh-side"><p>Our work is run under three certified management systems. They cover how we design, install and support, how we keep people safe on site, and how we limit our impact on the environment.</p></div>
+          </div>
+        </header>
+        <div class="q-cols">
+          <article class="q-col"><p class="q-std">ISO 9001:2015</p><h3>Quality</h3><p>Documented processes from survey to handover, with inspection, testing and client sign-off at every stage.</p></article>
+          <article class="q-col"><p class="q-std">ISO 45001:2018</p><h3>Health &amp; safety</h3><p>Occupational health and safety management for our teams and everyone around them on client sites.</p></article>
+          <article class="q-col"><p class="q-std">ISO 14001:2015</p><h3>Environment</h3><p>Environmental management that covers materials, waste and energy across our projects and offices.</p></article>
+        </div>
+        <p class="q-by"><span>Certified by Bureau Veritas (UKAS)</span><span>MCC certified · Abu Dhabi</span><span>ICV certified</span><span>Registered ADNOC supplier</span></p>
+      </div>
+    </section>
+  </div></div>
+</section>
+
+<!-- ================= B ================= -->
+<section class="pk-opt" id="b">
+  <div class="pk-head">
+    <span class="pk-where">Option B · New page: quality.html</span>
+    <h2>A dedicated Quality &amp; QHSE page</h2>
+    <label class="pk-pick"><input type="radio" name="opt" value="B"> Pick B</label>
+    <p>A full page linked from the footer and from every "ISO 9001 · 14001 · 45001" line on the site. It can also go in the main menu. This is what ADNOC and government buyers usually look for. It is the strongest option, but it needs your real QHSE policy statement and a list of your site practices. The certificate PDFs would be a bonus.</p>
+  </div>
+  <div class="pk-frame"><div class="content" data-theme="light">
+    <div class="q-hero"><div class="wrap">
+      <p class="crumb">Home / Quality &amp; QHSE</p>
+      <h1>Quality &amp; QHSE</h1>
+      <p>Certified management systems for quality, occupational health and safety, and the environment, applied to every project we deliver across the UAE.</p>
+    </div></div>
+
+    <section class="sec">
+      <div class="wrap">
+        <header class="sh">
+          <p class="sh-bar"><span class="sh-idx">01</span><span>Our policy</span></p>
+        </header>
+        <p class="q-policy" style="margin-top:36px">We commit to deliver work that meets our clients' requirements, to send every person home safe, and to reduce our impact on the environment. We set objectives, measure them and keep improving. <span class="pk-note">Your policy text</span></p>
+        <div class="q-mini"><b>Signed by management · reviewed every year <span class="pk-note">confirm</span></b><span>Download the QHSE policy (PDF) <span class="pk-note">need file</span></span></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="wrap">
+        <header class="sh">
+          <p class="sh-bar"><span class="sh-idx">02</span><span>Certified management systems</span><span class="sh-meta">Bureau Veritas · UKAS</span></p>
+          <div class="sh-main sh-main--solo"><h2 class="sh-title">Three standards, audited independently</h2></div>
+        </header>
+        <div class="q-ledger">
+          <div class="q-row"><p class="n">9001<small>ISO 9001:2015</small></p><p><b>Quality management</b>Documented processes from survey and design through installation, testing, handover and support.</p><p class="by">Bureau Veritas · UKAS</p></div>
+          <div class="q-row"><p class="n">45001<small>ISO 45001:2018</small></p><p><b>Occupational health &amp; safety</b>Hazards identified and controlled for our teams and for everyone on the sites where we work.</p><p class="by">Bureau Veritas · UKAS</p></div>
+          <div class="q-row"><p class="n">14001<small>ISO 14001:2015</small></p><p><b>Environmental management</b>Materials, packaging, e-waste and energy managed across our projects and offices.</p><p class="by">Bureau Veritas · UKAS</p></div>
+        </div>
+        <p class="q-by"><span>Also</span><span>MCC certified · Abu Dhabi</span><span>ICV certified</span><span>Registered ADNOC supplier</span></p>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="wrap">
+        <header class="sh">
+          <p class="sh-bar"><span class="sh-idx">03</span><span>On every site</span><span class="sh-meta"><span class="pk-note">confirm each line</span></span></p>
+          <div class="sh-main sh-main--solo"><h2 class="sh-title">How QHSE shows up in the work</h2></div>
+        </header>
+        <ul class="q-list">
+          <li><span>01</span>Risk assessment and method statement before work starts</li>
+          <li><span>02</span>Permit-to-work and site induction on client premises</li>
+          <li><span>03</span>Daily toolbox talks and the right PPE for each task</li>
+          <li><span>04</span>Inspection and test plans with recorded sign-off</li>
+          <li><span>05</span>Incident and near-miss reporting, with follow-up actions</li>
+          <li><span>06</span>Segregated packaging and e-waste disposal</li>
+        </ul>
+      </div>
+    </section>
+  </div></div>
+</section>
+
+<!-- ================= C ================= -->
+<section class="pk-opt" id="c">
+  <div class="pk-head">
+    <span class="pk-where">Option C · Band on the home page</span>
+    <h2>A short credentials band on the home page</h2>
+    <label class="pk-pick"><input type="radio" name="opt" value="C"> Pick C</label>
+    <p>A light, numbers-only row in the same style as the home page facts. It sits next to the clients row. On its own it is the quietest option; paired with B it links through to the full page.</p>
+  </div>
+  <div class="pk-frame"><div class="content" data-theme="light">
+    <section class="sec q-band">
+      <div class="wrap">
+        <header class="sh">
+          <p class="sh-bar"><span class="sh-idx">06</span><span>Quality · QHSE</span><span class="sh-meta">Bureau Veritas · UKAS</span></p>
+        </header>
+        <div class="facts" style="margin-top:36px">
+          <div class="fact"><span class="fact-label">ISO · Quality</span><span class="fact-num">9001</span></div>
+          <div class="fact"><span class="fact-label">ISO · Health &amp; safety</span><span class="fact-num">45001</span></div>
+          <div class="fact"><span class="fact-label">ISO · Environment</span><span class="fact-num">14001</span></div>
+          <div class="fact fact--text">
+            <p class="fact-certs">MCC certified <span>·</span> ICV certified <span>·</span> ADNOC supplier</p>
+            <p>Certified management systems for quality, safety and the environment, on every project.</p>
+            <a class="tlink" href="#b">Quality &amp; QHSE <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div></div>
+</section>
+
+<div class="pk-out" id="pick">
+  <label for="notes">Your choice and any notes (for example "B + C", "put it in the main menu", "rename to HSE")</label>
+  <textarea id="notes" placeholder="Notes…"></textarea>
+  <div class="row"><button type="button" class="pk-btn" data-copy>Copy my pick</button><span class="ok" data-ok hidden>Copied. Paste it back to Claude.</span></div>
+</div>
+
+<script>
+document.querySelector('[data-copy]').addEventListener('click', async () => {
+  const picked = document.querySelector('input[name="opt"]:checked');
+  const text = `QHSE option: ${picked ? picked.value : '(none picked)'}\nNotes: ${document.getElementById('notes').value || '-'}`;
+  try { await navigator.clipboard.writeText(text); } catch (e) { prompt('Copy this:', text); }
+  document.querySelector('[data-ok]').hidden = false;
+});
+</script>
+</body>
+</html>
