@@ -1071,6 +1071,33 @@ html.reduce .mq-track { animation-duration: 140s; }
 .status:empty { display: none; }
 .status { padding: 14px 18px; border-radius: 6px; background: #e3f1f8; font-size: 14px; }
 .status.is-error { background: #fbe8ee; }
+.status a, .form .hint a { text-decoration: underline; text-underline-offset: 3px; }
+.form[hidden] { display: none; }
+.form .btn:disabled { opacity: 0.6; cursor: progress; }
+/* the honeypot: out of sight and out of the tab order, so only bots fill it in */
+.hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+/* ---------- Cookie choice (assets/js/track.js; only when a Google tag is set up) ---------- */
+.consent {
+  position: fixed; left: 20px; bottom: 20px; z-index: 90; display: grid; gap: 14px; width: min(400px, calc(100vw - 100px));
+  padding: 18px 20px; border-radius: 14px; background: #0b1b2b; color: #eef6fb; box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.55);
+  font-size: 14px; line-height: 1.55; opacity: 0; transform: translateY(12px); transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+}
+.consent.is-in { opacity: 1; transform: none; }
+.consent a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.consent-row { display: flex; gap: 8px; justify-content: flex-end; }
+.consent-btn { height: 38px; padding: 0 18px; border-radius: 999px; box-shadow: inset 0 0 0 1px rgba(238, 246, 251, 0.3); color: #eef6fb; font: 500 14px var(--sans); transition: background-color 0.3s, color 0.3s; }
+.consent-btn:hover { background: rgba(238, 246, 251, 0.12); }
+.consent-btn.is-main { background: #fff; color: #0b1b2b; box-shadow: none; }
+.consent-btn.is-main:hover { background: var(--accent); }
+.consent-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* the privacy policy (privacy.html), on the guide layout */
+.legal ul + p { margin-top: 1em; }
+.legal a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--rule-2); text-underline-offset: 3px; }
+.legal a:hover { text-decoration-color: var(--cyan-ink); }
+.footer-legal { display: flex; gap: 18px; }
+.footer-legal button { color: inherit; font: inherit; }
+.footer-legal button:hover { color: var(--fg); }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1100px) {

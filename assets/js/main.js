@@ -323,7 +323,7 @@
     return url;
   };
   let leaving = false;
-  const PAGE_NAMES = { '': 'Home', 'index.html': 'Home', 'about.html': 'Who We Are', 'services.html': 'What We Do', 'solutions.html': 'How We Do', 'projects.html': 'Clients & Projects', 'partners.html': 'Partners & Clients', 'quality.html': 'Quality & QHSE', 'certifications.html': 'Certifications', 'insights.html': 'Insights', 'contact.html': 'Contact Us', 'careers.html': 'Careers', 'job.html': 'Careers' };
+  const PAGE_NAMES = { '': 'Home', 'index.html': 'Home', 'about.html': 'Who We Are', 'services.html': 'What We Do', 'solutions.html': 'How We Do', 'projects.html': 'Clients & Projects', 'partners.html': 'Partners & Clients', 'quality.html': 'Quality & QHSE', 'certifications.html': 'Certifications', 'insights.html': 'Insights', 'contact.html': 'Contact Us', 'privacy.html': 'Privacy Policy', 'careers.html': 'Careers', 'job.html': 'Careers' };
   // pages in folders take their section's name: service/<slug>/ and services/<area>/ → What We Do
   const FOLDER_NAMES = { service: 'What We Do', services: 'What We Do', insights: 'Insights' };
   const pageName = (url) => {
@@ -758,9 +758,25 @@
       if (input === fEmail || input === fPhone) reach.classList.remove('is-error');
     }));
 
-    form.addEventListener('submit', (e) => {
+    const send = $('[data-send]', form);
+    const sendLabel = $('span', send);
+    const done = $('[data-form-done]');
+    const say = (kind, ...parts) => {
+      status.className = `status full${kind ? ` is-${kind}` : ''}`;
+      status.replaceChildren(...parts.map((p) => (typeof p === 'string' ? document.createTextNode(p) : p)));
+    };
+    const link = (label, href, ext) => {
+      const a = document.createElement('a');
+      a.href = href;
+      a.textContent = label;
+      if (ext) { a.target = '_blank'; a.rel = 'noopener'; }
+      return a;
+    };
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const via = (e.submitter && e.submitter.value) || 'email';
+      if (send.disabled) return;
+      const via = (e.submitter && e.submitter.value) || 'send';
       const name = fName.value.trim(), email = fEmail.value.trim(), phone = fPhone.value.trim();
       const company = fCompany.value.trim(), message = fMsg.value.trim();
       let first = null;
@@ -780,14 +796,56 @@
       const topics = $$('input[name="topics"]:checked', form).map((i) => i.value);
       const lines = ['Hello Hamdaz,', '', message, '', `Name: ${name}`, company && `Company: ${company}`, email && `Email: ${email}`, phone && `Phone: ${phone}`, topics.length && `Interested in: ${topics.join(', ')}`].filter((l) => l !== false && l !== null && l !== undefined);
       const text = lines.join('\n');
-      status.className = 'status full';
+      const waHref = `https://wa.me/${form.dataset.wa}?text=${encodeURIComponent(text)}`;
+      const mailHref = `mailto:${form.dataset.email}?subject=${encodeURIComponent(`Website enquiry from ${name}${company ? `, ${company}` : ''}`)}&body=${encodeURIComponent(text)}`;
       if (via === 'whatsapp') {
-        window.open(`https://wa.me/${form.dataset.wa}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
-        status.textContent = 'WhatsApp is opening with your message ready. Just press send.';
-      } else {
-        const subject = encodeURIComponent(`Website enquiry from ${name}${company ? `, ${company}` : ''}`);
-        window.location.href = `mailto:${form.dataset.email}?subject=${subject}&body=${encodeURIComponent(text)}`;
-        status.textContent = `Your email app should open with the message ready. If it does not, write to ${form.dataset.email}.`;
+        window.open(waHref, '_blank', 'noopener');
+        window.hzTrack && window.hzTrack('whatsapp');
+        say('', 'WhatsApp is opening with your message ready. Just press send.');
+        return;
+      }
+
+      // to the ERP (hamdaz-2.0 app/website): saved there, and the team is told
+      const data = new FormData();
+      data.set('name', name);
+      if (company) data.set('company', company);
+      if (email) data.set('email', email);
+      if (phone) data.set('phone', phone);
+      topics.forEach((t) => data.append('topics', t));
+      data.set('message', message);
+      data.set('page', location.pathname);
+      data.set('website', field('website').value); // the honeypot: people leave it empty
+      const src = window.hzSource ? window.hzSource() : {};
+      Object.entries(src).forEach(([k, v]) => { if (typeof v === 'string' && v) data.set(k, v); });
+
+      send.disabled = true;
+      sendLabel.textContent = 'Sending…';
+      say('', 'Sending your message…');
+      const ctl = new AbortController();
+      const timer = setTimeout(() => ctl.abort(), 30000); // the ERP can take a few seconds to wake
+      try {
+        const r = await fetch(form.dataset.api, { method: 'POST', body: data, credentials: 'omit', signal: ctl.signal });
+        let body = null;
+        try { body = await r.json(); } catch (err) { /* not JSON */ }
+        if (!r.ok) {
+          if (body && typeof body.detail === 'string' && r.status < 500) return say('error', body.detail);
+          throw new Error(`status ${r.status}`);
+        }
+        say('');
+        form.hidden = true;
+        $('[data-form-done-text]').textContent = (body && body.message) || `Thank you, ${name.split(/\s+/)[0]}. We have your message and will be in touch soon.`;
+        done.hidden = false;
+        done.focus({ preventScroll: true });
+        done.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        window.hzTrack && window.hzTrack('lead');
+        window.ScrollTrigger && requestAnimationFrame(() => window.ScrollTrigger.refresh());
+      } catch (err) {
+        // offline, a timeout, or the ERP is down: the message is not lost, it can go another way
+        say('error', 'We could not send your message just now. Please try again, or send it ', link('on WhatsApp', waHref, true), ' or ', link('by email', mailHref), '.');
+      } finally {
+        clearTimeout(timer);
+        send.disabled = false;
+        sendLabel.textContent = 'Send message';
       }
     });
   }

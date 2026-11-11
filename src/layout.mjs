@@ -1,7 +1,21 @@
-import { site, contact, services, categories, serviceBySlug, industries, waLink, svcUrl, areaUrl } from './data.mjs';
+import { site, contact, services, categories, serviceBySlug, industries, waLink, svcUrl, areaUrl, tracking } from './data.mjs';
 import { icon } from './icons.mjs';
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+
+// The Google tag, when `tracking` in data.mjs has an Ads id. Consent defaults to "denied" before the tag loads
+// (Consent Mode), so no advertising or analytics cookie is set until the visitor accepts; a choice made earlier
+// is applied here, before the first hit. Ids and labels are checked so a typo cannot break out of the script.
+const AW = /^AW-\d{6,14}$/.test(tracking.ads) ? tracking.ads : '';
+const GA = AW && /^G-[A-Z0-9]{4,14}$/.test(tracking.analytics) ? tracking.analytics : '';
+const CONV = Object.fromEntries(Object.entries(tracking.conversions).filter(([, v]) => /^[A-Za-z0-9_-]{4,40}$/.test(v)));
+if (tracking.ads && !AW) console.warn('  ! tracking.ads in src/data.mjs is not an AW-123456789 id, so no Google tag is added');
+const GRANT = "{ad_storage:'granted',ad_user_data:'granted',ad_personalization:'granted',analytics_storage:'granted'}";
+const googleTag = AW
+  ? `<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}window.hzTag=${JSON.stringify({ ads: AW, conv: CONV })};gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});try{if(localStorage.getItem('hz-consent')==='granted')gtag('consent','update',${GRANT})}catch(e){}gtag('set','ads_data_redaction',true);gtag('set','url_passthrough',true);gtag('js',new Date());gtag('config','${AW}');${GA ? `gtag('config','${GA}');` : ''}</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=${AW}"></script>
+`
+  : '';
 
 // Original hamdaz.com navigation labels
 export const NAV = [
@@ -143,6 +157,7 @@ function footer() {
     <div class="footer-base">
       <p>Copyright © <span data-year>${new Date().getFullYear()}</span> Hamdaz. All Rights Reserved.</p>
       <p>HAMDAZTECH TECHNOLOGY SERVICES LLC · HAMDAZ TECHNOLOGIES LLP</p>
+      <p class="footer-legal"><a href="privacy.html">Privacy policy</a>${AW ? '<button type="button" data-consent-open>Cookie settings</button>' : ''}</p>
       <a href="#top">Back to top ↑</a>
     </div>
   </div>
@@ -201,11 +216,12 @@ ${noindex ? '<meta name="robots" content="noindex">\n' : ''}<link rel="canonical
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="assets/css/style.css?v=${V}">
-<script>(function(d){var r=d.documentElement;r.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches){r.classList.add('reduce')}else{r.classList.add('anim');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('anim')},4000)}try{if(sessionStorage.getItem('hz-nav')){r.classList.add('from-nav');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('from-nav')},3000)}}catch(e){}})(document)</script>
+${googleTag}<script>(function(d){var r=d.documentElement;r.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches){r.classList.add('reduce')}else{r.classList.add('anim');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('anim')},4000)}try{if(sessionStorage.getItem('hz-nav')){r.classList.add('from-nav');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('from-nav')},3000)}}catch(e){}})(document)</script>
 ${three ? '<link rel="modulepreload" href="assets/vendor/three.module.min.js">\n' : ''}<script src="assets/vendor/gsap.min.js" defer></script>
 <script src="assets/vendor/ScrollTrigger.min.js" defer></script>
 <script src="assets/vendor/lenis.min.js" defer></script>
 <script src="assets/js/main.js?v=${V}" defer></script>
+<script src="assets/js/track.js?v=${V}" defer></script>
 ${scripts.map((s) => `<script src="${s}?v=${V}" defer></script>\n`).join('')}${stage ? `<script type="module" src="assets/js/stage.js?v=${V}"></script>\n` : earth ? `<script type="module" src="assets/js/earth.js?v=${V}"></script>\n` : ''}${scene ? `<script type="module" src="assets/js/scenes.js?v=${V}"></script>\n` : ''}${jsonld}</head>
 <body id="top" class="${bodyClass}">
 ${header(active)}
