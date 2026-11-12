@@ -18,6 +18,30 @@ export const careers = {
   api: 'https://hamdaz2-h4ajc0d0a3h9fwfa.centralus-01.azurewebsites.net',
 };
 
+// The contact form posts here (the ERP's public /website/enquiry, outside its login: hamdaz-2.0 app/website),
+// so every message is saved in the ERP and the team is told. If the ERP cannot be reached the form offers
+// WhatsApp and email instead.
+export const enquiry = {
+  url: `${careers.api}/website/enquiry`,
+};
+
+/* ---------- Google tag (Google Ads + Analytics) ---------- */
+// While `ads` is empty nothing loads: no Google script, no cookie banner. To switch it on, paste the ids from
+// Google Ads (Goals → Conversions → a conversion → Tag setup → "Install the tag yourself": the send_to value
+// reads 'AW-123456789/AbCdEfGh', the id before the slash, the label after it) and rebuild.
+// Advertising and analytics cookies wait for the visitor's "Accept" (Consent Mode); see assets/js/track.js.
+export const tracking = {
+  ads: '', // 'AW-123456789'
+  analytics: '', // 'G-XXXXXXXXXX', optional
+  // one Google Ads conversion per kind of contact; leave a label empty to skip that one
+  conversions: {
+    lead: '', // the contact form, sent
+    call: '', // a tap on a phone number
+    whatsapp: '', // a WhatsApp chat opened
+    email: '', // a tap on the email address
+  },
+};
+
 export const contact = {
   email: 'hello@hamdaz.com',
   whatsapp: '919207773300',

@@ -1,7 +1,7 @@
-import { contact, services, waLink } from '../data.mjs';
+import { contact, categories, enquiry, waLink } from '../data.mjs';
 import { icon } from '../icons.mjs';
 import { clock } from '../layout.mjs';
-import { pageHero, content, head, btn, officeLabel } from '../components.mjs';
+import { pageHero, content, head, btn, tlink, officeLabel } from '../components.mjs';
 import { ldScript, orgNode, officeNodes, breadcrumbNode } from '../blocks.mjs';
 
 const hero = pageHero({ crumb: 'Contact Us', eyebrow: 'Contact Us', title: 'Connect with HAMDAZ', text: 'Where Passion Meets Technology, and Your Success is Our Mission!', hero: 'globe' });
@@ -29,7 +29,8 @@ const offices = `<section class="sec">
   </div>
 </section>`;
 
-const topics = [...services.slice(0, 6).map((s) => s.title), 'AI Products', 'Custom ChatGPT', 'Other'];
+// one per service area, so every service the ads bring people for has a box to tick
+const topics = [...categories.map((c) => c.short), 'AI Products', 'Other'];
 const direct = [
   ['WhatsApp', contact.whatsappDisplay, waLink('Hello Hamdaz, I would like to discuss a project.'), true],
   ['Email', contact.email, `mailto:${contact.email}`],
@@ -47,7 +48,8 @@ const form = `<section class="sec form-sec">
           .map(([k, v, href, ext]) => `<li><a href="${href}"${ext ? ' target="_blank" rel="noopener"' : ''}><small>${k}</small><strong>${v}</strong><span class="ix-go" aria-hidden="true">${icon('arrow-up-right')}</span></a></li>`)
           .join('')}</ul>
       </div>
-      <form class="form" data-form data-wa="${contact.whatsapp}" data-email="${contact.email}" action="mailto:${contact.email}" method="post" enctype="text/plain" novalidate data-reveal>
+      <div class="form-main" data-reveal>
+      <form class="form" data-form data-api="${enquiry.url}" data-wa="${contact.whatsapp}" data-email="${contact.email}" novalidate>
         <div class="field"><label for="f-name">Your name *</label><input id="f-name" name="name" autocomplete="name" required></div>
         <div class="field"><label for="f-company">Company</label><input id="f-company" name="company" autocomplete="organization"></div>
         <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" aria-describedby="f-reach"></div>
@@ -58,13 +60,22 @@ const form = `<section class="sec form-sec">
           <div class="topics">${topics.map((t) => `<label class="topic"><input type="checkbox" name="topics" value="${t}"><span>${t}</span></label>`).join('')}</div>
         </fieldset>
         <div class="field full"><label for="f-msg">Message *</label><textarea id="f-msg" name="message" rows="4" required placeholder="Tell us about your project"></textarea></div>
+        <div class="hp" aria-hidden="true"><label for="f-website">Leave this empty</label><input id="f-website" name="website" tabindex="-1" autocomplete="off"></div>
         <div class="form-actions full">
-          ${btn('Send by email', '', { tag: 'button', ic: 'send', attrs: 'type="submit" name="via" value="email"' })}
+          ${btn('Send message', '', { tag: 'button', ic: 'send', attrs: 'type="submit" name="via" value="send" data-send' })}
           ${btn('Send on WhatsApp', '', { tag: 'button', variant: 'ghost', ic: 'whatsapp', attrs: 'type="submit" name="via" value="whatsapp"' })}
         </div>
-        <p class="hint full">Opens your email app or WhatsApp with the message ready. Nothing is stored on this site.</p>
+        <p class="hint full">Your message goes straight to our team. We use your details only to reply; see our <a href="privacy.html">privacy policy</a>.</p>
         <p class="status full" role="status" aria-live="polite" data-status></p>
+        <noscript><p class="status full">This form needs JavaScript. You can also email <a href="mailto:${contact.email}">${contact.email}</a> or message us on <a href="${waLink()}">WhatsApp</a>.</p></noscript>
       </form>
+      <div class="apply-done form-done" data-form-done tabindex="-1" hidden>
+        <span class="apply-done-mark" aria-hidden="true">${icon('check')}</span>
+        <h3 class="apply-done-title">Message sent</h3>
+        <p data-form-done-text></p>
+        ${tlink('Explore our services', 'services.html')}
+      </div>
+      </div>
     </div>
   </div>
 </section>`;
