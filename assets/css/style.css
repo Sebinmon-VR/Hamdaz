@@ -738,6 +738,11 @@ a:hover .tone img, .feat:hover .tone img, .about-media:hover .tone img { transfo
 .svx-panel.is-on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
 .svx-media { aspect-ratio: 16 / 8; }
 .svx-media .tone { height: 100%; border-radius: 0; }
+/* the live pictures (cards.js): drawn on one fixed layer over the page, under the header and menus; the card
+   keeps the navy behind it, and its corners and fade come from the card itself */
+.cards-gl { position: fixed; left: 0; top: 0; z-index: 40; pointer-events: none; }
+.svx-media { border-radius: 15px 15px 0 0; }
+.is-3d, .is-3d .tone { background: #061423; }
 .svx-body { display: grid; gap: 10px; padding: 24px 26px 26px; }
 .svx-p-title { font-family: var(--display); font-weight: 500; font-size: clamp(21px, 1.8vw, 26px); line-height: 1.2; letter-spacing: -0.02em; }
 .svx-p-text { font-size: 15px; line-height: 1.6; color: var(--ink-2); }

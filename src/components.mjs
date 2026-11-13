@@ -7,6 +7,21 @@ const [uae, india] = contact.offices;
 export const sentences = (t) => t.split(/(?<=\.)\s+/);
 export const pad2 = (n) => String(n).padStart(2, '0');
 export const svcImg = (s) => `assets/img/svc/${s.slug}.webp`;
+// the live picture drawn for a card on the home page (assets/js/cards.js); the photo is the fallback without WebGL
+export const card3d = {
+  'generative-ai': 'core',
+  'data-analytics-predictive-services': 'bars',
+  'business-process-automation-and-digital-transformation-services': 'gears',
+  'data-center-infrastructure-services': 'server',
+  'cloud-services-migration': 'cloud',
+  'partner-services-msft-azure-aws-gcp-oci': 'partner',
+  'oil-and-gas-industry': 'pumpjack',
+  'small-and-medium-enterprises-smes': 'building',
+  'schools-and-educational-institutions': 'school',
+  'online-education': 'laptop',
+  sports: 'ball',
+};
+const card3dAttr = (slug) => (card3d[slug] ? ` data-card3d="${card3d[slug]}"` : '');
 export const productImg = (p) => `assets/img/products/${p.slug}.webp`;
 // The India office is labelled "India", so its small label shows the state instead
 export const officeLabel = (o) => (o.city.toUpperCase() === o.region ? o.coords : o.region);
@@ -21,7 +36,7 @@ export function btn(label, href, { variant = '', ic = 'arrow-up-right', ext = fa
 }
 export const tlink = (label, href, attrs = '') => `<a class="tlink" href="${href}"${attrs ? ` ${attrs}` : ''}>${label}${icon('arrow-right')}</a>`;
 // Brand duotone image: navy shadows, full colour on hover
-export const tone = (src, alt = '', w = 1000, h = 667) => `<span class="tone"><img src="${src}" alt="${alt}" loading="lazy" decoding="async" width="${w}" height="${h}"></span>`;
+export const tone = (src, alt = '', w = 1000, h = 667, attrs = '') => `<span class="tone"${attrs}><img src="${src}" alt="${alt}" loading="lazy" decoding="async" width="${w}" height="${h}"></span>`;
 const go = `<span class="ix-go" aria-hidden="true">${icon('arrow-up-right')}</span>`;
 
 /* ---------- First section: dark 3D AI chip on a circuit board (assets/js/earth.js) ---------- */
@@ -126,7 +141,7 @@ export function servicesIndex({ idx = '02' } = {}) {
       </ol>
       <div class="svx-panels" aria-hidden="true">
         ${featured.map((s, i) => `<div class="svx-panel${i ? '' : ' is-on'}" data-svx-panel="${i}">
-          <div class="svx-media">${tone(svcImg(s))}</div>
+          <div class="svx-media"${card3dAttr(s.slug)}>${tone(svcImg(s))}</div>
           <div class="svx-body">
             <p class="svx-p-title">${s.title}</p>
             <p class="svx-p-text">${s.summary}</p>
@@ -149,7 +164,7 @@ export function productsGrid({ idx = '03' } = {}) {
       ${industries
         .map(
           (p, i) => `<a class="prod" href="solutions.html#${p.slug}" data-reveal>
-        ${tone(productImg(p))}
+        ${tone(productImg(p), '', 1000, 667, card3dAttr(p.slug))}
         <span class="prod-meta"><span class="prod-num">${pad2(i + 1)}</span><span class="prod-title">${p.title}</span></span>
       </a>`,
         )

@@ -187,7 +187,7 @@ const V = Date.now().toString(36);
 // SEO head: `title` gets " – Hamdaz" added (or pass `fullTitle` to set it exactly), `description` is the
 // meta description, `image` an absolute social-card image, `ogType` 'website' or 'article'.
 // `scripts`: extra scripts for this page only (paths from the site root, loaded deferred after main.js).
-export function layout({ path = '', title, fullTitle: ft = '', description = site.description, active = '', body, earth = false, scene = false, stage = false, jsonld = '', base = '', bodyClass = '', image = `${site.url}/assets/img/og.png`, ogType = 'website', noindex = false, scripts = [] }) {
+export function layout({ path = '', title, fullTitle: ft = '', description = site.description, active = '', body, earth = false, scene = false, stage = false, jsonld = '', base = '', bodyClass = '', image = `${site.url}/assets/img/og.png`, ogType = 'website', noindex = false, scripts = [], modules = [] }) {
   const three = earth || scene || stage;
   const fullTitle = ft || (title ? `${title} – Hamdaz` : 'Hamdaz – Delivering the Digital Future');
   const url = `${site.url}/${path}`;
@@ -222,7 +222,7 @@ ${three ? '<link rel="modulepreload" href="assets/vendor/three.module.min.js">\n
 <script src="assets/vendor/lenis.min.js" defer></script>
 <script src="assets/js/main.js?v=${V}" defer></script>
 <script src="assets/js/track.js?v=${V}" defer></script>
-${scripts.map((s) => `<script src="${s}?v=${V}" defer></script>\n`).join('')}${stage ? `<script type="module" src="assets/js/stage.js?v=${V}"></script>\n` : earth ? `<script type="module" src="assets/js/earth.js?v=${V}"></script>\n` : ''}${scene ? `<script type="module" src="assets/js/scenes.js?v=${V}"></script>\n` : ''}${jsonld}</head>
+${scripts.map((s) => `<script src="${s}?v=${V}" defer></script>\n`).join('')}${stage ? `<script type="module" src="assets/js/stage.js?v=${V}"></script>\n` : earth ? `<script type="module" src="assets/js/earth.js?v=${V}"></script>\n` : ''}${scene ? `<script type="module" src="assets/js/scenes.js?v=${V}"></script>\n` : ''}${modules.map((s) => `<script type="module" src="${s}?v=${V}"></script>\n`).join('')}${jsonld}</head>
 <body id="top" class="${bodyClass}">
 ${header(active)}
 <main id="main">

@@ -112,6 +112,8 @@ export default {
   stage: true,
   bodyClass: 'page-home',
   scripts: ['assets/js/news.js'],
+  // the live pictures on the services panel and the industry cards
+  modules: ['assets/js/cards.js'],
   fullTitle: 'Hamdaz Technologies | IT, AI, Cybersecurity & ELV in Abu Dhabi',
   description: 'Abu Dhabi system integrator for AI, cloud, cybersecurity, MCC-certified CCTV, audio visual, networking and software. ISO certified, registered ADNOC supplier.',
   jsonld,
