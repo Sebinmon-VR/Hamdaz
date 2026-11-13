@@ -35,7 +35,8 @@
   // a posting answer as a line of the advert (a checkbox or a multi-select may reach here)
   const asText = (v) => (v === true ? 'Yes' : v === false ? 'No' : Array.isArray(v) ? v.map(asText).join(', ') : isoDate(v) ? fmtDate(v) : String(v));
   const metaOf = (j) => [j.department, j.location, cap(j.employment_type)].filter(Boolean).join(' · ');
-  // the role's LinkedIn job post, when HR saved one in the ERP (linkedin_url); only a linkedin.com https link is used
+  // the role on LinkedIn (linkedin_url): the company page post the ERP made for it, or a LinkedIn job HR posted by
+  // hand. Applications still come through this site's form. Only a linkedin.com https link is used.
   const linkedinOf = (j) => {
     try {
       const u = new URL(j.linkedin_url);

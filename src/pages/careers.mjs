@@ -82,7 +82,7 @@ const apply = `<section class="sec form-sec apply-sec" data-apply-sec hidden>
       <div class="form-side apply-side">
         <p class="apply-for"><small>Applying for</small><strong data-apply-role></strong><span data-apply-meta></span></p>
         <p class="hint">Files: PDF, Word, images or text, up to 15 MB each.</p>
-        <p class="hint" data-apply-linkedin hidden>Prefer LinkedIn? <a href="${linkedinJobs}" target="_blank" rel="noopener">Apply on LinkedIn</a> instead.</p>
+        <p class="hint" data-apply-linkedin hidden>This role is also on LinkedIn. <a href="${linkedinJobs}" target="_blank" rel="noopener">View on LinkedIn</a></p>
         <p class="hint">Questions? Write to <a href="mailto:${contact.email}">${contact.email}</a>.</p>
       </div>
       <div class="apply-main">
