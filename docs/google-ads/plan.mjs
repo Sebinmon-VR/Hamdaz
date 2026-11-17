@@ -12,7 +12,7 @@ export const languages = 'en';
 
 // on every ad (after the service and area lines)
 export const shared = {
-  headlines: ['Hamdaz Technologies', 'Abu Dhabi Based Team', 'ISO 9001 Certified', 'Request a Proposal Today', 'Talk to Our Engineers'],
+  headlines: ['Hamdaz Technologies', 'Abu Dhabi Based Team', 'ISO 9001, 14001 & 45001', 'Request a Proposal Today', 'Talk to Our Engineers'],
   description: 'ISO 9001, 14001 and 45001 certified team in Abu Dhabi. Tell us what you need today.',
 };
 
@@ -328,24 +328,53 @@ export const adGroups = {
 export const company = {
   title: 'What We Do',
   budget: 25,
-  headlines: ['Design, Install & Support', 'One Partner for Your IT'],
-  description: 'From site survey and design to installation, handover and support across the UAE.',
+  headlines: ['Survey, Design, Install & Run', 'One Partner, One Contract'],
+  description: 'Site survey, design, supply, installation and 24/7 support from one Abu Dhabi team.',
   groups: [
     {
       name: 'What We Do',
       url: 'services.html',
       path: ['services', 'abu-dhabi'],
       keywords: ['it company abu dhabi', 'it companies in abu dhabi', 'system integrator abu dhabi', 'system integrator uae', 'it solutions company uae', 'it solutions provider abu dhabi', 'it services company abu dhabi', 'technology company abu dhabi', 'it and security solutions uae', 'elv and it company uae', 'ict company abu dhabi', 'technology solutions provider uae'],
-      headlines: ['IT Company in Abu Dhabi', 'System Integrator in the UAE', 'AI, Cloud & Cybersecurity', 'CCTV, ELV & Audio Visual', 'Networks, Wi-Fi & Software', '38 IT Services, One Partner', 'ISO & MCC Certified', 'Registered ADNOC Supplier'],
-      descriptions: ['AI, cloud, cybersecurity, MCC CCTV, audio visual, networks and software from one team.', 'One Abu Dhabi team for your IT, security systems and software, supported after handover.'],
+      headlines: ['IT Company in Abu Dhabi', 'System Integrator in the UAE', 'AI, Cloud & Cybersecurity', 'CCTV, ELV & Audio Visual', 'Networks, Wi-Fi & Software', '38 Services, One Partner', 'MCC Certified Contractor', 'Registered ADNOC Supplier', '100+ Technology Brands', '24/7 NOC & SOC Support'],
+      descriptions: ['AI, cloud, cybersecurity, MCC CCTV, audio visual, networks and software from one team.', 'ISO 9001, 14001 & 45001 certified. Microsoft, Cisco, Fortinet, Hikvision & 100+ brands.'],
     },
     {
       name: 'Hamdaz (brand)',
       url: '',
       path: ['hamdaz'],
       keywords: ['hamdaz', 'hamdaz technologies', 'hamdaz abu dhabi', 'hamdaz technologies abu dhabi', 'hamdaz llc'],
-      headlines: ['Hamdaz Technologies', 'Abu Dhabi System Integrator', 'IT, AI & Security Systems', 'Visit Our Website'],
+      headlines: ['Hamdaz Technologies', 'Abu Dhabi System Integrator', 'IT, AI & Security Systems', 'See Our Projects & Clients', 'Talk to Our Team Today'],
       descriptions: ['Hamdaz Technologies, Abu Dhabi: AI, cloud, cybersecurity, ELV, AV, networks and software.', 'See our services, projects and certifications, or send us your requirement today.'],
     },
   ],
+};
+
+// Assets (extensions) Google shows under the ads: they make each ad bigger and show everything we do.
+// Account level: added once in Google Ads (Assets), they appear on every campaign. Sitelinks marked `company`
+// go on the What We Do campaign only (they point to each service area). build.mjs checks Google's limits:
+// sitelink text 25, sitelink description lines 35, callout 25, snippet value 25.
+export const assets = {
+  phone: '+971 2 626 5780',
+  callouts: ['MCC Certified Contractor', 'ISO 9001, 14001 & 45001', 'Registered ADNOC Supplier', 'ICV Certified', '24/7 NOC & SOC Support', '100+ Technology Brands', 'Abu Dhabi Based Team', 'Design to Handover & AMC'],
+  snippets: [
+    { header: 'Services', values: ['AI & Automation', 'Cybersecurity', 'Cloud & Data Centres', 'CCTV & Access Control', 'Audio Visual', 'Networking & Wi-Fi', 'Software, ERP & CRM', 'IT Staffing'] },
+    { header: 'Brands', values: ['Microsoft', 'Cisco', 'Fortinet', 'Palo Alto Networks', 'Hikvision', 'Axis', 'Crestron', 'Dell'] },
+  ],
+  sitelinks: {
+    account: [
+      { text: 'All Our Services', url: 'services.html', lines: ['38 services in 9 areas', 'AI, security, AV, cloud & more'] },
+      { text: 'Clients & Projects', url: 'projects.html', lines: ['CCTV, ANPR & data centre work', 'For ADNOC group & enterprises'] },
+      { text: 'Certifications', url: 'certifications.html', lines: ['ISO 9001, 14001 & 45001', 'MCC certified, ADNOC ICV'] },
+      { text: 'Contact Us', url: 'contact.html', lines: ['Send us your requirement', 'Call, WhatsApp or email us'] },
+    ],
+    company: [
+      { text: 'Cybersecurity', url: 'services/cybersecurity/', lines: ['Audits, Zero Trust & 24/7 SOC', 'Ransomware protection'] },
+      { text: 'CCTV & Security Systems', url: 'services/elv-security/', lines: ['MCC CCTV & access control', 'ANPR, barriers, data centres'] },
+      { text: 'AI & Automation', url: 'services/ai-data/', lines: ['Generative AI & chatbots', 'Analytics & automation'] },
+      { text: 'Cloud & Infrastructure', url: 'services/cloud-infrastructure/', lines: ['Azure, AWS, GCP & OCI', 'Migration & managed IT'] },
+      { text: 'Audio Visual', url: 'services/audio-visual/', lines: ['Meeting rooms & video walls', 'Pro audio & smart spaces'] },
+      { text: 'Software Development', url: 'services/software-development/', lines: ['Custom software & apps', 'ERP, CRM & LMS'] },
+    ],
+  },
 };

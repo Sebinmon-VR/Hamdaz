@@ -1,0 +1,69 @@
+ASSETS FOR GOOGLE ADS (enter in Google Ads > Campaigns > Assets)
+
+CALL (account level)
+  +971 2 626 5780
+
+CALLOUTS (account level, up to 25 characters each)
+  MCC Certified Contractor
+  ISO 9001, 14001 & 45001
+  Registered ADNOC Supplier
+  ICV Certified
+  24/7 NOC & SOC Support
+  100+ Technology Brands
+  Abu Dhabi Based Team
+  Design to Handover & AMC
+
+STRUCTURED SNIPPET (account level), header: Services
+  AI & Automation
+  Cybersecurity
+  Cloud & Data Centres
+  CCTV & Access Control
+  Audio Visual
+  Networking & Wi-Fi
+  Software, ERP & CRM
+  IT Staffing
+
+STRUCTURED SNIPPET (account level), header: Brands
+  Microsoft
+  Cisco
+  Fortinet
+  Palo Alto Networks
+  Hikvision
+  Axis
+  Crestron
+  Dell
+
+SITELINKS (account level)
+  All Our Services  ->  https://hamdaz.com/services.html
+      38 services in 9 areas
+      AI, security, AV, cloud & more
+  Clients & Projects  ->  https://hamdaz.com/projects.html
+      CCTV, ANPR & data centre work
+      For ADNOC group & enterprises
+  Certifications  ->  https://hamdaz.com/certifications.html
+      ISO 9001, 14001 & 45001
+      MCC certified, ADNOC ICV
+  Contact Us  ->  https://hamdaz.com/contact.html
+      Send us your requirement
+      Call, WhatsApp or email us
+
+SITELINKS (campaign: Hamdaz | What We Do only)
+  Cybersecurity  ->  https://hamdaz.com/services/cybersecurity/
+      Audits, Zero Trust & 24/7 SOC
+      Ransomware protection
+  CCTV & Security Systems  ->  https://hamdaz.com/services/elv-security/
+      MCC CCTV & access control
+      ANPR, barriers, data centres
+  AI & Automation  ->  https://hamdaz.com/services/ai-data/
+      Generative AI & chatbots
+      Analytics & automation
+  Cloud & Infrastructure  ->  https://hamdaz.com/services/cloud-infrastructure/
+      Azure, AWS, GCP & OCI
+      Migration & managed IT
+  Audio Visual  ->  https://hamdaz.com/services/audio-visual/
+      Meeting rooms & video walls
+      Pro audio & smart spaces
+  Software Development  ->  https://hamdaz.com/services/software-development/
+      Custom software & apps
+      ERP, CRM & LMS
+
