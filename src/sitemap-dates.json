@@ -1,0 +1,258 @@
+{
+ "": {
+  "hash": "71f07706a4e459bf",
+  "date": "2026-11-17"
+ },
+ "404.html": {
+  "hash": "cecfca8bc807c441",
+  "date": "2026-11-17"
+ },
+ "about.html": {
+  "hash": "6445ca1d851ec9f9",
+  "date": "2026-11-17"
+ },
+ "careers.html": {
+  "hash": "1132b8df99234ab4",
+  "date": "2026-11-17"
+ },
+ "certifications.html": {
+  "hash": "8c7fc67eb182f9b0",
+  "date": "2026-11-17"
+ },
+ "contact.html": {
+  "hash": "742325ee47ac3aab",
+  "date": "2026-11-17"
+ },
+ "insights.html": {
+  "hash": "9d13c494028f2f67",
+  "date": "2026-11-17"
+ },
+ "insights/choose-video-conferencing-platform-meeting-rooms/": {
+  "hash": "85da0dd7b7fa5c57",
+  "date": "2026-11-17"
+ },
+ "insights/mcc-approved-cctv-abu-dhabi/": {
+  "hash": "90ff54424f3b463f",
+  "date": "2026-11-17"
+ },
+ "insights/ransomware-resilience-endpoint-security-backup-gap/": {
+  "hash": "c91b9e580387dcbe",
+  "date": "2026-11-17"
+ },
+ "job.html": {
+  "hash": "d0c52e56e3215153",
+  "date": "2026-11-17"
+ },
+ "partners.html": {
+  "hash": "33ee9e769fa1075f",
+  "date": "2026-11-17"
+ },
+ "privacy.html": {
+  "hash": "a5f7e23950ffe553",
+  "date": "2026-11-17"
+ },
+ "projects.html": {
+  "hash": "b09da8d924d0ffb7",
+  "date": "2026-11-17"
+ },
+ "quality.html": {
+  "hash": "374285e783820b44",
+  "date": "2026-11-17"
+ },
+ "service/access-control-gate-barriers/": {
+  "hash": "0124240037aee817",
+  "date": "2026-11-17"
+ },
+ "service/anpr-intercom-car-parks/": {
+  "hash": "6d8b2de324cada86",
+  "date": "2026-11-17"
+ },
+ "service/av-setup-meeting-room-solutions/": {
+  "hash": "ce6e9e70bf3551f6",
+  "date": "2026-11-17"
+ },
+ "service/bot-services/": {
+  "hash": "44081f81cb666c5a",
+  "date": "2026-11-17"
+ },
+ "service/business-process-automation-and-digital-transformation-services/": {
+  "hash": "900b243f1d898c03",
+  "date": "2026-11-17"
+ },
+ "service/cctv-video-surveillance/": {
+  "hash": "189765ab4c44e069",
+  "date": "2026-11-17"
+ },
+ "service/cloud-services-migration/": {
+  "hash": "415c1f77c3eeb1b2",
+  "date": "2026-11-17"
+ },
+ "service/custom-software-web-development/": {
+  "hash": "8263485004debaa3",
+  "date": "2026-11-17"
+ },
+ "service/cyber-assessment-audit/": {
+  "hash": "36f180499ec8d463",
+  "date": "2026-11-17"
+ },
+ "service/data-analytics-predictive-services/": {
+  "hash": "dbd02d29180a3bd6",
+  "date": "2026-11-17"
+ },
+ "service/data-center-infrastructure-services/": {
+  "hash": "801ff186b9873f8a",
+  "date": "2026-11-17"
+ },
+ "service/data-centre-power-cooling/": {
+  "hash": "c72b883946f35082",
+  "date": "2026-11-17"
+ },
+ "service/digital-twin/": {
+  "hash": "5de9d25224533b4f",
+  "date": "2026-11-17"
+ },
+ "service/education-services/": {
+  "hash": "83ca469a8741e9ee",
+  "date": "2026-11-17"
+ },
+ "service/enterprise-networking-wifi/": {
+  "hash": "16ce94f5346681c0",
+  "date": "2026-11-17"
+ },
+ "service/erp-solutions/": {
+  "hash": "f288fff946f65856",
+  "date": "2026-11-17"
+ },
+ "service/generative-ai/": {
+  "hash": "5e99b8f144fb24cd",
+  "date": "2026-11-17"
+ },
+ "service/healthcare-services/": {
+  "hash": "798fe8518a995d5c",
+  "date": "2026-11-17"
+ },
+ "service/immersive-smart-spaces/": {
+  "hash": "776dd71e1ea9c733",
+  "date": "2026-11-17"
+ },
+ "service/information-security-services/": {
+  "hash": "7bf84bc3ec2e7596",
+  "date": "2026-11-17"
+ },
+ "service/it-ot-services/": {
+  "hash": "bf87b7d8a48e31c3",
+  "date": "2026-11-17"
+ },
+ "service/it-outsourcing-managed-operations/": {
+  "hash": "1a380ff38c50a9f3",
+  "date": "2026-11-17"
+ },
+ "service/it-staffing-resident-engineers/": {
+  "hash": "0a6ce30a4a69c390",
+  "date": "2026-11-17"
+ },
+ "service/lms-elearning-platforms/": {
+  "hash": "3294ceda2f64fefe",
+  "date": "2026-11-17"
+ },
+ "service/managed-ai-secops/": {
+  "hash": "0a89ffa43fb05429",
+  "date": "2026-11-17"
+ },
+ "service/managed-services/": {
+  "hash": "8bf7eb474360ad5a",
+  "date": "2026-11-17"
+ },
+ "service/meeting-rooms-video-conferencing/": {
+  "hash": "c5d9a39109555c84",
+  "date": "2026-11-17"
+ },
+ "service/mobile-app-development/": {
+  "hash": "0890e068cd5d1bcb",
+  "date": "2026-11-17"
+ },
+ "service/network-services-cabling-structured-cabling/": {
+  "hash": "adb4c3278be68394",
+  "date": "2026-11-17"
+ },
+ "service/partner-services-msft-azure-aws-gcp-oci/": {
+  "hash": "602393ce610fc60b",
+  "date": "2026-11-17"
+ },
+ "service/pro-audio-pa-systems/": {
+  "hash": "cdefdb141332a250",
+  "date": "2026-11-17"
+ },
+ "service/ransomware-resilience/": {
+  "hash": "2e35d0d8a37c06c9",
+  "date": "2026-11-17"
+ },
+ "service/retail-implementation-services/": {
+  "hash": "53cf8b150b9c3840",
+  "date": "2026-11-17"
+ },
+ "service/rpa-robotic-process-automation/": {
+  "hash": "700b8e756b811a5d",
+  "date": "2026-11-17"
+ },
+ "service/smart-farming/": {
+  "hash": "faca84d0ee3664ab",
+  "date": "2026-11-17"
+ },
+ "service/video-walls-digital-signage/": {
+  "hash": "14cf6d06d3f6f91f",
+  "date": "2026-11-17"
+ },
+ "service/zero-trust-identity-data-security/": {
+  "hash": "5a183428f0cf141e",
+  "date": "2026-11-17"
+ },
+ "service/zoho-sap-vodoo-crm-salesforce/": {
+  "hash": "d96417a734187522",
+  "date": "2026-11-17"
+ },
+ "services.html": {
+  "hash": "5278dcb552d48600",
+  "date": "2026-11-17"
+ },
+ "services/ai-data/": {
+  "hash": "a7bec2f4c0d71934",
+  "date": "2026-11-17"
+ },
+ "services/audio-visual/": {
+  "hash": "4a753bb94187575a",
+  "date": "2026-11-17"
+ },
+ "services/cloud-infrastructure/": {
+  "hash": "acbd5ecbbb657439",
+  "date": "2026-11-17"
+ },
+ "services/cybersecurity/": {
+  "hash": "42186f5021cb4eee",
+  "date": "2026-11-17"
+ },
+ "services/elv-security/": {
+  "hash": "a74b97734a054f5d",
+  "date": "2026-11-17"
+ },
+ "services/industry/": {
+  "hash": "e85267eadfe31a01",
+  "date": "2026-11-17"
+ },
+ "services/network-wifi/": {
+  "hash": "4d2dbe13f389e00f",
+  "date": "2026-11-17"
+ },
+ "services/software-development/": {
+  "hash": "949d89ca213cf7c5",
+  "date": "2026-11-17"
+ },
+ "services/staffing/": {
+  "hash": "64ce21b9d37c83f5",
+  "date": "2026-11-17"
+ },
+ "solutions.html": {
+  "hash": "92643641ac47fed5",
+  "date": "2026-11-17"
+ }
+}

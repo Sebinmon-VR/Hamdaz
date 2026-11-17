@@ -16,7 +16,7 @@ const row = (s) => `
 
 const intro = `<section class="sec cat-intro">
   <div class="wrap">
-    ${head({ idx: '01', label: 'Services', meta: `${services.length} services · ${categories.length} areas`, title: 'Everything we do, in one place', text: 'Pick an area to jump to it. Hover a service to see what it includes, or open it for the full page.' })}
+    ${head({ idx: '01', label: 'Services', meta: `${services.length} services · ${categories.length} areas`, title: 'Everything we do, in one place', text: 'Pick an area to jump to it, or open a service for everything it includes.' })}
     <nav class="cat-nav" aria-label="Service areas"><ul>${categories.map((c) => `<li><a href="#${c.id}">${icon(c.icon)}<span>${c.title}</span><b>${pad2(c.services.length)}</b></a></li>`).join('')}</ul></nav>
   </div>
 </section>`;

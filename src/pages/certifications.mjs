@@ -41,7 +41,7 @@ export default {
   active: 'quality',
   earth: true,
   fullTitle: 'Certifications | ISO 9001, 14001, 45001 & ADNOC ICV | Hamdaz',
-  description: 'Hamdaz Technologies certificates: ISO 9001:2015, ISO 14001:2015 and ISO 45001:2018 by Bureau Veritas (UKAS), ADNOC In-Country Value (ICV) and Abu Dhabi MCC certification.',
+  description: 'Hamdaz certificates: ISO 9001:2015, 14001:2015 and 45001:2018 by Bureau Veritas (UKAS), ADNOC In-Country Value (ICV) and Abu Dhabi MCC certification.',
   jsonld: ldScript(orgNode(), breadcrumbNode([['Certifications', 'certifications.html']])),
   body: [
     pageHero({ crumb: 'Certifications', eyebrow: 'Certifications', title: 'Certifications', text: 'Independently audited management systems for quality, health and safety, and the environment, and ADNOC In-Country Value.', hero: 'layers' }),

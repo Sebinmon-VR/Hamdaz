@@ -1,5 +1,7 @@
 import { site, contact, services, categories, serviceBySlug, industries, waLink, svcUrl, areaUrl, tracking } from './data.mjs';
 import { icon } from './icons.mjs';
+import { createHash } from 'node:crypto';
+import { readdirSync, readFileSync, statSync } from 'node:fs';
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 
@@ -7,13 +9,14 @@ const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').repl
 // (Consent Mode), so no advertising or analytics cookie is set until the visitor accepts; a choice made earlier
 // is applied here, before the first hit. Ids and labels are checked so a typo cannot break out of the script.
 const AW = /^AW-\d{6,14}$/.test(tracking.ads) ? tracking.ads : '';
-const GA = AW && /^G-[A-Z0-9]{4,14}$/.test(tracking.analytics) ? tracking.analytics : '';
+const GA = /^G-[A-Z0-9]{4,14}$/.test(tracking.analytics) ? tracking.analytics : '';
+const TAG = AW || GA; // Analytics works on its own too, so search traffic can be measured without an Ads account
 const CONV = Object.fromEntries(Object.entries(tracking.conversions).filter(([, v]) => /^[A-Za-z0-9_-]{4,40}$/.test(v)));
 if (tracking.ads && !AW) console.warn('  ! tracking.ads in src/data.mjs is not an AW-123456789 id, so no Google tag is added');
 const GRANT = "{ad_storage:'granted',ad_user_data:'granted',ad_personalization:'granted',analytics_storage:'granted'}";
-const googleTag = AW
-  ? `<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}window.hzTag=${JSON.stringify({ ads: AW, conv: CONV })};gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});try{if(localStorage.getItem('hz-consent')==='granted')gtag('consent','update',${GRANT})}catch(e){}gtag('set','ads_data_redaction',true);gtag('set','url_passthrough',true);gtag('js',new Date());gtag('config','${AW}');${GA ? `gtag('config','${GA}');` : ''}</script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=${AW}"></script>
+const googleTag = TAG
+  ? `<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}window.hzTag=${JSON.stringify({ ads: AW, conv: CONV })};gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});try{if(localStorage.getItem('hz-consent')==='granted')gtag('consent','update',${GRANT})}catch(e){}gtag('set','ads_data_redaction',true);gtag('set','url_passthrough',true);gtag('js',new Date());${AW ? `gtag('config','${AW}');` : ''}${GA ? `gtag('config','${GA}');` : ''}</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=${TAG}"></script>
 `
   : '';
 
@@ -181,8 +184,25 @@ function curtain(name = '') {
 </div>`;
 }
 
-// a version stamp for the stylesheet and scripts, new on every build, so browsers fetch the latest copies
-const V = Date.now().toString(36);
+// a version stamp for the stylesheet and scripts: a hash of their contents, so it only changes when they do (pages
+// stay byte-for-byte the same between builds when nothing changed, which keeps the sitemap's dates honest)
+const V = (() => {
+  const h = createHash('sha1');
+  for (const dir of ['assets/css', 'assets/js']) {
+    const base = new URL(`../${dir}/`, import.meta.url);
+    for (const f of readdirSync(base, { recursive: true }).map(String).sort()) {
+      const p = new URL(f.replace(/\\/g, '/'), base);
+      if (statSync(p).isFile()) h.update(f).update(readFileSync(p));
+    }
+  }
+  return h.digest('hex').slice(0, 10);
+})();
+
+// the social-card image's size, for the images whose size is known (the site card and the service photos)
+const ogSize = (img) => {
+  const [w, h] = /\/assets\/img\/og\.png/.test(img) ? [1200, 630] : /\/assets\/img\/svc\//.test(img) ? [1200, 800] : [];
+  return w ? `<meta property="og:image:width" content="${w}">\n<meta property="og:image:height" content="${h}">\n` : '';
+};
 
 // SEO head: `title` gets " – Hamdaz" added (or pass `fullTitle` to set it exactly), `description` is the
 // meta description, `image` an absolute social-card image, `ogType` 'website' or 'article'.
@@ -199,7 +219,8 @@ export function layout({ path = '', title, fullTitle: ft = '', description = sit
 ${base ? `<base href="${base}">\n` : ''}<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(fullTitle)}</title>
 <meta name="description" content="${esc(description)}">
-${noindex ? '<meta name="robots" content="noindex">\n' : ''}<link rel="canonical" href="${url}">
+<meta name="robots" content="${noindex ? 'noindex' : 'index, follow, max-image-preview:large, max-snippet:-1'}">
+<link rel="canonical" href="${url}">
 <meta name="theme-color" content="#061423">
 <meta property="og:type" content="${ogType}">
 <meta property="og:locale" content="en_AE">
@@ -208,7 +229,11 @@ ${noindex ? '<meta name="robots" content="noindex">\n' : ''}<link rel="canonical
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${url}">
 <meta property="og:image" content="${image}">
+${ogSize(image)}<meta property="og:image:alt" content="${esc(fullTitle)}">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${esc(fullTitle)}">
+<meta name="twitter:description" content="${esc(description)}">
+<meta name="twitter:image" content="${image}">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/img/favicon.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">

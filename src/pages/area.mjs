@@ -1,7 +1,7 @@
 // One page per service area at /services/<area>/: what the area covers, its services, how we deliver,
 // brands and sectors, selected projects (where there are some), FAQs and contact.
 import { site, services, categories, serviceBySlug, svcUrl, areaUrl } from '../data.mjs';
-import { pageHero, content, head, btn, svcCard, contactSection } from '../components.mjs';
+import { pageHero, content, head, btn, svcCard, contactSection, SVC_PHOTOS } from '../components.mjs';
 import { areaSeo, articles } from '../content/index.mjs';
 import { projects } from '../content/projects.mjs';
 import { ldScript, orgNode, breadcrumbNode, faqNode, crumbTrail, prose, numbered, chips, faqList, trustRow, ORG_ID } from '../blocks.mjs';
@@ -87,7 +87,7 @@ export default categories.map((c) => {
     bodyClass: 'page-detail',
     fullTitle: `${seo.seoTitle} | Hamdaz`,
     description: seo.seoDescription,
-    image: `${site.url}/assets/img/svc/${list[0].slug}.jpg`,
+    image: `${site.url}/assets/img/svc/${list[0].slug}.jpg?v=${SVC_PHOTOS}`,
     jsonld,
     body: [hero, content(about, grid, deliver, brands, projectsSec, faqs, contactSection({ idx: idx() }))].join('\n'),
   };

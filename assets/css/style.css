@@ -403,7 +403,7 @@ html.hero-scan-top .header:not(.is-scrolled):not(.is-light) .header-end .pill { 
 .hero-rail-item {
   --prog: 0;
   position: relative; display: flex; align-items: center; justify-content: flex-end; gap: 10px;
-  padding: 6px 0; background: none; border: 0; color: var(--fg-2); cursor: pointer; font: inherit; text-align: right;
+  min-height: 24px; min-width: 24px; padding: 6px 0; background: none; border: 0; color: var(--fg-2); cursor: pointer; font: inherit; text-align: right;
 }
 .hero-rail-item .mono { font-size: 10.5px; opacity: 0.7; }
 .hero-rail-item b { position: absolute; right: 64px; white-space: nowrap; font-weight: 500; font-size: 13px; opacity: 0; transform: translateX(6px); transition: opacity 0.35s var(--ease), transform 0.35s var(--ease); }
@@ -529,10 +529,10 @@ html:has(.earth.is-hover) .cursor-dot { opacity: 0; }
   --paper-2: #e8e7e1;
   --ink: #0b1b2b;
   --ink-2: #4a5663;
-  --ink-3: #7d8691;
+  --ink-3: #5f6873;
   --rule: rgba(11, 27, 43, 0.12);
   --rule-2: rgba(11, 27, 43, 0.28);
-  --cyan-ink: #0479a8;
+  --cyan-ink: #036f9b;
   --pink-ink: #d0216f;
   --deep: #0c2a46;
   --bg: var(--paper);
@@ -650,8 +650,9 @@ a:hover .tone img, .feat:hover .tone img, .about-media:hover .tone img { transfo
 .index--full .ix { padding: 20px 0; }
 .svc-row.is-target .ix-num { color: var(--cyan-ink); }
 
-/* ---------- Managed services as cards on What We Do (hover lists what's included) ---------- */
-.svc-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+/* ---------- Services as cards (What We Do, area pages, related services): the photo fills the left of the
+   card and fades into the white under the text; on a phone the card stacks and the photo fades downwards ---------- */
+.svc-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 /* services page: quick links to each service area, then one section per area */
 .cat-nav ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .cat-nav a {
@@ -671,41 +672,35 @@ a:hover .tone img, .feat:hover .tone img, .about-media:hover .tone img { transfo
 .svc-card { text-align: left; }
 .svc-row.is-target .svc-card { border-color: var(--cyan-ink); }
 .svc-card {
-  position: relative; display: flex; flex-direction: column; width: 100%; overflow: hidden;
-  border: 1px solid var(--rule); border-radius: 14px; background: #fff;
+  position: relative; display: block; width: 100%; overflow: hidden; isolation: isolate;
+  border: 1px solid var(--rule); border-radius: 20px; background: #fff;
   transition: transform 0.6s var(--ease), box-shadow 0.6s var(--ease), border-color 0.4s;
 }
-.svc-card:hover, .svc-card:focus-visible { transform: translateY(-6px); border-color: transparent; box-shadow: 0 28px 60px -28px rgba(6, 20, 35, 0.38); }
-.svc-media { position: relative; display: block; aspect-ratio: 16 / 9; }
-.svc-media .tone { position: absolute; inset: 0; border-radius: 0; }
-.svc-num {
-  position: absolute; left: 14px; top: 12px; z-index: 2; padding: 4px 9px; border-radius: 99px;
-  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.06em; color: #fff;
-  background: rgba(6, 20, 35, 0.55); backdrop-filter: blur(6px);
+.svc-card:hover, .svc-card:focus-visible { transform: translateY(-5px); border-color: transparent; box-shadow: 0 30px 64px -32px rgba(6, 20, 35, 0.42); }
+.svc-media {
+  position: absolute; z-index: -1; inset: 0 auto 0 0; width: 62%; display: block;
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 28%, rgba(0, 0, 0, 0.55) 50%, rgba(0, 0, 0, 0.22) 68%, rgba(0, 0, 0, 0.07) 84%, transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 28%, rgba(0, 0, 0, 0.55) 50%, rgba(0, 0, 0, 0.22) 68%, rgba(0, 0, 0, 0.07) 84%, transparent 100%);
 }
-.svc-pop {
-  position: absolute; inset: 0; z-index: 1; display: grid; align-content: end; gap: 10px; padding: 44px 20px 16px;
-  color: #fff; background: linear-gradient(180deg, rgba(6, 20, 35, 0.72), rgba(6, 20, 35, 0.94));
-  opacity: 0; transform: translateY(10px); transition: opacity 0.45s var(--ease), transform 0.6s var(--ease);
-}
-.svc-card:hover .svc-pop, .svc-card:focus-visible .svc-pop { opacity: 1; transform: none; }
-.svc-pop-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #30c1f8; }
-.svc-pop-list { display: grid; gap: 5px; font-size: 13.5px; line-height: 1.35; }
-.svc-pop-list span { position: relative; padding-left: 14px; }
-.svc-pop-list span::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 5px; height: 5px; border-radius: 50%; background: #30c1f8; }
-.svc-body { display: flex; flex-direction: column; gap: 12px; flex: 1; padding: 20px 22px 22px; }
-.svc-title { font-family: var(--display); font-weight: 500; font-size: clamp(19px, 1.45vw, 22px); line-height: 1.2; letter-spacing: -0.02em; }
-.svc-text { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
+.svc-media .tone { position: absolute; inset: 0; border-radius: 0; background: transparent; }
+.svc-card:hover .tone img, .svc-card:focus-visible .tone img { transform: scale(1.06); }
+.svc-body { position: relative; display: flex; flex-direction: column; gap: 12px; min-height: 300px; margin-left: 48%; padding: 26px 24px 22px 0; }
+.svc-num { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; color: #5d6976; }
+.svc-title { font-family: var(--display); font-weight: 500; font-size: clamp(19px, 1.5vw, 23px); line-height: 1.2; letter-spacing: -0.02em; }
+.svc-text { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
 .svc-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.svc-tag { padding: 5px 10px; border-radius: 99px; border: 1px solid var(--rule-2); font-size: 12px; line-height: 1.2; color: var(--ink-2); }
+.svc-tag { padding: 5px 10px; border-radius: 99px; border: 1px solid var(--rule-2); background: rgba(255, 255, 255, 0.6); font-size: 12px; line-height: 1.2; color: var(--ink-2); }
 .svc-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: auto; padding-top: 8px; font-size: 14px; font-weight: 500; }
 .svc-card:hover .ix-go, .svc-card:focus-visible .ix-go { background: var(--ink); color: #fff; box-shadow: none; transform: rotate(45deg); }
-@media (max-width: 1024px) { .svc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 1024px) { .svc-grid { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 640px) {
-  .svc-grid { grid-template-columns: minmax(0, 1fr); }
+  .svc-media {
+    inset: 0 0 auto 0; width: auto; height: 240px;
+    -webkit-mask-image: linear-gradient(180deg, #000 32%, rgba(0, 0, 0, 0.5) 55%, rgba(0, 0, 0, 0.18) 75%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 32%, rgba(0, 0, 0, 0.5) 55%, rgba(0, 0, 0, 0.18) 75%, transparent 100%);
+  }
+  .svc-body { min-height: 0; margin: 196px 0 0; padding: 0 20px 20px; }
 }
-/* touch screens have no hover: the tags already show the main areas */
-@media (hover: none) { .svc-pop { display: none; } }
 
 /* ---------- Home: our managed services, a list with a detail panel (main.js switches it) ---------- */
 .svx { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(32px, 4vw, 64px); align-items: start; }
@@ -1188,12 +1183,38 @@ html.reduce .mq-track { animation-duration: 140s; }
 }
 .crumbs span[aria-current] { color: var(--fg-3); }
 
-.sp-ov { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: start; }
+.sp-ov { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(32px, 5vw, 80px); align-items: start; }
+/* service overview: a large lead, the text at a comfortable width, the rest behind "Read more" */
+.sp-lead { margin: 0 0 26px; font-family: var(--display); font-weight: 400; font-size: clamp(21px, 1.9vw, 27px); line-height: 1.4; letter-spacing: -0.012em; color: var(--ink); max-width: 34ch; }
+.sp-ov-text .sp-prose p { max-width: 62ch; }
+.sp-more { margin-top: 16px; }
+.sp-more summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--ink); font-size: 15px; font-weight: 500; color: var(--ink); }
+.sp-more summary::-webkit-details-marker { display: none; }
+.sp-more summary .i { width: 16px; height: 16px; transition: transform 0.4s var(--ease); }
+.sp-more[open] summary .i { transform: rotate(180deg); }
+.sp-more .sp-prose { margin-top: 18px; }
+/* beside it: the photo and the three "Why Hamdaz" points, kept in view while the text scrolls */
+.sp-side { position: sticky; top: 104px; }
+.sp-side .sp-media { margin-bottom: 26px; }
+.sp-kh { margin: 0 0 4px; font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #5d6976; }
+.sp-points { list-style: none; margin: 0; padding: 0; }
+.sp-points li { padding: 14px 0; border-top: 1px solid var(--rule); }
+.sp-points h3 { font-family: var(--display); font-weight: 500; font-size: 17px; line-height: 1.3; letter-spacing: -0.01em; }
+.sp-points p { margin-top: 4px; font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
+@media (max-width: 1024px) { .sp-side { position: static; } .sp-lead { max-width: none; } }
 .sp-ov--text { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
 .sp-prose p { font-size: clamp(16px, 1.15vw, 18px); line-height: 1.7; color: var(--ink-2); max-width: 40rem; }
 .sp-prose p + p { margin-top: 1.1em; }
 .sp-media { margin: 0; }
-.sp-media .tone { display: block; aspect-ratio: 3 / 2; border-radius: 18px; overflow: hidden; }
+/* the same photo as the service's card, fading in from its left edge towards the text */
+.sp-media .tone {
+  display: block; aspect-ratio: 3 / 2; border-radius: 18px; overflow: hidden; background: transparent;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.6) 18%, #000 42%);
+  mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.6) 18%, #000 42%);
+}
+@media (max-width: 1024px) {
+  .sp-media .tone { -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent 100%); mask-image: linear-gradient(180deg, #000 60%, transparent 100%); }
+}
 .sp-media .tone img { width: 100%; height: 100%; object-fit: cover; }
 .sp-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
 .sp-aside { display: grid; justify-items: start; gap: 28px; }

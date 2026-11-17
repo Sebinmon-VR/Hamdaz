@@ -14,6 +14,17 @@ This file covers what the code already does for search, what to check before lau
 - **Speed:** images served as WebP (7.6 MB → 3.5 MB for the service, product and hero photos); no loading screen holds back the first paint.
 - **Social cards:** each service page uses its own photo as the share image.
 
+### Added at launch (November 2026)
+
+- **Lighthouse:** SEO 100 and accessibility 100 on the home, service, about, contact and insight pages (mobile).
+- **Old WordPress URLs:** every URL in the old site's `wp-sitemap.xml` 301-redirects to its new page (`staticwebapp.config.json`).
+- **Honest sitemap dates:** `<lastmod>` only changes when a page's HTML changes (hashes in `src/sitemap-dates.json`). Asset version stamps are content hashes, so unchanged pages stay identical between builds. Service photos are listed in the sitemap for Google Images.
+- **`llms.txt`:** a plain summary of the company and every page, for AI assistants and AI search.
+- **IndexNow:** after each automatic deploy, `tools/indexnow.mjs` tells Bing (which also feeds ChatGPT search and Copilot), Yandex and others which pages changed. The key file is `<key>.txt` in the site root.
+- **Social cards:** `og:image` size and alt text, and Twitter/X title, description and image, on every page.
+- **Robots:** `max-image-preview:large` and `max-snippet:-1`, so Google can show large images and full snippets.
+- **Analytics:** Google Analytics 4 can now run on its own. Put the `G-…` id in `tracking.analytics` in `src/data.mjs`; no Ads account is needed.
+
 ## Check before launch
 
 - [ ] **Main phone number.** The site and the structured data use **+971 2 626 5780** as the main number (it is the one in the 2026 profiles); +971 2 309 0211 still shows beside it. Pick one main number and use it everywhere: website, Google Business Profile, LinkedIn and directories.

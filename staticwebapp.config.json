@@ -1,0 +1,43 @@
+{
+  "routes": [
+    { "route": "/about-us", "redirect": "/about.html", "statusCode": 301 },
+    { "route": "/services", "redirect": "/services.html", "statusCode": 301 },
+    { "route": "/products", "redirect": "/solutions.html", "statusCode": 301 },
+    { "route": "/contact-us", "redirect": "/contact.html", "statusCode": 301 },
+    { "route": "/thank-you", "redirect": "/contact.html", "statusCode": 301 },
+    { "route": "/author/*", "redirect": "/about.html", "statusCode": 301 },
+    { "route": "/feed", "redirect": "/insights.html", "statusCode": 301 },
+    { "route": "/wp-sitemap.xml", "redirect": "/sitemap.xml", "statusCode": 301 },
+    { "route": "/wp-sitemap-*", "redirect": "/sitemap.xml", "statusCode": 301 },
+    { "route": "/product/oil-and-gas-industry", "redirect": "/solutions.html#oil-and-gas-industry", "statusCode": 301 },
+    { "route": "/product/small-and-medium-enterprises-smes", "redirect": "/solutions.html#small-and-medium-enterprises-smes", "statusCode": 301 },
+    { "route": "/product/schools-and-educational-institutions", "redirect": "/solutions.html#schools-and-educational-institutions", "statusCode": 301 },
+    { "route": "/product/online-education", "redirect": "/solutions.html#online-education", "statusCode": 301 },
+    { "route": "/product/sports", "redirect": "/solutions.html#sports", "statusCode": 301 },
+    { "route": "/product/*", "redirect": "/solutions.html", "statusCode": 301 },
+    { "route": "/careers", "redirect": "/careers.html", "statusCode": 301 },
+    { "route": "/careers/apply/*", "rewrite": "/careers-apply.html" },
+    { "route": "/assets/js/*", "headers": { "cache-control": "public, max-age=0, must-revalidate" } },
+    { "route": "/assets/css/*", "headers": { "cache-control": "public, max-age=0, must-revalidate" } },
+    { "route": "/assets/vendor/*", "headers": { "cache-control": "public, max-age=2592000" } },
+    { "route": "/assets/*", "headers": { "cache-control": "public, max-age=604800" } },
+    { "route": "/*.html", "headers": { "cache-control": "public, max-age=0, must-revalidate" }
+    }
+  ],
+  "responseOverrides": {
+    "404": {
+      "rewrite": "/404.html"
+    }
+  },
+  "globalHeaders": {
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "X-Frame-Options": "SAMEORIGIN",
+    "Strict-Transport-Security": "max-age=31536000"
+  },
+  "mimeTypes": {
+    ".webp": "image/webp",
+    ".mjs": "text/javascript",
+    ".json": "application/json"
+  }
+}

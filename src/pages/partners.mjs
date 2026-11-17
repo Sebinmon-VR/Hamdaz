@@ -57,8 +57,8 @@ export default {
   path: 'partners.html',
   active: 'clients',
   earth: true,
-  fullTitle: 'Partners & Clients | ADNOC Group, Microsoft, Cisco, Dell & more | Hamdaz',
-  description: `Hamdaz clients across the UAE, including ADNOC and its group companies, and ${nPartners} technology partners such as Microsoft, Cisco, Huawei, Dell, Fortinet, Hikvision and Crestron.`,
+  fullTitle: 'Clients & Technology Partners | ADNOC, Microsoft, Cisco | Hamdaz',
+  description: `Hamdaz clients across the UAE, including ADNOC group companies, and ${nPartners} technology partners such as Microsoft, Cisco, Dell, Fortinet and Hikvision.`,
   jsonld: ldScript(orgNode(), breadcrumbNode([['Partners & Clients', 'partners.html']])),
   body: [
     pageHero({ crumb: 'Partners & Clients', eyebrow: 'Partners & clients', title: 'Partners & Clients', text: 'The organisations we work for, and the technology brands we supply, install and support.', hero: 'layers' }),

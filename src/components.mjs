@@ -6,7 +6,10 @@ import { clock } from './layout.mjs';
 const [uae, india] = contact.offices;
 export const sentences = (t) => t.split(/(?<=\.)\s+/);
 export const pad2 = (n) => String(n).padStart(2, '0');
-export const svcImg = (s) => `assets/img/svc/${s.slug}.webp`;
+// SVC_PHOTOS: raise it whenever the service photos are replaced, so browsers holding the old ones (images are
+// cached for 30 days) fetch the new files
+export const SVC_PHOTOS = 2;
+export const svcImg = (s) => `assets/img/svc/${s.slug}.webp?v=${SVC_PHOTOS}`;
 // the live picture drawn for a card on the home page (assets/js/cards.js); the photo is the fallback without WebGL
 export const card3d = {
   'generative-ai': 'core',
@@ -108,18 +111,17 @@ export function intro({ art = false } = {}) {
 }
 
 /* ---------- Managed services, as cards (What We Do) ---------- */
-// a service as a card: its image, title, summary and main areas; hovering it lists everything included.
-// It links to the service's own page (service/<slug>/).
+// a service as a card: its photo on the left, fading into the card under its number, title, summary and two
+// main areas. It links to the service's own page (service/<slug>/), which shows the same photo (svcImg).
 export const svcCard = (s, i) => {
   const areas = s.items.map(([name]) => name).filter((n) => !/^latest technolog/i.test(n));
   return `<a class="svc-card" href="${svcUrl(s.slug)}" data-reveal>
-        <span class="svc-media">${tone(svcImg(s))}<span class="svc-num">${pad2(i + 1)}</span>
-          <span class="svc-pop"><span class="svc-pop-label">What's included</span><span class="svc-pop-list">${s.items.map(([name]) => `<span>${name}</span>`).join('')}</span></span>
-        </span>
+        <span class="svc-media">${tone(svcImg(s))}</span>
         <span class="svc-body">
+          <span class="svc-num">${pad2(i + 1)}</span>
           <span class="svc-title">${s.title}</span>
           <span class="svc-text">${s.summary}</span>
-          <span class="svc-tags">${areas.slice(0, 3).map((n) => `<span class="svc-tag">${n}</span>`).join('')}</span>
+          <span class="svc-tags">${areas.slice(0, 2).map((n) => `<span class="svc-tag">${n}</span>`).join('')}</span>
           <span class="svc-foot"><span>Explore service</span>${go}</span>
         </span>
       </a>`;

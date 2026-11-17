@@ -54,7 +54,8 @@ node build.mjs --serve   # rebuild and preview at http://localhost:8080
 - **Shared blocks (each page's 3D element, page hero, light sheet, services list, product cards, ChatGPT section, contact and careers):** `src/components.mjs`
 - **Page layouts:** `src/pages/*.mjs`. A page module exports one page or a list of pages; pages in folders (`service/<slug>/index.html`) have their relative links rewritten by `build.mjs`, so the source always writes paths from the site root.
 - **Service, area and insight text (SEO):** `src/content/*.mjs`; sections and structured data for those pages: `src/blocks.mjs`
-- **Images:** pages use the WebP copies (`assets/img/**/*.webp`); the JPGs stay for social-card previews. The images for Custom Software, ERP and LMS are crops of other service photos until real ones are added.
+- **Images:** pages use the WebP copies (`assets/img/**/*.webp`); the JPGs stay for social-card previews. Each service has one photo, `assets/img/svc/<slug>.webp` (and `.jpg`), 1200 × 800. Its card (What We Do, area pages, related services) and its own page use that same file, so they always match. The photos are from Pexels; `docs/svc-photo-sources.md` lists which one each service uses.
+- **Service cards:** `svcCard` in `src/components.mjs`, styled under `.svc-card` in `assets/css/style.css`. The photo fills the left of the card and fades into the white under the text; on a phone the card stacks and the photo fades downwards.
 - **Styles:** `assets/css/style.css`. The dark tokens (hero, header, menu, footer) are at the top; the light-theme tokens are scoped to `.content` further down.
 - **Motion and interactions:** `assets/js/main.js`
 - **3D elements:** `assets/js/earth.js` runs them (the file keeps its old name); the elements are in `assets/js/heroes/` (`chip.js`, `network.js`, `layers.js`, `waves.js`, `beacon.js`, `globe.js`, `spark.js`; the home page uses `logowin.js`, page also uses `inknet.js` and `galaxy.js`). The chip's board layout and camera framings (`presets()`) are in `assets/js/circuit.js`; its label positions are `ANCHORS` in `heroes/chip.js`.
@@ -72,9 +73,25 @@ The night-Earth images (the Contact globe and the Custom ChatGPT panel) are NASA
 
 ## Deploying
 
-Upload everything except `src/`, `docs/`, `build.mjs`, `package.json` and `README.md` to the web root (including the `service/`, `services/` and `insights/` folders). See `docs/SEO.md` for the search-engine set-up after launch.
+The site is hosted on **Azure Static Web Apps**: app `hamdaz-website`, resource group `hamdaz`, Free plan, preview address `https://jolly-smoke-05d73e400.3.azurestaticapps.net`.
 
-On Apache hosting (cPanel and most shared hosts), the included `.htaccess` file:
+**Publishing is automatic:** every push to `main` runs `.github/workflows/deploy.yml`, which builds the site, deploys `dist/` to Azure and tells IndexNow search engines which pages changed. It needs the repository secret `AZURE_STATIC_WEB_APPS_API_TOKEN`, the app's deployment token (Azure portal → hamdaz-website → Manage deployment token). It can also be run by hand from the Actions tab. To deploy from this computer instead:
+
+```bash
+node build.mjs --dist     # build the pages, then copy only the live files into dist/
+npx @azure/static-web-apps-cli deploy ./dist --env production \
+  --deployment-token "$(az staticwebapp secrets list -n hamdaz-website -g hamdaz --query properties.apiKey -o tsv)"
+```
+
+`staticwebapp.config.json` is the Azure version of `.htaccess`: it 301-redirects every URL of the old WordPress site (`/about-us/`, `/services/`, `/products/`, `/contact-us/`, `/thank-you/`, `/product/<slug>/`, `/author/…`, `/feed/`, `wp-sitemap.xml`) to its new page, sends `/careers/apply/<token>` to `careers-apply.html` (which forwards to `job.html?id=<token>`), serves `404.html`, caches `/assets/` for 30 days and adds security headers. Azure treats `/x` and `/x/` as the same route, so list each route once, without the trailing slash.
+
+**Domain.** hamdaz.com is registered at GoDaddy. Its DNS is the Azure DNS zone `hamdaz.com` in resource group `hamdaz`, with nameservers `ns1-07.azure-dns.com`, `ns2-07.azure-dns.net`, `ns3-07.azure-dns.org` and `ns4-07.azure-dns.info` set at GoDaddy. Before that it was Hostinger's `ns1/ns2.dns-parking.com`. The zone holds:
+- **Microsoft 365 email (do not change):** MX `@` → `hamdaz-com.mail.protection.outlook.com`, TXT `@` `MS=ms65274685` and SPF, CNAME `autodiscover` → `autodiscover.outlook.com`, CNAMEs `selector1`/`selector2._domainkey` (DKIM), TXT `_dmarc`.
+- **Website:** `@` is an alias A record to the Static Web App, CNAME `www` → `jolly-smoke-05d73e400.3.azurestaticapps.net`, and TXT `_dnsauth` is the Static Web App's ownership token for the root domain.
+
+After the switch, `www.hamdaz.com` is added in Azure (`az staticwebapp hostname set -n hamdaz-website -g hamdaz --hostname www.hamdaz.com`) and `hamdaz.com` is set as the default domain, so `www` and the preview address redirect to it. Azure issues the HTTPS certificates itself. To roll back, set the nameservers at GoDaddy back to `ns1.dns-parking.com` and `ns2.dns-parking.com`, as long as the Hostinger account still has the domain. See `docs/SEO.md` for the search-engine set-up after launch.
+
+On Apache hosting (cPanel and most shared hosts), the included `.htaccess` file does the same job:
 - 301-redirects the old WordPress URLs (`/about-us`, `/services`, `/products`, `/contact-us`, `/product/<slug>/`) to the new pages; the old `/service/<slug>/` addresses are real pages again
 - forces HTTPS, sets up the 404 page, and turns on compression and caching
 

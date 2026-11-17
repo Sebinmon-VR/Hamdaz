@@ -72,7 +72,7 @@ export default {
   active: '',
   earth: true,
   fullTitle: 'Privacy Policy | Hamdaz Technologies',
-  description: 'How Hamdaz Technologies uses the personal data sent through hamdaz.com: the contact and careers forms, cookies and Google Ads, who else sees it, and how to ask for a copy or deletion.',
+  description: 'How Hamdaz uses personal data sent through hamdaz.com: the contact and careers forms, cookies and Google Ads, and how to ask for a copy or deletion.',
   jsonld: ldScript(orgNode(), breadcrumbNode([['Privacy Policy', 'privacy.html']])),
   body: [pageHero({ crumb: 'Privacy Policy', eyebrow: 'Legal', title: 'Privacy Policy', text: 'What we collect through this website, why, and the choices you have.', hero: 'layers' }), content(body)].join('\n'),
 };

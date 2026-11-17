@@ -7,7 +7,7 @@ export const site = {
   short: 'Hamdaz',
   url: 'https://hamdaz.com',
   description:
-    'Hamdaz redefine excellence in Managed Software Services. With a focus on innovation and efficiency, we offer a comprehensive suite of solutions tailored to meet the diverse needs of businesses across various industries.',
+    'Hamdaz Technologies is an Abu Dhabi system integrator for AI, cloud, cybersecurity, MCC-certified CCTV and ELV, audio visual, networking and software development. We design, install and support the technology organisations run on, across the UAE.',
 };
 
 // Careers: open roles come live from the Hamdaz ERP (hamdaz-2.0, app/hr/public.py). When HR posts an

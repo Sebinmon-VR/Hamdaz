@@ -1,8 +1,9 @@
 // One page per service at /service/<slug>/ (the old WordPress addresses): overview, what's included,
 // how we deliver it, brands and sectors, FAQs, related services and contact.
 import { site, services, categoryOf, serviceBySlug, svcUrl, areaUrl, waLink } from '../data.mjs';
-import { pageHero, content, head, btn, tlink, tone, svcImg, svcCard, contactSection } from '../components.mjs';
+import { pageHero, content, head, btn, tlink, tone, svcImg, svcCard, contactSection, SVC_PHOTOS } from '../components.mjs';
 import { serviceSeo, areaSeo, articles } from '../content/index.mjs';
+import { icon } from '../icons.mjs';
 import { ldScript, orgNode, breadcrumbNode, faqNode, crumbTrail, prose, numbered, chips, faqList, trustRow, ORG_ID } from '../blocks.mjs';
 
 export default services.map((s) => {
@@ -18,20 +19,33 @@ export default services.map((s) => {
 
   const hero = pageHero({ crumb: crumbTrail(crumbs.slice(0, -1).concat([[s.title]])), eyebrow: cat.title, title: seo.h1, text: seo.lead, hero: 'layers' });
 
+  // Overview: the first two sentences as a large lead, the next part of the text, and the rest behind "Read more"
+  // (a <details>, so it stays in the page for search engines). Beside it, the service's photo (the same one as its
+  // card) and the three "Why Hamdaz" points, so both columns end at about the same height.
+  const [first, ...later] = seo.overview;
+  const sentences = first.split(/(?<=\.)\s+(?=[A-Z])/);
+  const n = sentences.slice(0, 2).join(' ').length > 280 ? 1 : 2; // long sentences: the lead is just the first
+  const lead = sentences.slice(0, n).join(' ');
+  const [shown, ...hidden] = [sentences.slice(n).join(' '), ...later].filter(Boolean);
   const overview = `<section class="sec sp-sec">
   <div class="wrap">
     ${head({ idx: '01', label: 'Overview', meta: cat.title, title: s.title })}
     <div class="sp-ov">
-      <div>
-        ${prose(seo.overview)}
+      <div class="sp-ov-text">
+        <p class="sp-lead" data-reveal>${lead}</p>
+        ${shown ? prose([shown]) : ''}
+        ${hidden.length ? `<details class="sp-more"><summary><span>Read more</span>${icon('chevron-down')}</summary>${prose(hidden)}</details>` : ''}
         <div class="sp-actions" data-reveal>
           ${btn('Talk to an expert', `contact.html?about=${ask}`, { magnetic: true })}
           ${btn('WhatsApp', waLink(`Hello Hamdaz, I would like to know more about ${s.title}.`), { variant: 'ghost', ic: 'whatsapp', ext: true })}
         </div>
       </div>
-      <figure class="sp-media" data-reveal>${tone(svcImg(s), `${s.title} by Hamdaz Technologies, Abu Dhabi`)}</figure>
+      <aside class="sp-side">
+        <figure class="sp-media" data-reveal>${tone(svcImg(s), `${s.title} by Hamdaz Technologies, Abu Dhabi`)}</figure>
+        <p class="sp-kh">Why Hamdaz</p>
+        <ul class="sp-points">${seo.benefits.map(([t, d]) => `<li data-reveal><h3>${t}</h3><p>${d}</p></li>`).join('')}</ul>
+      </aside>
     </div>
-    <ul class="sp-benefits">${seo.benefits.map(([t, d]) => `<li data-reveal><h3>${t}</h3><p>${d}</p></li>`).join('')}</ul>
   </div>
 </section>`;
 
@@ -70,7 +84,7 @@ export default services.map((s) => {
   const more = `<section class="sec sp-sec">
   <div class="wrap">
     ${head({ idx: '06', label: 'Related services', meta: cat.title, title: `More in ${cat.title}`, action: btn(`All ${cat.title} services`, areaUrl(cat.id), { variant: 'ghost' }) })}
-    <ol class="svc-grid">${related.slice(0, 3).map((r) => `<li>${svcCard(r, services.indexOf(r))}</li>`).join('')}</ol>
+    <ol class="svc-grid">${related.slice(0, related.length >= 4 ? 4 : 2).map((r) => `<li>${svcCard(r, services.indexOf(r))}</li>`).join('')}</ol>
     ${reading.length ? `<p class="sp-read">${reading.map((a) => `<a href="insights/${a.slug}/"><span class="mono">Insight</span>${a.title}</a>`).join('')}</p>` : ''}
   </div>
 </section>`;
@@ -83,7 +97,7 @@ export default services.map((s) => {
       serviceType: s.title,
       description: seo.seoDescription,
       url: `${site.url}/${url}`,
-      image: `${site.url}/assets/img/svc/${s.slug}.jpg`,
+      image: `${site.url}/assets/img/svc/${s.slug}.jpg?v=${SVC_PHOTOS}`,
       provider: { '@id': ORG_ID },
       areaServed: { '@type': 'Country', name: 'United Arab Emirates' },
       category: cat.title,
@@ -102,7 +116,7 @@ export default services.map((s) => {
     bodyClass: 'page-detail',
     fullTitle: `${seo.seoTitle} | Hamdaz`,
     description: seo.seoDescription,
-    image: `${site.url}/assets/img/svc/${s.slug}.jpg`,
+    image: `${site.url}/assets/img/svc/${s.slug}.jpg?v=${SVC_PHOTOS}`,
     jsonld,
     body: [hero, content(overview, includes, deliver, brands, faqs, more, contactSection({ idx: '07' }))].join('\n'),
   };

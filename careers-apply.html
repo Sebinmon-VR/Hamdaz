@@ -1,0 +1,15 @@
+<!doctype html>
+<!-- Azure Static Web Apps serves this page for /careers/apply/<token> (the ERP's share links,
+     see staticwebapp.config.json). It sends the visitor on to that role's page, job.html?id=<token>. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Opening the role – Hamdaz</title>
+<script>
+  var t = (location.pathname.match(/\/careers\/apply\/([A-Za-z0-9_-]+)/) || [])[1];
+  location.replace(t ? '/job.html?id=' + t : '/careers.html');
+</script>
+</head>
+<body><p><a href="/careers.html">Open roles at Hamdaz</a></p></body>
+</html>

@@ -63,7 +63,7 @@ export default {
   active: 'quality',
   earth: true,
   fullTitle: 'Quality & QHSE | ISO 9001, 14001 & 45001 Certified | Hamdaz',
-  description: 'Hamdaz Technologies is ISO 9001, ISO 14001 and ISO 45001 certified by Bureau Veritas (UKAS): our QHSE policy and how quality, health, safety and the environment are managed on every project.',
+  description: 'Hamdaz is ISO 9001, 14001 and 45001 certified by Bureau Veritas (UKAS). Our QHSE policy and how quality, safety and the environment are managed on every project.',
   jsonld: ldScript(orgNode(), breadcrumbNode([['Quality & QHSE', 'quality.html']])),
   body: [
     pageHero({ crumb: 'Quality &amp; QHSE', eyebrow: 'QHSE', title: 'Quality &amp; QHSE', text: 'Certified management systems for quality, occupational health and safety, and the environment, applied to every project we deliver across the UAE.', hero: 'layers' }),
