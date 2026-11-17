@@ -6,7 +6,11 @@ import { site, contact, tracking } from '../data.mjs';
 import { pageHero, content } from '../components.mjs';
 import { ldScript, orgNode, breadcrumbNode } from '../blocks.mjs';
 
-const updated = '11 November 2026';
+const updated = '17 November 2026';
+// what Google's tag is used for: Analytics, Ads, or both (the wording below follows `tracking` in data.mjs)
+const ADS = /^AW-\d{6,14}$/.test(tracking.ads);
+const GA = /^G-[A-Z0-9]{4,14}$/.test(tracking.analytics);
+const tools = [ADS && 'Google Ads', GA && 'Google Analytics'].filter(Boolean).join(' and ');
 const mail = `<a href="mailto:${contact.email}">${contact.email}</a>`;
 const [uae, india] = contact.offices;
 const addr = ({ postal: p }) => [p.street, p.pobox && `PO Box ${p.pobox}`, p.locality, p.code, p.country === 'AE' ? 'UAE' : 'India'].filter(Boolean).join(', ');
@@ -20,20 +24,20 @@ const sections = [
       <li><strong>When you send the contact form:</strong> your name, company, email, phone number, the topics you tick and your message. Alongside it we keep the page you sent it from, the first page of your visit, the website that sent you here, and any campaign tags in that first page’s address (for example from a Google ad). That last part shows us which of our ads and pages lead to real enquiries.</li>
       <li><strong>When you apply for a job:</strong> the answers and files you send with the application form.</li>
       <li><strong>When you contact us directly</strong> by email, phone or WhatsApp: what you choose to send us.</li>
-      <li><strong>When you browse:</strong> our servers keep standard logs (such as your IP address, browser and the pages requested) to keep the site running and secure. With your consent, Google’s tag also measures visits and ad clicks (see <a href="#cookies">Cookies and Google</a>).</li>
+      <li><strong>When you browse:</strong> our servers keep standard logs (such as your IP address, browser and the pages requested) to keep the site running and secure. With your consent, Google’s tag also measures visits${ADS ? ' and ad clicks' : ''} (see <a href="#cookies">Cookies and Google</a>).</li>
     </ul>
     <p>We don’t ask for, and ask you not to send, sensitive information such as health or financial details through the forms.</p>`],
   ['use', 'How we use it', `
     <ul>
       <li>To reply to you, prepare a proposal or quote, and deliver and support any work that follows.</li>
       <li>To consider your job application.</li>
-      <li>To understand which of our pages and ads bring enquiries, so we spend our advertising sensibly.</li>
+      <li>${ADS ? 'To understand which of our pages and ads bring enquiries, so we spend our advertising sensibly.' : 'To understand how visitors find the site and which pages are useful, so we can improve it.'}</li>
       <li>To keep the site and our systems secure, and to meet our legal and accounting obligations.</li>
     </ul>
     <p>We don’t sell your personal data, and we don’t add you to a mailing list unless you ask us to.</p>`],
   ['cookies', 'Cookies and Google', `
     <p>The site itself sets no cookies. It keeps a few small notes in your browser: the first page of your visit (sent with the contact form only if you use it) and whether you just moved between pages, both cleared when you close the tab, and your cookie choice, so we don’t ask again on every page.</p>
-    <p>We advertise on Google and use Google’s tag (Google Ads${tracking.analytics ? ' and Google Analytics' : ''}) to see which ads and pages bring enquiries. It sets advertising and analytics cookies <strong>only if you choose “Accept”</strong> in the cookie banner. If you decline, or have not chosen yet, Google’s tag does not store or read those cookies. It may still send Google basic signals without cookies (for example, that a page was viewed or a form sent), which Google uses to estimate how our ads perform in aggregate.</p>
+    <p>${ADS ? `We advertise on Google and use Google’s tag (${tools}) to see which ads and pages bring enquiries.` : `We use Google’s tag (${tools || 'Google Analytics'}) to see how visitors find the site and which pages they read.`} It sets ${ADS ? 'advertising and analytics' : 'analytics'} cookies <strong>only if you choose “Accept”</strong> in the cookie banner. If you decline, or have not chosen yet, Google’s tag does not store or read those cookies. It may still send Google basic signals without cookies (for example, that a page was viewed or a form sent), which Google uses ${ADS ? 'to estimate how our ads perform' : 'for measurement'} in aggregate.</p>
     <p>You can change your choice at any time with “Cookie settings” at the foot of every page, or clear the cookies in your browser. To learn how Google uses this data, see <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">How Google uses information from sites that use its services</a>.</p>`],
   ['share', 'Who else sees it', `
     <ul>
@@ -72,7 +76,7 @@ export default {
   active: '',
   earth: true,
   fullTitle: 'Privacy Policy | Hamdaz Technologies',
-  description: 'How Hamdaz uses personal data sent through hamdaz.com: the contact and careers forms, cookies and Google Ads, and how to ask for a copy or deletion.',
+  description: `How Hamdaz uses personal data sent through hamdaz.com: the contact and careers forms, cookies and ${tools || 'Google'}, and how to ask for a copy or deletion.`,
   jsonld: ldScript(orgNode(), breadcrumbNode([['Privacy Policy', 'privacy.html']])),
   body: [pageHero({ crumb: 'Privacy Policy', eyebrow: 'Legal', title: 'Privacy Policy', text: 'What we collect through this website, why, and the choices you have.', hero: 'layers' }), content(body)].join('\n'),
 };

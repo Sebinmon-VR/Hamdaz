@@ -32,7 +32,7 @@ export const enquiry = {
 // Advertising and analytics cookies wait for the visitor's "Accept" (Consent Mode); see assets/js/track.js.
 export const tracking = {
   ads: '', // 'AW-123456789'
-  analytics: '', // 'G-XXXXXXXXXX', optional
+  analytics: 'G-116FSSGKQY', // Google Analytics 4, property "hamdaz.com" (developer.hamdaz@gmail.com)
   // one Google Ads conversion per kind of contact; leave a label empty to skip that one
   conversions: {
     lead: '', // the contact form, sent

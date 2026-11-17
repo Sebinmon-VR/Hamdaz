@@ -80,7 +80,7 @@
     box.setAttribute('role', 'region');
     box.setAttribute('aria-label', 'Cookie choice');
     const p = document.createElement('p');
-    p.append('We use cookies to see which of our ads bring people here and to improve the site. ');
+    p.append(tag && tag.ads ? 'We use cookies to see which of our ads bring people here and to improve the site. ' : 'We use cookies to see how visitors find and use the site, so we can improve it. ');
     const more = document.createElement('a');
     more.href = '/privacy.html#cookies';
     more.textContent = 'Privacy policy';
