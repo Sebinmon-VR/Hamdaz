@@ -320,3 +320,32 @@ export const adGroups = {
     descriptions: ['Hand us the day-to-day: service desk, 24/7 monitoring and support contracts.', 'Every contract measured against SLAs, with monthly service reviews you can act on.'],
   },
 };
+
+// One more campaign for the company as a whole: people searching for an IT company or system integrator in
+// general (sent to the What We Do page, which lists every service), and people searching for Hamdaz by name (sent
+// to the home page; cheap clicks that keep competitors' ads off our own name). Keywords here must not repeat a
+// service ad group's keywords, so the two do not bid against each other (build.mjs checks).
+export const company = {
+  title: 'What We Do',
+  budget: 25,
+  headlines: ['Design, Install & Support', 'One Partner for Your IT'],
+  description: 'From site survey and design to installation, handover and support across the UAE.',
+  groups: [
+    {
+      name: 'What We Do',
+      url: 'services.html',
+      path: ['services', 'abu-dhabi'],
+      keywords: ['it company abu dhabi', 'it companies in abu dhabi', 'system integrator abu dhabi', 'system integrator uae', 'it solutions company uae', 'it solutions provider abu dhabi', 'it services company abu dhabi', 'technology company abu dhabi', 'it and security solutions uae', 'elv and it company uae', 'ict company abu dhabi', 'technology solutions provider uae'],
+      headlines: ['IT Company in Abu Dhabi', 'System Integrator in the UAE', 'AI, Cloud & Cybersecurity', 'CCTV, ELV & Audio Visual', 'Networks, Wi-Fi & Software', '38 IT Services, One Partner', 'ISO & MCC Certified', 'Registered ADNOC Supplier'],
+      descriptions: ['AI, cloud, cybersecurity, MCC CCTV, audio visual, networks and software from one team.', 'One Abu Dhabi team for your IT, security systems and software, supported after handover.'],
+    },
+    {
+      name: 'Hamdaz (brand)',
+      url: '',
+      path: ['hamdaz'],
+      keywords: ['hamdaz', 'hamdaz technologies', 'hamdaz abu dhabi', 'hamdaz technologies abu dhabi', 'hamdaz llc'],
+      headlines: ['Hamdaz Technologies', 'Abu Dhabi System Integrator', 'IT, AI & Security Systems', 'Visit Our Website'],
+      descriptions: ['Hamdaz Technologies, Abu Dhabi: AI, cloud, cybersecurity, ELV, AV, networks and software.', 'See our services, projects and certifications, or send us your requirement today.'],
+    },
+  ],
+};

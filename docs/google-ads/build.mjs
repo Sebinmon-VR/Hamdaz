@@ -9,7 +9,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { categories, serviceBySlug, svcUrl } from '../../src/data.mjs';
-import { site, locations, languages, shared, negatives, campaigns, adGroups } from './plan.mjs';
+import { site, locations, languages, shared, negatives, campaigns, adGroups, company } from './plan.mjs';
 
 const OUT = join(dirname(fileURLToPath(import.meta.url)), 'import');
 const LIMIT = { headline: 30, description: 90, path: 15 };
@@ -56,6 +56,35 @@ for (const c of categories) {
     dedupe(g.keywords).forEach((k, i) => {
       rows.keywords.push({ Campaign: name, 'Ad group': group, Keyword: k, 'Criterion Type': 'Phrase', 'Final URL': url });
       if (i < 3) rows.keywords.push({ Campaign: name, 'Ad group': group, Keyword: k, 'Criterion Type': 'Exact', 'Final URL': url });
+    });
+  }
+}
+// the company-wide campaign (plan.mjs `company`): broad searches to the What We Do page, and the brand
+if (company) {
+  const name = campaignName(company);
+  rows.campaigns.push({ Campaign: name, 'Campaign Type': 'Search', Networks: 'Google search', Budget: company.budget, 'Budget type': 'Daily', Languages: languages, 'Campaign Status': 'Paused' });
+  locations.forEach((l) => rows.locations.push({ Campaign: name, Location: l }));
+  negatives.forEach((n) => rows.negatives.push({ Campaign: name, 'Ad group': '', Keyword: n, 'Criterion Type': 'Campaign negative phrase' }));
+  company.headlines.forEach((h) => check('company headline', h, LIMIT.headline));
+  check('company description', company.description, LIMIT.description);
+  // its keywords must not repeat a service ad group's, or the two would bid against each other
+  const serviceKeywords = new Set(Object.values(adGroups).flatMap((g) => g.keywords.map((k) => k.toLowerCase())));
+  for (const g of company.groups) {
+    const url = `${site}${g.url}`;
+    g.headlines.forEach((h) => check(`${g.name} headline`, h, LIMIT.headline));
+    g.descriptions.forEach((d) => check(`${g.name} description`, d, LIMIT.description));
+    g.path.forEach((p) => check(`${g.name} path`, p, LIMIT.path));
+    g.keywords.filter((k) => serviceKeywords.has(k.toLowerCase())).forEach((k) => problems.push(`"${k}" in ${g.name} is also a service keyword`));
+    const headlines = dedupe([...g.headlines, ...company.headlines, ...shared.headlines]).slice(0, 15);
+    const descriptions = [...g.descriptions, company.description, shared.description].slice(0, 4);
+    rows.adGroups.push({ Campaign: name, 'Ad group': g.name, 'Max CPC': 15, 'Ad group status': 'Enabled' });
+    const ad = { Campaign: name, 'Ad group': g.name, 'Ad type': 'Responsive search ad', 'Final URL': url, 'Path 1': g.path[0], 'Path 2': g.path[1] || '' };
+    for (let i = 0; i < 15; i++) ad[`Headline ${i + 1}`] = headlines[i] || '';
+    for (let i = 0; i < 4; i++) ad[`Description ${i + 1}`] = descriptions[i] || '';
+    rows.ads.push(ad);
+    dedupe(g.keywords).forEach((k, i) => {
+      rows.keywords.push({ Campaign: name, 'Ad group': g.name, Keyword: k, 'Criterion Type': 'Phrase', 'Final URL': url });
+      if (i < 3) rows.keywords.push({ Campaign: name, 'Ad group': g.name, Keyword: k, 'Criterion Type': 'Exact', 'Final URL': url });
     });
   }
 }
