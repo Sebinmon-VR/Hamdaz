@@ -4,8 +4,8 @@ import { icon } from './icons.mjs';
 import { head, pad2 } from './components.mjs';
 
 const [uae, india] = contact.offices;
-// the main number for search listings (+971 2 626 5780, as in the 2026 company profiles)
-export const MAIN_PHONE = uae.phones[uae.phones.length - 1].tel;
+// the main number for search listings: the first UAE number (+971 2 626 5780)
+export const MAIN_PHONE = uae.phones[0].tel;
 export const ORG_ID = `${site.url}/#organization`;
 const abs = (path) => `${site.url}/${path}`;
 

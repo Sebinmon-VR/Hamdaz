@@ -78,7 +78,7 @@ function mega() {
       <ul class="mega-certs" aria-label="Certifications">
         <li>MCC certified · Abu Dhabi</li><li>ISO 9001 · 14001 · 45001</li><li>ICV certified · ADNOC supplier</li>
       </ul>
-      <p class="mega-contact"><a href="tel:${office.phones[office.phones.length - 1].tel}">${icon('phone')}${office.phones[office.phones.length - 1].label}</a><a href="mailto:${contact.email}">${icon('mail')}${contact.email}</a></p>
+      <p class="mega-contact"><a href="tel:${office.phones[0].tel}">${icon('phone')}${office.phones[0].label}</a><a href="mailto:${contact.email}">${icon('mail')}${contact.email}</a></p>
     </aside>
   </div>
 </div>`;

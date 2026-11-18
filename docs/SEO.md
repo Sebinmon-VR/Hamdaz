@@ -27,7 +27,7 @@ This file covers what the code already does for search, what to check before lau
 
 ## Check before launch
 
-- [ ] **Main phone number.** The site and the structured data use **+971 2 626 5780** as the main number (it is the one in the 2026 profiles); +971 2 309 0211 still shows beside it. Pick one main number and use it everywhere: website, Google Business Profile, LinkedIn and directories.
+- [x] **Main phone number.** Confirmed 18 Nov 2026: **+971 2 626 5780** is the main number. It is listed first everywhere on the site and used in the structured data; +971 2 309 0211 is shown second. Use 626 5780 as the main number on the Google Business Profile, LinkedIn and directories too.
 - [ ] **Address spelling.** The site now says "Millennium Tower" (as in the profiles). Use exactly the same address everywhere: *Office 22, 2nd Floor, Millennium Tower, Hamdan Street, Abu Dhabi, PO Box 5758*.
 - [ ] **Read the new page text.** The service, area and insight text in `src/content/*.mjs` was drafted from the AV, ELV and Cybersecurity profiles and the existing site text. Have someone in each team read their pages, especially the FAQs and the three Insight guides, before they go live.
 - [ ] **New service photos.** Custom Software & Web, ERP and LMS use crops of other photos for now. Replace `assets/img/svc/<slug>.jpg` and `.webp` with real ones (1000 × 667).

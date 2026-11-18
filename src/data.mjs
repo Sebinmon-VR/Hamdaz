@@ -60,9 +60,10 @@ export const contact = {
       coords: '24.45° N · 54.38° E',
       entity: 'HAMDAZTECH TECHNOLOGY SERVICES LLC',
       lines: ['PO Box. 5758, Office 22 | 2nd Floor,', 'Millennium Tower, OPP. Hamdan Centre,', 'Hamdan Street, Abu Dhabi, U. A. E.'],
+      // the first number is the main one (search listings, header, Google Business Profile)
       phones: [
-        { label: '+971 23090211', tel: '+97123090211' },
         { label: '+971 26265780', tel: '+97126265780' },
+        { label: '+971 23090211', tel: '+97123090211' },
       ],
       map: 'https://www.google.com/maps/search/?api=1&query=Millennium+Tower+Hamdan+Street+Abu+Dhabi',
       postal: { street: 'Office 22, 2nd Floor, Millennium Tower, Hamdan Street', locality: 'Abu Dhabi', region: 'Abu Dhabi', pobox: '5758', country: 'AE' },
