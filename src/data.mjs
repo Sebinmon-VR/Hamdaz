@@ -208,7 +208,7 @@ export const services = [
   },
   {
     slug: 'partner-services-msft-azure-aws-gcp-oci',
-    title: 'Partner Services – MSFT Azure, AWS, GCP, OCI',
+    title: 'Partner Services – Microsoft Azure, AWS, GCP, OCI',
     summary: 'Specializing in partner services, our consultancy ensures optimal utilization of cloud platforms.',
     intro: 'Specializing in partner services, our consultancy ensures optimal utilization of cloud platforms. Our key focus areas include:',
     items: [

@@ -34,6 +34,7 @@ export default {
   path: 'services.html',
   active: 'services',
   earth: true,
+  modules: ['assets/js/svc-live.js'],
   fullTitle: 'IT, AI, Cybersecurity, ELV & AV Services in Abu Dhabi | Hamdaz',
   description: `${services.length} services across AI, cloud, cybersecurity, MCC-certified CCTV and ELV, audio visual, networking, software development and IT staffing, from Abu Dhabi.`,
   jsonld: ldScript(orgNode(), breadcrumbNode([['What We Do', 'services.html']])),

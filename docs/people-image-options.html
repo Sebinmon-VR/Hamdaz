@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>People picture options</title>
+<meta name="robots" content="noindex">
+<style>
+:root { --bg:#f5f7fa; --ink:#0c2a46; --mute:#5b6b7c; --line:#dde3ea; --card:#fff; --accent:#30c1f8; --ok:#0f7a4a; --ok-bg:#e3f6ec; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#071a2d; --ink:#e8eef5; --mute:#93a4b6; --line:#1c3753; --card:#0c2440; --ok:#7fe0b0; --ok-bg:#0f2f24; } }
+:root[data-theme="dark"] { --bg:#071a2d; --ink:#e8eef5; --mute:#93a4b6; --line:#1c3753; --card:#0c2440; --ok:#7fe0b0; --ok-bg:#0f2f24; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.top { position:sticky; top:0; z-index:60; background:var(--bg); border-bottom:1px solid var(--line); }
+.top .in { max-width:1200px; margin:0 auto; padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center; }
+.top h1 { font-size:18px; margin:0; margin-right:auto; }
+.top button { font:inherit; font-size:14px; padding:8px 14px; border-radius:8px; border:1px solid var(--ink); background:var(--ink); color:var(--bg); cursor:pointer; }
+main { max-width:1200px; margin:0 auto; padding:24px 16px 140px; }
+.intro { color:var(--mute); max-width:820px; margin:0 0 10px; }
+.done { display:inline-block; margin:6px 0 8px; padding:10px 14px; border-radius:10px; background:var(--ok-bg); color:var(--ok); font-size:14px; max-width:820px; }
+h2 { margin:40px 0 4px; font-size:20px; }
+h2 + p { margin:0 0 18px; color:var(--mute); max-width:820px; }
+
+/* the three directions, each drawn like the service page's photo + title */
+.dirs { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:16px; }
+.dir { position:relative; display:flex; flex-direction:column; gap:12px; padding:14px; border-radius:14px; background:var(--card); border:2px solid var(--line); cursor:pointer; }
+.dir input { position:absolute; opacity:0; pointer-events:none; }
+.dir:has(input:checked) { border-color:var(--accent); box-shadow:0 0 0 3px rgba(48,193,248,.22); }
+.dir:has(input:focus-visible) { outline:2px solid var(--accent); outline-offset:2px; }
+.dir .tag { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--mute); }
+.dir:has(input:checked) .tag::after { content:"  ✓ chosen"; color:var(--accent); }
+.dir h3 { margin:0; font-size:16px; line-height:1.35; }
+.dir p { margin:0; font-size:13px; color:var(--mute); }
+.pic { position:relative; display:block; aspect-ratio:3/2; border-radius:14px; overflow:hidden; background:#061423; }
+.pic img { display:block; width:100%; height:100%; object-fit:cover; }
+.thumbs { display:flex; gap:8px; }
+.thumbs button { padding:0; width:64px; aspect-ratio:3/2; border-radius:6px; overflow:hidden; border:2px solid transparent; background:none; cursor:pointer; }
+.thumbs button[aria-pressed="true"] { border-color:var(--accent); }
+.thumbs img { display:block; width:100%; height:100%; object-fit:cover; }
+
+/* the other pictures: one row each, current / A / B */
+.rows { display:grid; gap:0; }
+.row { display:grid; grid-template-columns:220px repeat(3, minmax(0, 1fr)); gap:12px; align-items:start; padding:16px 0; border-top:1px solid var(--line); }
+.row .name b { display:block; font-size:15px; }
+.row .name span { font-size:13px; color:var(--mute); }
+.opt { position:relative; display:block; border-radius:10px; overflow:hidden; background:var(--card); border:2px solid transparent; cursor:pointer; }
+.opt input { position:absolute; opacity:0; pointer-events:none; }
+.opt:has(input:checked) { border-color:var(--accent); box-shadow:0 0 0 3px rgba(48,193,248,.22); }
+.opt:has(input:focus-visible) { outline:2px solid var(--accent); outline-offset:2px; }
+.opt .pic { border-radius:0; }
+.opt .cap { display:block; padding:6px 10px 8px; font-size:12px; color:var(--mute); }
+.opt .cap b { color:var(--ink); }
+.opt:has(input:checked) .cap b::after { content:" ✓"; color:var(--accent); }
+.todo { display:grid; place-items:center; padding:14px; text-align:center; color:#93a4b6; font-size:12px; line-height:1.4; background:repeating-linear-gradient(135deg, #0c2a46 0 12px, #0f3150 12px 24px); }
+.head { display:grid; grid-template-columns:220px repeat(3, minmax(0, 1fr)); gap:12px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--mute); padding-bottom:8px; }
+
+/* the live pictures (assets/js/cards.js, the same code as the home page) */
+.cards-gl { position:fixed; left:0; top:0; z-index:40; pointer-events:none; }
+.is-3d { background:#061423; }
+
+.out { position:fixed; left:50%; bottom:16px; transform:translateX(-50%); width:min(720px, calc(100% - 32px)); background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; box-shadow:0 10px 30px rgba(0,0,0,.15); display:none; z-index:70; }
+.out.on { display:block; }
+.out textarea { width:100%; height:120px; font:12px/1.5 ui-monospace, Consolas, monospace; border:1px solid var(--line); border-radius:8px; padding:8px; background:var(--bg); color:var(--ink); }
+.out p { margin:0 0 8px; font-size:14px; }
+@media (max-width:900px) {
+  .dirs { grid-template-columns:1fr; }
+  .head { display:none; }
+  .row { grid-template-columns:repeat(3, minmax(0, 1fr)); }
+  .row .name { grid-column:1 / -1; }
+}
+</style>
+</head>
+<body>
+<div class="top"><div class="in">
+  <h1>Pictures with people</h1>
+  <button type="button" data-copy>Copy my picks</button>
+</div></div>
+<main>
+  <p class="done">Done: the title now reads "Partner Services – Microsoft Azure, AWS, GCP, OCI" everywhere on the site and in the Google Ads files. Not published yet.</p>
+  <p class="intro">For the pictures, there are two directions: <b>A</b>, photos with Indian people in them, or <b>B</b>, the live pictures used on the home page. First the Partner Services page in each direction, then every other service photo that shows people. Click the one you want in each row, then press "Copy my picks" and paste the text back to Claude.</p>
+
+  <h2>Partner Services page</h2>
+  <p>The photo beside the overview on the service page. The same picture is used on its card on the What We Do page.</p>
+  <div class="dirs">
+    <label class="dir">
+      <input type="radio" name="partner-services-msft-azure-aws-gcp-oci" value="current">
+      <span class="tag">Now</span>
+      <span class="pic"><img src="../assets/img/svc/partner-services-msft-azure-aws-gcp-oci.webp" alt=""></span>
+      <h3>Partner Services – Microsoft Azure, AWS, GCP, OCI</h3>
+      <p>The current photo.</p>
+    </label>
+    <label class="dir">
+      <input type="radio" name="partner-services-msft-azure-aws-gcp-oci" value="A" checked>
+      <span class="tag">A · Indian-theme photo</span>
+      <span class="pic"><img data-a-img src="people-photos/in-4963357.webp" alt=""></span>
+      <span class="thumbs" data-thumbs>
+        <button type="button" aria-pressed="true" data-id="4963357" aria-label="Handshake"><img src="people-photos/in-4963357.webp" alt=""></button>
+        <button type="button" aria-pressed="false" data-id="4308091" aria-label="Consultants at a laptop"><img src="people-photos/in-4308091.webp" alt=""></button>
+        <button type="button" aria-pressed="false" data-id="18067562" aria-label="Team at a laptop"><img src="people-photos/in-18067562.webp" alt=""></button>
+      </span>
+      <h3>Partner Services – Microsoft Azure, AWS, GCP, OCI</h3>
+      <p>A real photo with Indian people. Click the small pictures to try each one. Free Pexels photos.</p>
+    </label>
+    <label class="dir">
+      <input type="radio" name="partner-services-msft-azure-aws-gcp-oci" value="B">
+      <span class="tag">B · Live picture</span>
+      <span class="pic" data-card3d="partner"><img src="../assets/img/svc/partner-services-msft-azure-aws-gcp-oci.webp" alt=""></span>
+      <h3>Partner Services – Microsoft Azure, AWS, GCP, OCI</h3>
+      <p>The same live picture as this service on the home page: one hub linked to four platforms, on the glowing floor. Move the pointer over it.</p>
+    </label>
+  </div>
+
+  <h2>The other photos with people</h2>
+  <p>13 more service photos show people. For A, I'd find an Indian-theme photo for each one once you pick this direction; three samples are shown. For B, three services already have a live picture on the home page; the rest would each need their own object designed.</p>
+  <div class="head"><span>Service</span><span>Now</span><span>A · Indian-theme photo</span><span>B · Live picture</span></div>
+  <div class="rows" data-rows></div>
+</main>
+<div class="out" data-out><p>Copy this and paste it back to Claude:</p><textarea readonly data-text></textarea></div>
+<script>
+// [slug, title, A sample (Pexels id or ''), B live kind ('' = still to design)]
+const ROWS = [
+  ['business-process-automation-and-digital-transformation-services', 'Business Process Automation & Digital Transformation', '10499058', 'gears'],
+  ['data-analytics-predictive-services', 'Data Analytics & Predictive Services', '18067562', 'bars'],
+  ['data-center-infrastructure-services', 'Data Center / Infrastructure Services', '', 'server'],
+  ['digital-twin', 'Digital Twin', '28196491', ''],
+  ['data-centre-power-cooling', 'Data Centre Power & Cooling', '', ''],
+  ['cyber-assessment-audit', 'Cyber Assessment & Audit', '', ''],
+  ['erp-solutions', 'ERP Solutions', '', ''],
+  ['managed-services', 'Managed Services', '', ''],
+  ['meeting-rooms-video-conferencing', 'Meeting Rooms & Video Conferencing', '', ''],
+  ['education-services', 'Education Services', '', ''],
+  ['lms-elearning-platforms', 'LMS & eLearning Platforms', '', ''],
+  ['healthcare-services', 'Healthcare Services', '', ''],
+  ['zoho-sap-vodoo-crm-salesforce', 'Zoho, SAP, Odoo CRM & Salesforce', '', ''],
+];
+const opt = (slug, value, label, media, checked) => `<label class="opt"><input type="radio" name="${slug}" value="${value}"${checked ? ' checked' : ''}>${media}<span class="cap"><b>${label}</b></span></label>`;
+const photo = (src) => `<span class="pic"><img src="${src}" alt="" loading="lazy"></span>`;
+const todo = (text) => `<span class="pic todo">${text}</span>`;
+document.querySelector('[data-rows]').innerHTML = ROWS.map(([slug, title, a, b]) => {
+  const now = `../assets/img/svc/${slug}.webp`;
+  return `<div class="row" data-slug="${slug}">
+    <div class="name"><b>${title}</b><span>${a ? '1 sample photo' : 'photo to find'} · ${b ? 'live picture ready' : 'live picture to design'}</span></div>
+    ${opt(slug, 'current', 'Now', photo(now), true)}
+    ${opt(slug, 'A', a ? 'A · sample' : 'A · Indian photo', a ? photo(`people-photos/in-${a}.webp`) : todo('An Indian-theme photo<br>found after you pick A'), false)}
+    ${opt(slug, 'B', b ? 'B · live' : 'B · live', b ? `<span class="pic" data-card3d="${b}"><img src="${now}" alt=""></span>` : todo('Its own live object<br>designed after you pick B'), false)}
+  </div>`;
+}).join('');
+
+// A: try each Indian-theme photo for Partner Services
+let partnerPhoto = '4963357';
+document.querySelector('[data-thumbs]').addEventListener('click', (e) => {
+  const b = e.target.closest('button'); if (!b) return;
+  e.preventDefault();
+  partnerPhoto = b.dataset.id;
+  document.querySelector('[data-a-img]').src = `people-photos/in-${partnerPhoto}.webp`;
+  document.querySelectorAll('[data-thumbs] button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  document.querySelector('input[name="partner-services-msft-azure-aws-gcp-oci"][value="A"]').checked = true;
+});
+
+document.querySelector('[data-copy]').addEventListener('click', async () => {
+  const pick = (slug) => document.querySelector(`input[name="${slug}"]:checked`)?.value || 'current';
+  const p = pick('partner-services-msft-azure-aws-gcp-oci');
+  const lines = [`partner-services: ${p}${p === 'A' ? ` (pexels ${partnerPhoto})` : ''}`, ...ROWS.map(([slug]) => `${slug}: ${pick(slug)}`)];
+  const text = `People picture picks\n${lines.join('\n')}`;
+  try { await navigator.clipboard.writeText(text); } catch (e) { /* shown below */ }
+  document.querySelector('[data-text]').value = text;
+  document.querySelector('[data-out]').classList.add('on');
+});
+</script>
+<script type="module" src="../assets/js/cards.js"></script>
+</body>
+</html>

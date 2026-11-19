@@ -24,6 +24,21 @@ export const card3d = {
   'online-education': 'laptop',
   sports: 'ball',
 };
+// the live picture on each What We Do card (assets/js/svc-live.js and the objects in assets/js/live/); the photo is the
+// fallback without WebGL, and they are only drawn where the page loads svc-live.js (the What We Do page and the
+// service pages, where it also replaces the photo beside the overview)
+export const svcLive = {
+  'generative-ai': 'genai', 'bot-services': 'bot', 'data-analytics-predictive-services': 'analytics',
+  'business-process-automation-and-digital-transformation-services': 'bpa', 'rpa-robotic-process-automation': 'rpa', 'digital-twin': 'twin',
+  'managed-ai-secops': 'soc', 'cyber-assessment-audit': 'audit', 'zero-trust-identity-data-security': 'zerotrust', 'ransomware-resilience': 'vault', 'information-security-services': 'padlock',
+  'cloud-services-migration': 'cloud', 'partner-services-msft-azure-aws-gcp-oci': 'partner', 'data-center-infrastructure-services': 'server', 'managed-services': 'managed', 'it-ot-services': 'itot',
+  'cctv-video-surveillance': 'cctv', 'access-control-gate-barriers': 'barrier', 'anpr-intercom-car-parks': 'anpr', 'data-centre-power-cooling': 'cooling',
+  'meeting-rooms-video-conferencing': 'meetset', 'video-walls-digital-signage': 'videowall', 'pro-audio-pa-systems': 'proaudio', 'immersive-smart-spaces': 'immersive', 'av-setup-meeting-room-solutions': 'projector',
+  'enterprise-networking-wifi': 'wifi', 'network-services-cabling-structured-cabling': 'cabling',
+  'custom-software-web-development': 'code', 'erp-solutions': 'erp', 'lms-elearning-platforms': 'lms', 'zoho-sap-vodoo-crm-salesforce': 'crm', 'mobile-app-development': 'mobile',
+  'education-services': 'education', 'healthcare-services': 'health', 'retail-implementation-services': 'retail', 'smart-farming': 'farming',
+  'it-staffing-resident-engineers': 'staffing', 'it-outsourcing-managed-operations': 'outsourcing',
+};
 const card3dAttr = (slug) => (card3d[slug] ? ` data-card3d="${card3d[slug]}"` : '');
 export const productImg = (p) => `assets/img/products/${p.slug}.webp`;
 // The India office is labelled "India", so its small label shows the state instead
@@ -62,7 +77,7 @@ export function pageHero({ crumb, eyebrow, title, text, scene, hero = 'chip' }) 
   <div class="page-hero-inner">
     <p class="mono crumbs"><a href="index.html">Home</a> <span aria-hidden="true">/</span> ${crumb}</p>
     <p class="mono eyebrow">(${eyebrow})</p>
-    <h1 class="display" data-split>${title}</h1>
+    <h1 class="display${title.replace(/<[^>]*>/g, '').length > 32 ? ' display--long' : ''}" data-split>${title}</h1>
     ${text ? `<p class="lead" data-reveal>${text}</p>` : ''}
   </div>
   <div class="page-hero-foot mono" aria-hidden="true"><span>Scroll</span><span>${uae.city} — ${india.city}</span></div>
@@ -111,12 +126,12 @@ export function intro({ art = false } = {}) {
 }
 
 /* ---------- Managed services, as cards (What We Do) ---------- */
-// a service as a card: its photo on the left, fading into the card under its number, title, summary and two
-// main areas. It links to the service's own page (service/<slug>/), which shows the same photo (svcImg).
+// a service as a card: its photo on the left (its live picture on the What We Do page), fading into the card under
+// its number, title, summary and two main areas. It links to the service's own page (service/<slug>/), which shows the same photo (svcImg).
 export const svcCard = (s, i) => {
   const areas = s.items.map(([name]) => name).filter((n) => !/^latest technolog/i.test(n));
   return `<a class="svc-card" href="${svcUrl(s.slug)}" data-reveal>
-        <span class="svc-media">${tone(svcImg(s))}</span>
+        <span class="svc-media"${svcLive[s.slug] ? ` data-live="${svcLive[s.slug]}"` : ''}>${tone(svcImg(s))}</span>
         <span class="svc-body">
           <span class="svc-num">${pad2(i + 1)}</span>
           <span class="svc-title">${s.title}</span>

@@ -1,7 +1,7 @@
 // One page per service at /service/<slug>/ (the old WordPress addresses): overview, what's included,
 // how we deliver it, brands and sectors, FAQs, related services and contact.
 import { site, services, categoryOf, serviceBySlug, svcUrl, areaUrl, waLink } from '../data.mjs';
-import { pageHero, content, head, btn, tlink, tone, svcImg, svcCard, contactSection, SVC_PHOTOS } from '../components.mjs';
+import { pageHero, content, head, btn, tlink, tone, svcImg, svcCard, svcLive, contactSection, SVC_PHOTOS } from '../components.mjs';
 import { serviceSeo, areaSeo, articles } from '../content/index.mjs';
 import { icon } from '../icons.mjs';
 import { ldScript, orgNode, breadcrumbNode, faqNode, crumbTrail, prose, numbered, chips, faqList, trustRow, ORG_ID } from '../blocks.mjs';
@@ -41,7 +41,7 @@ export default services.map((s) => {
         </div>
       </div>
       <aside class="sp-side">
-        <figure class="sp-media" data-reveal>${tone(svcImg(s), `${s.title} by Hamdaz Technologies, Abu Dhabi`)}</figure>
+        <figure class="sp-media" data-reveal>${tone(svcImg(s), `${s.title} by Hamdaz Technologies, Abu Dhabi`, 1000, 667, svcLive[s.slug] ? ` data-live="${svcLive[s.slug]}"` : '')}</figure>
         <p class="sp-kh">Why Hamdaz</p>
         <ul class="sp-points">${seo.benefits.map(([t, d]) => `<li data-reveal><h3>${t}</h3><p>${d}</p></li>`).join('')}</ul>
       </aside>
@@ -113,6 +113,7 @@ export default services.map((s) => {
     path: url,
     active: 'services',
     earth: true,
+    modules: ['assets/js/svc-live.js'],
     bodyClass: 'page-detail',
     fullTitle: `${seo.seoTitle} | Hamdaz`,
     description: seo.seoDescription,

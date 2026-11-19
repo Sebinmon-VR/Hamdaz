@@ -850,5 +850,20 @@
     });
   }
 
+  /* ---------------------------------------------------------------- How We Do: the method timeline */
+  // the line fills with light as the steps pass the lower middle of the screen, and each point lights as it is reached
+  const tl = $('[data-tl]');
+  if (tl) {
+    const steps = $$('.tl-step', tl);
+    const fill = () => {
+      const r = tl.getBoundingClientRect();
+      const p = reduce ? 1 : Math.max(0, Math.min(1, (innerHeight * 0.62 - r.top) / (r.height * 0.75)));
+      tl.style.setProperty('--p', p.toFixed(3));
+      steps.forEach((s, i) => s.classList.toggle('on', p >= i / (steps.length - 1) - 0.02));
+    };
+    if (!reduce) { addEventListener('scroll', fill, { passive: true }); addEventListener('resize', fill); }
+    fill();
+  }
+
   $$('[data-year]').forEach((el) => (el.textContent = new Date().getFullYear()));
 })();

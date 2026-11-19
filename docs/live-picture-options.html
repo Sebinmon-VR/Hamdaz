@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live picture styles</title>
+<meta name="robots" content="noindex">
+<style>
+:root { --bg:#f5f7fa; --ink:#0c2a46; --mute:#5b6b7c; --line:#dde3ea; --card:#fff; --accent:#30c1f8; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#071a2d; --ink:#e8eef5; --mute:#93a4b6; --line:#1c3753; --card:#0c2440; } }
+:root[data-theme="dark"] { --bg:#071a2d; --ink:#e8eef5; --mute:#93a4b6; --line:#1c3753; --card:#0c2440; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.top { position:sticky; top:0; z-index:60; background:var(--bg); border-bottom:1px solid var(--line); }
+.top .in { max-width:1200px; margin:0 auto; padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center; }
+.top h1 { font-size:18px; margin:0; margin-right:auto; }
+.top button { font:inherit; font-size:14px; padding:8px 14px; border-radius:8px; border:1px solid var(--ink); background:var(--ink); color:var(--bg); cursor:pointer; }
+main { max-width:1200px; margin:0 auto; padding:24px 16px 140px; }
+.intro { color:var(--mute); max-width:820px; margin:0 0 8px; }
+.style { margin-top:36px; padding:18px; border-radius:16px; background:var(--card); border:2px solid var(--line); }
+.style:has(input:checked) { border-color:var(--accent); box-shadow:0 0 0 3px rgba(48,193,248,.2); }
+.style header { display:flex; flex-wrap:wrap; gap:8px 16px; align-items:baseline; justify-content:space-between; margin-bottom:14px; }
+.style h2 { margin:0; font-size:19px; }
+.style header p { margin:4px 0 0; color:var(--mute); font-size:14px; max-width:760px; }
+.pick { display:inline-flex; align-items:center; gap:8px; padding:7px 12px; border-radius:999px; border:1px solid var(--line); font-size:14px; cursor:pointer; white-space:nowrap; }
+.pick input { accent-color:var(--accent); }
+.style:has(input:checked) .pick { border-color:var(--accent); color:var(--accent); }
+.grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:14px; }
+.item { display:flex; flex-direction:column; gap:8px; }
+.item b { font-size:14px; }
+.item span { font-size:12.5px; color:var(--mute); }
+.live { display:block; aspect-ratio:3/2; border-radius:16px; background:#061423; }
+.live.light { background:#e6ebf1; }
+.live-gl { position:fixed; left:0; top:0; z-index:40; pointer-events:none; }
+.note { margin:28px 0 0; color:var(--mute); font-size:14px; max-width:820px; }
+textarea.c { width:100%; max-width:820px; height:70px; margin-top:8px; font:inherit; font-size:14px; padding:10px; border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--ink); }
+.out { position:fixed; left:50%; bottom:16px; transform:translateX(-50%); width:min(720px, calc(100% - 32px)); background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; box-shadow:0 10px 30px rgba(0,0,0,.15); display:none; z-index:70; }
+.out.on { display:block; }
+.out textarea { width:100%; height:90px; font:12px/1.5 ui-monospace, Consolas, monospace; border:1px solid var(--line); border-radius:8px; padding:8px; background:var(--bg); color:var(--ink); }
+.out p { margin:0 0 8px; font-size:14px; }
+@media (max-width:900px) { .grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="top"><div class="in">
+  <h1>Better live pictures</h1>
+  <button type="button" data-copy>Copy my picks</button>
+</div></div>
+<main>
+  <p class="intro">Three new styles for the moving service pictures, each shown on three services. Move the pointer over a picture: each one reacts in its own way. On a phone they react as they reach the middle of the screen. Pick the style you like, add any notes, then press "Copy my picks" and paste the text back to Claude. Once you pick, every service gets its own object in that style.</p>
+
+  <section class="style">
+    <header>
+      <div><h2>A · Studio, dark</h2><p>Real-looking metal, glass and screens, lit like a product photo on the home page's navy, with a faint ring of light on the floor.</p></div>
+      <label class="pick"><input type="radio" name="style" value="A studio dark"> Pick this style</label>
+    </header>
+    <div class="grid">
+      <div class="item"><span class="live" data-live="dark:partner"></span><b>Partner Services</b><span>Hover: the four clouds (Microsoft Azure, AWS, Google Cloud, Oracle) pull in to the hub and the links speed up.</span></div>
+      <div class="item"><span class="live" data-live="dark:server"></span><b>Data Center / Infrastructure</b><span>Hover: the middle rack's glass door swings open and a server slides out.</span></div>
+      <div class="item"><span class="live" data-live="dark:meeting"></span><b>Meeting Rooms &amp; Video Conferencing</b><span>The call moves from speaker to speaker. Hover: the screen wakes and the camera light comes on.</span></div>
+    </div>
+  </section>
+
+  <section class="style">
+    <header>
+      <div><h2>B · Studio, light</h2><p>The same objects on a pale studio backdrop, like a product shot on white. It sits naturally on the light What We Do and service pages.</p></div>
+      <label class="pick"><input type="radio" name="style" value="B studio light"> Pick this style</label>
+    </header>
+    <div class="grid">
+      <div class="item"><span class="live light" data-live="light:partner"></span><b>Partner Services</b><span>Hover: the clouds pull in to the hub.</span></div>
+      <div class="item"><span class="live light" data-live="light:server"></span><b>Data Center / Infrastructure</b><span>Hover: the door opens, a server slides out.</span></div>
+      <div class="item"><span class="live light" data-live="light:meeting"></span><b>Meeting Rooms &amp; Video Conferencing</b><span>Hover: the screen wakes.</span></div>
+    </div>
+  </section>
+
+  <section class="style">
+    <header>
+      <div><h2>C · Light dust</h2><p>The same objects drawn in thousands of points of light, like the home page hero. They gather into shape as you scroll to them and lift apart into a cloud on hover. The pointer pushes the dust aside.</p></div>
+      <label class="pick"><input type="radio" name="style" value="C light dust"> Pick this style</label>
+    </header>
+    <div class="grid">
+      <div class="item"><span class="live" data-live="dust:partner"></span><b>Partner Services</b><span>Hub and four clouds in light.</span></div>
+      <div class="item"><span class="live" data-live="dust:server"></span><b>Data Center / Infrastructure</b><span>A row of racks in light, LEDs brighter.</span></div>
+      <div class="item"><span class="live" data-live="dust:meeting"></span><b>Meeting Rooms &amp; Video Conferencing</b><span>Screen, video bar and table in light.</span></div>
+    </div>
+  </section>
+
+  <p class="note">Notes (optional): anything to change, such as "A but lighter floor" or "mix A and C".</p>
+  <textarea class="c" data-notes placeholder="Your notes"></textarea>
+</main>
+<div class="out" data-out><p>Copy this and paste it back to Claude:</p><textarea readonly data-text></textarea></div>
+<script>
+document.querySelector('[data-copy]').addEventListener('click', async () => {
+  const style = document.querySelector('input[name="style"]:checked')?.value || 'none picked';
+  const notes = document.querySelector('[data-notes]').value.trim();
+  const text = `Live picture style: ${style}${notes ? `\nNotes: ${notes}` : ''}`;
+  try { await navigator.clipboard.writeText(text); } catch (e) { /* shown below */ }
+  document.querySelector('[data-text]').value = text;
+  document.querySelector('[data-out]').classList.add('on');
+});
+</script>
+<script type="module" src="live2/live2.js"></script>
+</body>
+</html>

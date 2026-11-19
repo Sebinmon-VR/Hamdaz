@@ -683,6 +683,10 @@ a:hover .tone img, .feat:hover .tone img, .about-media:hover .tone img { transfo
   mask-image: linear-gradient(90deg, #000 0%, #000 28%, rgba(0, 0, 0, 0.55) 50%, rgba(0, 0, 0, 0.22) 68%, rgba(0, 0, 0, 0.07) 84%, transparent 100%);
 }
 .svc-media .tone { position: absolute; inset: 0; border-radius: 0; background: transparent; }
+/* What We Do cards and service pages: the live picture (assets/js/svc-live.js) is drawn into a canvas over the photo,
+   under the same fade */
+.svc-live { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.svc-media.is-live .tone, .tone.is-live > img { visibility: hidden; }
 .svc-card:hover .tone img, .svc-card:focus-visible .tone img { transform: scale(1.06); }
 .svc-body { position: relative; display: flex; flex-direction: column; gap: 12px; min-height: 300px; margin-left: 48%; padding: 26px 24px 22px 0; }
 .svc-num { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; color: #5d6976; }
@@ -1004,6 +1008,48 @@ html.reduce .mq-track { animation-duration: 140s; }
 .feat-num { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.08em; color: var(--ink-3); }
 .feat-title { font-family: var(--display); font-weight: 500; font-size: clamp(24px, 2.4vw, 36px); line-height: 1.08; letter-spacing: -0.03em; text-wrap: balance; }
 .feat-text { max-width: 30rem; font-size: 16px; line-height: 1.6; color: var(--ink-2); }
+/* How We Do: four ways to work with us, each with its live picture (assets/js/svc-live.js) */
+.ways { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.ways > li { display: flex; }
+.way { display: flex; flex-direction: column; width: 100%; overflow: hidden; isolation: isolate; border: 1px solid var(--rule); border-radius: 20px; background: #fff; color: var(--ink); transition: transform 0.6s var(--ease), box-shadow 0.6s var(--ease), border-color 0.4s; }
+.way:hover, .way:focus-visible { transform: translateY(-5px); border-color: transparent; box-shadow: 0 30px 64px -32px rgba(6, 20, 35, 0.42); }
+.way .tone { aspect-ratio: 4 / 3; border-radius: 0; }
+.way-body { display: flex; flex-direction: column; gap: 10px; flex: 1; padding: 20px 22px 22px; }
+.way-kick { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #5d6976; }
+.way-title { font-family: var(--display); font-weight: 500; font-size: clamp(19px, 1.5vw, 22px); line-height: 1.2; letter-spacing: -0.02em; }
+.way-text { font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
+.way-go { margin-top: auto; padding-top: 6px; font-size: 14px; font-weight: 500; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--rule-2); }
+.way:hover .way-go { text-decoration-color: currentColor; }
+/* How We Do: the method as a timeline. Five points on a line that fills with light as the section passes the middle of
+   the screen (--p, set by main.js), each lighting up (.on) as the light reaches it; each step's card sits under its
+   point. Up to tablet width the line runs down the left. */
+.tl { position: relative; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px; --p: 0; }
+.tl-track { position: absolute; left: 10%; right: 10%; top: 31px; height: 2px; background: var(--rule); border-radius: 2px; }
+.tl-fill { position: absolute; inset: 0 auto 0 0; width: calc(var(--p) * 100%); background: linear-gradient(90deg, #30c1f8, #6b50f6); box-shadow: 0 0 14px rgba(48, 193, 248, 0.7); border-radius: 2px; }
+.tl-step { position: relative; display: grid; grid-template-rows: 64px 1fr; justify-items: center; gap: 20px; }
+.tl-dot { position: relative; z-index: 1; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: #fff; border: 1px solid var(--rule); color: var(--ink); transition: background-color 0.5s, color 0.5s, box-shadow 0.5s, transform 0.5s var(--ease); }
+.tl-dot .i { width: 24px; height: 24px; }
+.tl-dot b { position: absolute; top: -8px; right: -8px; padding: 2px 7px; border-radius: 99px; background: var(--ink); color: #fff; font: 500 11px/1.4 var(--mono); }
+.tl-step.on .tl-dot { background: #061423; color: #30c1f8; box-shadow: 0 0 0 6px rgba(48, 193, 248, 0.14), 0 10px 30px -8px rgba(48, 193, 248, 0.6); transform: translateY(-2px); }
+.tl-card { width: 100%; height: 100%; display: flex; flex-direction: column; gap: 8px; padding: 22px 20px; border: 1px solid var(--rule); border-radius: 18px; background: #fff; transition: border-color 0.5s, box-shadow 0.5s, transform 0.5s var(--ease); }
+.tl-step.on .tl-card { border-color: transparent; box-shadow: 0 24px 50px -30px rgba(6, 20, 35, 0.35); transform: translateY(-4px); }
+.tl-kick { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #5d6976; }
+.tl-title { font-family: var(--display); font-weight: 500; font-size: clamp(18px, 1.35vw, 21px); line-height: 1.2; letter-spacing: -0.015em; }
+.tl-promise { font-weight: 500; font-size: 14.5px; color: var(--ink); }
+.tl-text { font-size: 14px; line-height: 1.6; color: var(--ink-2); }
+.tl-get { list-style: none; margin: auto 0 0; padding: 12px 0 0; display: grid; gap: 7px; border-top: 1px solid var(--rule); }
+.tl-get li { display: grid; grid-template-columns: 18px 1fr; gap: 8px; align-items: start; font-size: 13.5px; line-height: 1.45; color: var(--ink); }
+.tl-get .i { width: 16px; height: 16px; margin-top: 2px; color: #0d8fc4; }
+@media (max-width: 1100px) {
+  .tl { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .tl-track { left: 31px; right: auto; top: 32px; bottom: 32px; width: 2px; height: auto; }
+  .tl-fill { inset: 0 0 auto 0; width: 2px; height: calc(var(--p) * 100%); }
+  .tl-step { grid-template-columns: 64px minmax(0, 1fr); grid-template-rows: auto; justify-items: stretch; align-items: start; gap: 18px; }
+}
+.sp-list p a { display: inline-block; margin-left: 4px; color: var(--ink); font-weight: 500; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--rule-2); }
+.sp-list p a:hover { text-decoration-color: currentColor; }
+@media (max-width: 1100px) { .ways { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .ways { grid-template-columns: minmax(0, 1fr); } }
 
 /* ---------- About page ---------- */
 .about-split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(32px, 6vw, 112px); align-items: center; }
@@ -1175,11 +1221,15 @@ html.reduce .mq-track { animation-duration: 140s; }
 /* ---------- Service, area, project and insight pages (src/pages/service.mjs, area.mjs, projects.mjs, insights.mjs) ---------- */
 .page-detail .page-hero { min-height: 78vh; min-height: 78svh; }
 /* the headline stays in the left half, clear of the 3D element on the right */
-.page-detail .page-hero .display { font-size: clamp(30px, 2.8vw, 46px); max-width: min(14em, 58vw); }
+.page-detail .page-hero .display { font-size: clamp(30px, 2.8vw, 46px); max-width: min(14em, 58vw); text-wrap: balance; }
+/* long names (over 32 characters, display--long from pageHero): a little smaller and wider, so they sit on two even
+   lines on a laptop or desktop instead of four */
+.page-detail:not(.page-article) .page-hero .display--long { font-size: clamp(28px, 2.4vw, 40px); max-width: min(24em, 56vw); }
 .page-article .page-hero .display { font-size: clamp(24px, 2.1vw, 34px); max-width: min(20em, 60vw); }
 @media (max-width: 760px) {
   .page-detail .page-hero-inner { grid-template-columns: minmax(0, 1fr); }
   .page-detail .page-hero .display { max-width: none; font-size: clamp(28px, 8.2vw, 40px); overflow-wrap: break-word; hyphens: auto; }
+  .page-detail:not(.page-article) .page-hero .display--long { max-width: none; font-size: clamp(24px, 6.6vw, 34px); }
 }
 .crumbs span[aria-current] { color: var(--fg-3); }
 
