@@ -1760,7 +1760,7 @@ html.theme-dark .cp-rows, html.theme-dark .lw-grid {
   color: var(--ink);
 }
 html.theme-dark .cp-rows { margin-inline: var(--pad); border: 0; border-radius: 20px; background: #fff; }
-html.theme-dark .lw-grid { border-color: var(--rule); border-radius: 16px; overflow: hidden; }
+html.theme-dark .lw-grid { border-color: var(--rule); border-radius: 16px; overflow: hidden; background: #fff; } /* white under the empty end of the last row too */
 html.theme-dark .lw-tile { background: #fff; }
 html.theme-dark .lw-tile:hover { background: #f2f4f6; }
 html.theme-dark .lw-tile--dark, html.theme-dark .lw-tile--dark:hover { background: var(--deep); }
