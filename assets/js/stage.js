@@ -156,6 +156,7 @@ async function init(host) {
     else if (kind === 'glass') el3d = await buildGlass({ root: heroRoot, scene: darkScene, renderer: dark, reduceMotion });
     else if (kind === 'circuit') el3d = await buildCircuit({ root: heroRoot, scene: darkScene, renderer: dark, reduceMotion, U });
     net = light ? await buildInknet({ root: netRoot, U, reduceMotion }) : null;
+    if (net) document.addEventListener('hz-theme', () => net.theme());
     if (galaxySec) galaxy = await buildGalaxy({ root: galRoot, U, reduceMotion });
   } catch (e) {
     console.error(e);

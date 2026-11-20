@@ -86,9 +86,10 @@
   const lightZones = $$('.content');
   const darkPanels = $$('.content [data-dark]');
   const spans = (el, y) => { const r = el.getBoundingClientRect(); return r.top <= y && r.bottom >= y; };
+  const isDark = () => doc.classList.contains('theme-dark');
   const updateHeaderTheme = () => {
     const mid = header.offsetHeight / 2;
-    const overLight = lightZones.some((el) => spans(el, mid)) && !darkPanels.some((el) => spans(el, mid));
+    const overLight = !isDark() && lightZones.some((el) => spans(el, mid)) && !darkPanels.some((el) => spans(el, mid));
     header.classList.toggle('is-light', overLight && !menuOpen);
   };
   const onScroll = () => {
@@ -101,6 +102,34 @@
   };
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
+
+  /* ---------------------------------------------------------------- Theme (light / dark) */
+  // The head script has already set html.theme-dark from the visitor's last choice, or the site default
+  // (siteTheme in src/data.mjs). The switch in the header flips it, remembers it, and tells the 3D scenes
+  // (the hz-theme event). Where the browser can, the new theme opens out in a circle from the switch.
+  const themeBtns = $$('[data-theme-btn]');
+  const syncTheme = () => themeBtns.forEach((b) => b.setAttribute('aria-checked', String(isDark())));
+  const setTheme = (dark) => {
+    doc.classList.toggle('theme-dark', dark);
+    try { localStorage.setItem('hz-theme', dark ? 'dark' : 'light'); } catch (e) { /* private mode: this page only */ }
+    syncTheme();
+    updateHeaderTheme();
+    document.dispatchEvent(new CustomEvent('hz-theme', { detail: { dark } }));
+  };
+  syncTheme();
+  themeBtns.forEach((b) => b.addEventListener('click', () => {
+    const next = !isDark();
+    if (reduce || !document.startViewTransition) return setTheme(next);
+    const r = b.getBoundingClientRect();
+    const x = r.left + r.width / 2;
+    const y = r.top + r.height / 2;
+    const end = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    const vt = document.startViewTransition(() => setTheme(next));
+    vt.ready.then(() => doc.animate(
+      { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${end}px at ${x}px ${y}px)`] },
+      { duration: 800, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', pseudoElement: '::view-transition-new(root)' },
+    )).catch(() => {});
+  }));
 
   /* ---------------------------------------------------------------- Menu */
   const menuBtn = $('[data-menu-btn]');
@@ -172,7 +201,7 @@
       const h = e.target.closest('a, button, label, [data-magnetic]');
       cursor.classList.toggle('is-label', !!l);
       cursor.classList.toggle('is-hover', !l && !!h);
-      cursor.classList.toggle('on-light', !!e.target.closest('[data-theme="light"], .modal, .mega-grid') && !e.target.closest('.content [data-dark]'));
+      cursor.classList.toggle('on-light', !doc.classList.contains('theme-dark') && !!e.target.closest('[data-theme="light"], .modal, .mega-grid') && !e.target.closest('.content [data-dark]'));
       label.textContent = l ? l.dataset.cursor : '';
     });
     document.addEventListener('pointerleave', () => cursor.classList.remove('is-hover', 'is-label'));

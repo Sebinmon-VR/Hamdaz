@@ -10,6 +10,10 @@ export const site = {
     'Hamdaz Technologies is an Abu Dhabi system integrator for AI, cloud, cybersecurity, MCC-certified CCTV and ELV, audio visual, networking and software development. We design, install and support the technology organisations run on, across the UAE.',
 };
 
+// The theme a first visit opens in: 'dark' or 'light'. The switch in the header lets anyone change it, and
+// remembers their choice in that browser. To go back to the light site for everyone, set 'light' and rebuild.
+export const siteTheme = 'dark';
+
 // Careers: open roles come live from the Hamdaz ERP (hamdaz-2.0, app/hr/public.py). When HR posts an
 // opening there and ticks "publicly listed", it shows on careers.html with no rebuild; its application
 // form is the one HR set up in the ERP, and applications go straight back into the ERP.

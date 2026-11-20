@@ -4,11 +4,16 @@
 import * as THREE from '../../vendor/three.module.min.js';
 import { networkGraph } from './network.js';
 
-const INK = new THREE.Color('#33475b');
-const CYAN = new THREE.Color('#0aa3dc');
-const PINK = new THREE.Color('#d0216f');
+// ink, cyan and pink for the light sheet, and lighter ones for the dark theme's midnight sheet
+const TONES = {
+  light: { ink: new THREE.Color('#33475b'), cyan: new THREE.Color('#0aa3dc'), pink: new THREE.Color('#d0216f'), line: 0.14 },
+  dark: { ink: new THREE.Color('#b7c8da'), cyan: new THREE.Color('#30c1f8'), pink: new THREE.Color('#fb4994'), line: 0.26 },
+};
+const toneNow = () => TONES[document.documentElement.classList.contains('theme-dark') ? 'dark' : 'light'];
 
 export function build({ root, U, reduceMotion }) {
+  let tone = toneNow();
+  let shown = 1;
   const { nodes, pairs, rand } = networkGraph();
   const spin = new THREE.Group();
   root.add(spin);
@@ -19,7 +24,7 @@ export function build({ root, U, reduceMotion }) {
   const lg = new THREE.BufferGeometry();
   lg.setAttribute('position', new THREE.BufferAttribute(linePos, 3));
   const lineMat = new THREE.ShaderMaterial({
-    uniforms: { uColor: { value: INK.clone() }, uOpacity: { value: 0.14 } },
+    uniforms: { uColor: { value: tone.ink.clone() }, uOpacity: { value: tone.line } },
     vertexShader: `varying float vF; void main() { vec4 mv = modelViewMatrix * vec4(position, 1.0); vF = smoothstep(7.2, 5.0, -mv.z); gl_Position = projectionMatrix * mv; }`,
     fragmentShader: `uniform vec3 uColor; uniform float uOpacity; varying float vF; void main() { gl_FragColor = vec4(uColor, uOpacity * (0.3 + 0.7 * vF)); }`,
     transparent: true,
@@ -32,10 +37,12 @@ export function build({ root, U, reduceMotion }) {
   const pos = new Float32Array(N * 3);
   const col = new Float32Array(N * 3);
   const size = new Float32Array(N);
+  const kind = []; // each person's colour: 'pink', 'cyan' or 'ink'
   nodes.forEach((v, i) => {
     v.toArray(pos, i * 3);
     const r = rand();
-    (r < 0.16 ? PINK : r < 0.5 ? CYAN : INK).toArray(col, i * 3);
+    kind[i] = r < 0.16 ? 'pink' : r < 0.5 ? 'cyan' : 'ink';
+    tone[kind[i]].toArray(col, i * 3);
     size[i] = rand() < 0.07 ? 10 : 4 + rand() * 2.5;
   });
   const ng = new THREE.BufferGeometry();
@@ -73,7 +80,7 @@ export function build({ root, U, reduceMotion }) {
   pg.setAttribute('aSpeed', new THREE.BufferAttribute(sp, 1));
   pg.setAttribute('aOffset', new THREE.BufferAttribute(off, 1));
   const pulseMat = new THREE.ShaderMaterial({
-    uniforms: { uTime: U.uTime, uPixel: U.uPixel, uColor: { value: CYAN.clone() }, uOpacity: { value: 1 } },
+    uniforms: { uTime: U.uTime, uPixel: U.uPixel, uColor: { value: tone.cyan.clone() }, uOpacity: { value: 1 } },
     vertexShader: `attribute vec3 aA; attribute vec3 aB; attribute float aSpeed; attribute float aOffset; uniform float uTime; uniform float uPixel; varying float vA;
       void main() { float t = fract(uTime * aSpeed + aOffset); vec4 mv = modelViewMatrix * vec4(mix(aA, aB, t), 1.0); gl_Position = projectionMatrix * mv; float s = sin(t * 3.14159); gl_PointSize = (3.0 + 6.0 * s) * uPixel * (6.0 / -mv.z); vA = s; }`,
     fragmentShader: `uniform vec3 uColor; uniform float uOpacity; varying float vA; void main() { float d = length(gl_PointCoord - 0.5); float a = smoothstep(0.5, 0.2, d); gl_FragColor = vec4(uColor, a * vA * uOpacity); }`,
@@ -88,7 +95,16 @@ export function build({ root, U, reduceMotion }) {
     anchors: {},
     frame: spin, // the particles land in this group's space (it turns)
     // fade: 0..1, used while the particles are still settling into it
-    fade(k) { lineMat.uniforms.uOpacity.value = 0.14 * k; nodeMat.uniforms.uOpacity.value = k; pulseMat.uniforms.uOpacity.value = k; },
+    fade(k) { shown = k; lineMat.uniforms.uOpacity.value = tone.line * k; nodeMat.uniforms.uOpacity.value = k; pulseMat.uniforms.uOpacity.value = k; },
+    // the theme switch (main.js → stage.js): recolour for the light or the dark sheet
+    theme() {
+      tone = toneNow();
+      kind.forEach((c, i) => tone[c].toArray(col, i * 3));
+      ng.attributes.aColor.needsUpdate = true;
+      lineMat.uniforms.uColor.value.copy(tone.ink);
+      pulseMat.uniforms.uColor.value.copy(tone.cyan);
+      lineMat.uniforms.uOpacity.value = tone.line * shown;
+    },
     update({ t, pointer }) {
       spin.rotation.y = (reduceMotion ? 0.6 : t * 0.08) + pointer.x * 0.3;
       spin.rotation.x = 0.25 - pointer.y * 0.15;

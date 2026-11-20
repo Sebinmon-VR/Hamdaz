@@ -1,9 +1,11 @@
-import { site, contact, services, categories, serviceBySlug, industries, waLink, svcUrl, areaUrl, tracking } from './data.mjs';
+import { site, siteTheme, contact, services, categories, serviceBySlug, industries, waLink, svcUrl, areaUrl, tracking } from './data.mjs';
 import { icon } from './icons.mjs';
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+// the theme a first visit opens in (siteTheme in data.mjs); the head script applies it, or the visitor's own choice
+const THEME = siteTheme === 'light' ? 'light' : 'dark';
 
 // The Google tag, when `tracking` in data.mjs has an Ads id. Consent defaults to "denied" before the tag loads
 // (Consent Mode), so no advertising or analytics cookie is set until the visitor accepts; a choice made earlier
@@ -98,6 +100,7 @@ function header(active) {
   <a class="brand" href="index.html" aria-label="${site.name}, home"><img src="assets/img/logo.svg" width="176" height="136" alt=""><span>Technologies</span></a>
   <nav class="nav" aria-label="Primary"><ul>${links}</ul></nav>
   <div class="header-end">
+    <button class="theme-sw" type="button" role="switch" aria-checked="${THEME === 'dark'}" aria-label="Dark theme" title="Switch between the light and dark theme" data-theme-btn><span class="theme-sw-knob" aria-hidden="true"></span>${icon('sun')}${icon('moon')}</button>
     <a class="pill" href="contact.html"${active === 'contact' ? ' aria-current="page"' : ''} data-magnetic>Contact Now ${icon('arrow-up-right')}</a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn><span class="menu-btn-label">Menu</span><span class="menu-btn-lines"><i></i><i></i></span></button>
   </div>
@@ -241,7 +244,7 @@ ${ogSize(image)}<meta property="og:image:alt" content="${esc(fullTitle)}">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="assets/css/style.css?v=${V}">
-${googleTag}<script>(function(d){var r=d.documentElement;r.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches){r.classList.add('reduce')}else{r.classList.add('anim');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('anim')},4000)}try{if(sessionStorage.getItem('hz-nav')){r.classList.add('from-nav');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('from-nav')},3000)}}catch(e){}})(document)</script>
+${googleTag}<script>(function(d){var r=d.documentElement,t;r.classList.add('js');try{t=localStorage.getItem('hz-theme')}catch(e){}if(t!=='light'&&t!=='dark')t='${THEME}';if(t==='dark')r.classList.add('theme-dark');if(matchMedia('(prefers-reduced-motion: reduce)').matches){r.classList.add('reduce')}else{r.classList.add('anim');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('anim')},4000)}try{if(sessionStorage.getItem('hz-nav')){r.classList.add('from-nav');setTimeout(function(){if(!r.classList.contains('ready'))r.classList.remove('from-nav')},3000)}}catch(e){}})(document)</script>
 ${three ? '<link rel="modulepreload" href="assets/vendor/three.module.min.js">\n' : ''}<script src="assets/vendor/gsap.min.js" defer></script>
 <script src="assets/vendor/ScrollTrigger.min.js" defer></script>
 <script src="assets/vendor/lenis.min.js" defer></script>
