@@ -1689,15 +1689,16 @@ html.reduce .nw-list--loop .nw-track { animation-duration: 120s; }
 /* the switch: a small pill with a sun and a moon, the knob sits under the theme in use */
 .theme-sw {
   position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; align-items: center; flex: none;
-  width: 68px; height: 36px; padding: 3px; border-radius: 999px;
+  width: 52px; height: 28px; padding: 3px; border-radius: 999px;
   box-shadow: inset 0 0 0 1px var(--line-2); color: var(--fg-2);
   transition: box-shadow 0.3s, color 0.3s;
 }
 .theme-sw:hover { box-shadow: inset 0 0 0 1px var(--fg-3); color: var(--fg); }
-.theme-sw-knob { position: absolute; left: 3px; top: 3px; width: 30px; height: 30px; border-radius: 50%; background: var(--fg); transition: transform 0.55s var(--ease), background-color 0.3s; }
-.theme-sw .i { position: relative; justify-self: center; width: 16px; height: 16px; transition: color 0.4s var(--ease), transform 0.6s var(--ease); }
+.theme-sw::after { content: ""; position: absolute; inset: -8px -4px; } /* a larger tap area than the pill itself */
+.theme-sw-knob { position: absolute; left: 3px; top: 3px; width: 22px; height: 22px; border-radius: 50%; background: var(--fg); transition: transform 0.55s var(--ease), background-color 0.3s; }
+.theme-sw .i { position: relative; justify-self: center; width: 12px; height: 12px; transition: color 0.4s var(--ease), transform 0.6s var(--ease); }
 .theme-sw .i-sun { color: var(--bg); }
-html.theme-dark .theme-sw-knob { transform: translateX(31px); }
+html.theme-dark .theme-sw-knob { transform: translateX(23px); }
 html.theme-dark .theme-sw .i-sun { color: inherit; transform: rotate(-90deg); }
 html.theme-dark .theme-sw .i-moon { color: var(--bg); }
 .header.is-light .theme-sw { box-shadow: inset 0 0 0 1px rgba(11, 27, 43, 0.2); color: #4a5663; }

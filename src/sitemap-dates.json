@@ -1,258 +1,258 @@
 {
  "": {
-  "hash": "e1ba866c93181aa3",
+  "hash": "1daf9f1ce2c51d56",
   "date": "2026-11-20"
  },
  "404.html": {
-  "hash": "31cf774015a6c3ba",
+  "hash": "a477be1aae735830",
   "date": "2026-11-20"
  },
  "about.html": {
-  "hash": "95682986fd9ee555",
+  "hash": "c697db5e2651bf21",
   "date": "2026-11-20"
  },
  "careers.html": {
-  "hash": "7b99442f357b2f1d",
+  "hash": "b80b36a463602622",
   "date": "2026-11-20"
  },
  "certifications.html": {
-  "hash": "27645dc67ec92c6a",
+  "hash": "b77e8fbc06ce165d",
   "date": "2026-11-20"
  },
  "contact.html": {
-  "hash": "5d1771001c9fc94d",
+  "hash": "77f94a3c1681b709",
   "date": "2026-11-20"
  },
  "insights.html": {
-  "hash": "c4f1c2299eeb7b5f",
+  "hash": "3d215844aff922eb",
   "date": "2026-11-20"
  },
  "insights/choose-video-conferencing-platform-meeting-rooms/": {
-  "hash": "ebdaff3df3ba2e3d",
+  "hash": "b6cd948199fdf389",
   "date": "2026-11-20"
  },
  "insights/mcc-approved-cctv-abu-dhabi/": {
-  "hash": "3a6e551a08594b2e",
+  "hash": "79f9acb1a32f06e1",
   "date": "2026-11-20"
  },
  "insights/ransomware-resilience-endpoint-security-backup-gap/": {
-  "hash": "4a795a0ef519eb35",
+  "hash": "563050c51327c701",
   "date": "2026-11-20"
  },
  "job.html": {
-  "hash": "c670aed910eaa76e",
+  "hash": "e07eb272e1f99744",
   "date": "2026-11-20"
  },
  "partners.html": {
-  "hash": "911380d622213d09",
+  "hash": "938eb240a2d0cb60",
   "date": "2026-11-20"
  },
  "privacy.html": {
-  "hash": "456ecd519ea0d7b4",
+  "hash": "5b4750aeab942690",
   "date": "2026-11-20"
  },
  "projects.html": {
-  "hash": "cb99a1034db217dc",
+  "hash": "d39294b69d9382d9",
   "date": "2026-11-20"
  },
  "quality.html": {
-  "hash": "7b9ad2ea2403c6ca",
+  "hash": "3cc8f48bdddc5661",
   "date": "2026-11-20"
  },
  "service/access-control-gate-barriers/": {
-  "hash": "a511aeb85e57c3c2",
+  "hash": "437fa64bf4fa1dd9",
   "date": "2026-11-20"
  },
  "service/anpr-intercom-car-parks/": {
-  "hash": "dc15af157f620e87",
+  "hash": "0058eb3fb143024e",
   "date": "2026-11-20"
  },
  "service/av-setup-meeting-room-solutions/": {
-  "hash": "d5fdae4cdf689778",
+  "hash": "52d8082a29c3fb66",
   "date": "2026-11-20"
  },
  "service/bot-services/": {
-  "hash": "366e1fa8e9ad8bfc",
+  "hash": "abbda6c7d41ecaae",
   "date": "2026-11-20"
  },
  "service/business-process-automation-and-digital-transformation-services/": {
-  "hash": "c183c61bacb84015",
+  "hash": "b30d8a8e30071fbd",
   "date": "2026-11-20"
  },
  "service/cctv-video-surveillance/": {
-  "hash": "fa268385fabd0660",
+  "hash": "984bce54a916f828",
   "date": "2026-11-20"
  },
  "service/cloud-services-migration/": {
-  "hash": "3615f0961ea71df2",
+  "hash": "a3ba6949370b4283",
   "date": "2026-11-20"
  },
  "service/custom-software-web-development/": {
-  "hash": "77a2e846d23181ad",
+  "hash": "7a5deb5df07febc7",
   "date": "2026-11-20"
  },
  "service/cyber-assessment-audit/": {
-  "hash": "8602b55a2c178539",
+  "hash": "65a24d77f9da4863",
   "date": "2026-11-20"
  },
  "service/data-analytics-predictive-services/": {
-  "hash": "48123dfcb07a3ff1",
+  "hash": "2cf8fbc6954ab523",
   "date": "2026-11-20"
  },
  "service/data-center-infrastructure-services/": {
-  "hash": "483d9b82b6a4982b",
+  "hash": "401f72da70e75a82",
   "date": "2026-11-20"
  },
  "service/data-centre-power-cooling/": {
-  "hash": "06d377e45ca76585",
+  "hash": "141bbafb605c72ec",
   "date": "2026-11-20"
  },
  "service/digital-twin/": {
-  "hash": "58787068cc1166c7",
+  "hash": "a91bb53f7e99b11c",
   "date": "2026-11-20"
  },
  "service/education-services/": {
-  "hash": "4e46c75cb097b751",
+  "hash": "3fe5d788904be114",
   "date": "2026-11-20"
  },
  "service/enterprise-networking-wifi/": {
-  "hash": "57ce17622ca79cd9",
+  "hash": "fe15f1e1c35a8048",
   "date": "2026-11-20"
  },
  "service/erp-solutions/": {
-  "hash": "b69492aa2d74ee70",
+  "hash": "155439891e75f874",
   "date": "2026-11-20"
  },
  "service/generative-ai/": {
-  "hash": "c63539fac27748c2",
+  "hash": "681f6f67a8b5ecbf",
   "date": "2026-11-20"
  },
  "service/healthcare-services/": {
-  "hash": "b553243ca5ea94d4",
+  "hash": "6b2b40cff82597d7",
   "date": "2026-11-20"
  },
  "service/immersive-smart-spaces/": {
-  "hash": "799445c1524d3ada",
+  "hash": "fbcf09ffd08751ef",
   "date": "2026-11-20"
  },
  "service/information-security-services/": {
-  "hash": "dd981e8c92e1dabd",
+  "hash": "722bc99e6cd436a9",
   "date": "2026-11-20"
  },
  "service/it-ot-services/": {
-  "hash": "fc3d75bb3c8115d6",
+  "hash": "b0f235d7a15ebdce",
   "date": "2026-11-20"
  },
  "service/it-outsourcing-managed-operations/": {
-  "hash": "f0335407ccb95dc1",
+  "hash": "585821670325a08a",
   "date": "2026-11-20"
  },
  "service/it-staffing-resident-engineers/": {
-  "hash": "e7edfa75246942c1",
+  "hash": "324b2987dc73cf37",
   "date": "2026-11-20"
  },
  "service/lms-elearning-platforms/": {
-  "hash": "9a3a74a22062707a",
+  "hash": "01af796151489df6",
   "date": "2026-11-20"
  },
  "service/managed-ai-secops/": {
-  "hash": "c34ed44c85a4d08d",
+  "hash": "6d61338371b596a8",
   "date": "2026-11-20"
  },
  "service/managed-services/": {
-  "hash": "63ad17c456a71ec6",
+  "hash": "e246f306b4959275",
   "date": "2026-11-20"
  },
  "service/meeting-rooms-video-conferencing/": {
-  "hash": "da3797fa4be2e2d7",
+  "hash": "6f2c2c460c47121c",
   "date": "2026-11-20"
  },
  "service/mobile-app-development/": {
-  "hash": "88fe66b1410ce554",
+  "hash": "9fbcacd1dfd94d1d",
   "date": "2026-11-20"
  },
  "service/network-services-cabling-structured-cabling/": {
-  "hash": "7b83c272140fd4b3",
+  "hash": "45d98b6fd4744a8c",
   "date": "2026-11-20"
  },
  "service/partner-services-msft-azure-aws-gcp-oci/": {
-  "hash": "388b1365d93fbe3a",
+  "hash": "2f035bb8e6548c5e",
   "date": "2026-11-20"
  },
  "service/pro-audio-pa-systems/": {
-  "hash": "896efd715a8bd385",
+  "hash": "f51bd1313ce312db",
   "date": "2026-11-20"
  },
  "service/ransomware-resilience/": {
-  "hash": "cecb7fe97c716828",
+  "hash": "7765a84e874d2d5e",
   "date": "2026-11-20"
  },
  "service/retail-implementation-services/": {
-  "hash": "4f44bf18de85cc8a",
+  "hash": "426f227bf850cf27",
   "date": "2026-11-20"
  },
  "service/rpa-robotic-process-automation/": {
-  "hash": "378cccd7e067db70",
+  "hash": "019d40a5b3177900",
   "date": "2026-11-20"
  },
  "service/smart-farming/": {
-  "hash": "7653e83a7713c2ed",
+  "hash": "a9196a765ec9b62c",
   "date": "2026-11-20"
  },
  "service/video-walls-digital-signage/": {
-  "hash": "0c41d4d2b8fa4139",
+  "hash": "a2e86bd91fdd7736",
   "date": "2026-11-20"
  },
  "service/zero-trust-identity-data-security/": {
-  "hash": "53cb3b80d36673c4",
+  "hash": "3ffa64f960031c3d",
   "date": "2026-11-20"
  },
  "service/zoho-sap-vodoo-crm-salesforce/": {
-  "hash": "58f2d3224bd6a86b",
+  "hash": "e75e248e786bd268",
   "date": "2026-11-20"
  },
  "services.html": {
-  "hash": "11b23308bc13bb30",
+  "hash": "b1b898c7e0f838f1",
   "date": "2026-11-20"
  },
  "services/ai-data/": {
-  "hash": "b33a833a0984fb6d",
+  "hash": "71162e36ccda65fe",
   "date": "2026-11-20"
  },
  "services/audio-visual/": {
-  "hash": "af0c6720a105298d",
+  "hash": "6208b633adc0148e",
   "date": "2026-11-20"
  },
  "services/cloud-infrastructure/": {
-  "hash": "2daea222b8ab4d48",
+  "hash": "bb94cc356c6d6c3c",
   "date": "2026-11-20"
  },
  "services/cybersecurity/": {
-  "hash": "53c08bb0eab4d9a2",
+  "hash": "22d684bc39cc375f",
   "date": "2026-11-20"
  },
  "services/elv-security/": {
-  "hash": "d764ae28a07d6da0",
+  "hash": "b4ceb92ad20b8df4",
   "date": "2026-11-20"
  },
  "services/industry/": {
-  "hash": "f9c810772b8aa55a",
+  "hash": "3efac8c976cbc4f1",
   "date": "2026-11-20"
  },
  "services/network-wifi/": {
-  "hash": "e540c242aefa207d",
+  "hash": "1a37fad4b6ca26a2",
   "date": "2026-11-20"
  },
  "services/software-development/": {
-  "hash": "b5b92bc952f2b395",
+  "hash": "a041633e3d457f82",
   "date": "2026-11-20"
  },
  "services/staffing/": {
-  "hash": "030a78997fe52e96",
+  "hash": "d4f87c4ae80c7a28",
   "date": "2026-11-20"
  },
  "solutions.html": {
-  "hash": "3cc0983675278593",
+  "hash": "89e6151987e433fe",
   "date": "2026-11-20"
  }
 }
