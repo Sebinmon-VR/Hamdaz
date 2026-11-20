@@ -1752,17 +1752,18 @@ html.theme-dark .cat-nav a:hover, html.theme-dark .cat-nav a:focus-visible { box
 html.theme-dark .tl-step.on .tl-card { border-color: rgba(76, 200, 248, 0.26); box-shadow: 0 24px 50px -30px rgba(0, 0, 0, 0.8); }
 html.theme-dark .nw-item.is-on { background: linear-gradient(90deg, rgba(76, 200, 248, 0.09), transparent 70%); }
 
-/* logos: as a grey negative, so black wordmarks turn light and white details stay cut out of their marks;
-   brighter when pointed at */
-html.theme-dark .mq--logos img, html.theme-dark .lw-logo img { filter: grayscale(1) invert(1); opacity: 0.72; transition: opacity 0.4s, transform 0.6s var(--ease); }
+/* logos: white. A negative pushed bright, so black and coloured parts turn white while white details stay cut out
+   of their marks (the ADNOC falcon, Samsung's lettering); full white when pointed at */
+html.theme-dark .mq--logos img, html.theme-dark .lw-logo img { filter: grayscale(1) invert(1) brightness(3); opacity: 0.9; transition: opacity 0.4s, transform 0.6s var(--ease); }
+html.theme-dark .mq-logo--mark span, html.theme-dark .mq--logos .mq-name, html.theme-dark .lw-word { color: #fff; opacity: 0.9; }
 html.theme-dark .mq--logos li:hover img, html.theme-dark .lw-tile:hover .lw-logo img { opacity: 1; }
 html.theme-dark .mq--logos .mq-logo--dark { background: transparent; }
 html.theme-dark .lw-tile:hover { background: var(--card); }
 html.theme-dark .lw-tile--dark { background: transparent; }
 html.theme-dark .lw-tile--dark:hover { background: var(--card); }
-/* logos that are already light (white, neon green) or white on a colour block: grey only, not turned negative */
+/* logos that are already light (white, neon green): brightened, not turned negative */
 html.theme-dark .mq-logo--dark img, html.theme-dark .lw-tile--dark img,
-html.theme-dark img[src$="/shure.svg"], html.theme-dark img[src$="/schneiderelectric.svg"], html.theme-dark img[src$="/barco.svg"] { filter: grayscale(1); }
+html.theme-dark img[src$="/shure.svg"], html.theme-dark img[src$="/schneiderelectric.svg"] { filter: grayscale(1) brightness(1.5); }
 
 /* certificates stay white paper, and the ICV lockup stays on its white panel (ADNOC guidelines) */
 html.theme-dark .cx-paper, html.theme-dark .cert-img, html.theme-dark .qh-cert img { box-shadow: 0 0 0 1px rgba(232, 238, 244, 0.08), 0 30px 50px -28px rgba(0, 0, 0, 0.9); }
